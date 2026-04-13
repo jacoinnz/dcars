@@ -1,0 +1,11 @@
+{
+  "name": "dcars",
+  "private": true,
+  "description": "Root package so Vercel can install/build the Next.js app in ./web without changing dashboard settings.",
+  "scripts": {
+    "build": "npm run build --prefix web",
+    "dev": "npm run dev --prefix web",
+    "start": "npm run start --prefix web",
+    "lint": "npm run lint --prefix web"
+  }
+}
