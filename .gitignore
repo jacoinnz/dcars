@@ -1,0 +1,15 @@
+# Next.js (app lives in web/)
+web/node_modules/
+web/.next/
+web/out/
+web/data/
+web/.env
+web/.env.*
+!web/.env.example
+
+# OS / logs
+.DS_Store
+*.log
+
+# Local Cursor skill/reference copies (large; not needed for deployment)
+.cursor/
