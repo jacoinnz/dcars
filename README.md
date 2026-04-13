@@ -16,8 +16,8 @@ In [Vercel](https://vercel.com) → your project → **Settings** → **General*
 
 Framework should show **Next.js** after this. `DATABASE_URL` (Neon) must be set under **Environment Variables** for Production (and Preview if you use it).
 
-### 2. Root `package.json` (optional)
+### 2. Monorepo root (`package.json`)
 
-The root [`package.json`](./package.json) only helps run `npm run dev` / `npm run build` from the repo root locally (`--prefix web`). Vercel ignores it once **Root Directory** is **`web`**.
+The repo root [`package.json`](./package.json) declares an npm **workspace** for `web/` so a single `npm install` at the repo root installs `next` and the rest of the app. That fixes **`next: command not found`** when Vercel’s **Root Directory** is the repository root (not `web`). If your Vercel **Root Directory** is already **`web`**, Vercel installs inside `web/` only; the workspace still helps local runs from the repo root.
 
 See **`web/README.md`** for local development.
