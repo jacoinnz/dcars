@@ -1,3 +1,9 @@
+import { config } from "dotenv";
+import path from "node:path";
+
+config({ path: path.join(process.cwd(), ".env.local") });
+config({ path: path.join(process.cwd(), ".env") });
+
 import { getDb } from "../src/db";
 import { sites } from "../src/db/schema";
 

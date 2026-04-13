@@ -40,8 +40,9 @@ export function SessionEntryForm(props: {
 
       {props.sites.length === 0 ? (
         <p className="text-sm text-red-800">
-          No sites are configured yet. Run{" "}
-          <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">npm run db:push</code> then{" "}
+          No sites are configured yet. Add <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">DATABASE_URL</code>{" "}
+          (Neon) to <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">.env.local</code>, then run{" "}
+          <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">npm run db:push</code> and{" "}
           <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">npm run db:seed</code> from the{" "}
           <code className="rounded bg-stone-100 px-1 py-0.5 text-xs">web</code> folder.
         </p>
