@@ -245,6 +245,192 @@ export function ParticipantEntryForm(props: {
         </label>
       </fieldset>
 
+      <fieldset className="space-y-4 border-0 p-0">
+        <legend className="text-sm font-semibold text-stone-900">Parents &amp; guardian info</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Father name</span>
+            <input name="fatherName" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.fatherName ? (
+              <span className="text-xs text-red-700">{fieldErrors.fatherName.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Father occupation</span>
+            <input name="fatherOccupation" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.fatherOccupation ? (
+              <span className="text-xs text-red-700">{fieldErrors.fatherOccupation.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Father phone</span>
+            <input name="fatherPhone" type="tel" inputMode="tel" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.fatherPhone ? (
+              <span className="text-xs text-red-700">{fieldErrors.fatherPhone.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Father email</span>
+            <input name="fatherEmail" type="email" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.fatherEmail ? (
+              <span className="text-xs text-red-700">{fieldErrors.fatherEmail.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Mother name</span>
+            <input name="motherName" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.motherName ? (
+              <span className="text-xs text-red-700">{fieldErrors.motherName.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Mother occupation</span>
+            <input name="motherOccupation" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.motherOccupation ? (
+              <span className="text-xs text-red-700">{fieldErrors.motherOccupation.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Mother phone</span>
+            <input name="motherPhone" type="tel" inputMode="tel" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.motherPhone ? (
+              <span className="text-xs text-red-700">{fieldErrors.motherPhone.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Mother email</span>
+            <input name="motherEmail" type="email" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.motherEmail ? (
+              <span className="text-xs text-red-700">{fieldErrors.motherEmail.join(" ")}</span>
+            ) : null}
+          </label>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Guardian name</span>
+            <input name="guardianName" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.guardianName ? (
+              <span className="text-xs text-red-700">{fieldErrors.guardianName.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Relationship</span>
+            <input name="guardianRelationship" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" placeholder="e.g. uncle, grandparent" />
+            {fieldErrors?.guardianRelationship ? (
+              <span className="text-xs text-red-700">{fieldErrors.guardianRelationship.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Guardian phone</span>
+            <input name="guardianPhone" type="tel" inputMode="tel" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.guardianPhone ? (
+              <span className="text-xs text-red-700">{fieldErrors.guardianPhone.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Guardian email</span>
+            <input name="guardianEmail" type="email" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.guardianEmail ? (
+              <span className="text-xs text-red-700">{fieldErrors.guardianEmail.join(" ")}</span>
+            ) : null}
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-4 border-0 p-0">
+        <legend className="text-sm font-semibold text-stone-900">Document info</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Birth certificate</span>
+            <input name="documentBirthCert" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.documentBirthCert ? (
+              <span className="text-xs text-red-700">{fieldErrors.documentBirthCert.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">National ID</span>
+            <input name="documentNationalId" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.documentNationalId ? (
+              <span className="text-xs text-red-700">{fieldErrors.documentNationalId.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Transfer certificate</span>
+            <input name="documentTransferCert" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.documentTransferCert ? (
+              <span className="text-xs text-red-700">{fieldErrors.documentTransferCert.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Medical / immunization</span>
+            <input name="documentMedicalImmunization" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.documentMedicalImmunization ? (
+              <span className="text-xs text-red-700">{fieldErrors.documentMedicalImmunization.join(" ")}</span>
+            ) : null}
+          </label>
+        </div>
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-stone-800">Other document notes</span>
+          <textarea name="documentOtherNotes" rows={2} className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          {fieldErrors?.documentOtherNotes ? (
+            <span className="text-xs text-red-700">{fieldErrors.documentOtherNotes.join(" ")}</span>
+          ) : null}
+        </label>
+      </fieldset>
+
+      <fieldset className="space-y-4 border-0 p-0">
+        <legend className="text-sm font-semibold text-stone-900">Previous school information</legend>
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-stone-800">Previous school</span>
+          <input name="previousSchool" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          {fieldErrors?.previousSchool ? (
+            <span className="text-xs text-red-700">{fieldErrors.previousSchool.join(" ")}</span>
+          ) : null}
+        </label>
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-stone-800">Previous school address</span>
+          <textarea name="previousSchoolAddress" rows={2} className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          {fieldErrors?.previousSchoolAddress ? (
+            <span className="text-xs text-red-700">{fieldErrors.previousSchoolAddress.join(" ")}</span>
+          ) : null}
+        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Last class / grade</span>
+            <input name="previousSchoolClassOrGrade" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.previousSchoolClassOrGrade ? (
+              <span className="text-xs text-red-700">{fieldErrors.previousSchoolClassOrGrade.join(" ")}</span>
+            ) : null}
+          </label>
+          <label className="block space-y-1">
+            <span className="text-sm font-medium text-stone-800">Date left</span>
+            <input name="previousSchoolDateLeft" type="date" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+            {fieldErrors?.previousSchoolDateLeft ? (
+              <span className="text-xs text-red-700">{fieldErrors.previousSchoolDateLeft.join(" ")}</span>
+            ) : null}
+          </label>
+        </div>
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-stone-800">Leaving reason</span>
+          <textarea name="previousSchoolLeavingReason" rows={2} className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          {fieldErrors?.previousSchoolLeavingReason ? (
+            <span className="text-xs text-red-700">{fieldErrors.previousSchoolLeavingReason.join(" ")}</span>
+          ) : null}
+        </label>
+      </fieldset>
+
+      <fieldset className="space-y-4 border-0 p-0">
+        <legend className="text-sm font-semibold text-stone-900">Admission notes</legend>
+        <label className="block space-y-1">
+          <span className="text-sm font-medium text-stone-800">Notes</span>
+          <textarea name="admissionNotes" rows={3} className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          {fieldErrors?.admissionNotes ? (
+            <span className="text-xs text-red-700">{fieldErrors.admissionNotes.join(" ")}</span>
+          ) : null}
+        </label>
+      </fieldset>
+
       <button
         type="submit"
         disabled={pending || props.sites.length === 0}
