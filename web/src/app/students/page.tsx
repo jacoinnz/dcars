@@ -22,22 +22,57 @@ export default async function StudentsHubPage() {
 
   const userId = session.user.id;
   const isSuperAdmin = Boolean(session.user.isSuperAdmin);
-  const viewableIds = await getViewableInstitutionIds(userId, isSuperAdmin);
-  const db = getDb();
 
-  const schoolRows =
-    viewableIds.length === 0
-      ? []
-      : await db
-          .select({
-            id: institutions.id,
-            name: institutions.name,
-            siteName: sites.name,
-          })
-          .from(institutions)
-          .innerJoin(sites, eq(sites.id, institutions.siteId))
-          .where(inArray(institutions.id, viewableIds))
-          .orderBy(asc(institutions.name));
+  type SchoolRow = { id: string; name: string; siteName: string };
+  let schoolRows: SchoolRow[] = [];
+  let loadError: string | null = null;
+
+  try {
+    const viewableIds = await getViewableInstitutionIds(userId, isSuperAdmin);
+    const db = getDb();
+    schoolRows =
+      viewableIds.length === 0
+        ? []
+        : await db
+            .select({
+              id: institutions.id,
+              name: institutions.name,
+              siteName: sites.name,
+            })
+            .from(institutions)
+            .innerJoin(sites, eq(sites.id, institutions.siteId))
+            .where(inArray(institutions.id, viewableIds))
+            .orderBy(asc(institutions.name));
+  } catch (err) {
+    console.error("[students]", err);
+    loadError =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+          ? err
+          : "Unknown error";
+  }
+
+  if (loadError) {
+    const devDetail = process.env.NODE_ENV === "development" ? loadError : null;
+    return (
+      <AppPage>
+        <Stack gap="md">
+          <Title order={1}>Student information</Title>
+          <Alert color="red" title="This page couldn’t load">
+            <Text size="sm">
+              {devDetail ??
+                "The app could not load school data from the database. This is often a missing or wrong DATABASE_URL on the server."}
+            </Text>
+            <Text size="sm" mt="sm" c="dimmed">
+              On Vercel: Project → Settings → Environment Variables → add <code>DATABASE_URL</code> with your Neon
+              connection string (same as <code>web/.env.local</code>) for <strong>Production</strong>, then redeploy.
+            </Text>
+          </Alert>
+        </Stack>
+      </AppPage>
+    );
+  }
 
   return (
     <AppPage>
