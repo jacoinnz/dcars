@@ -1,5 +1,8 @@
-import Link from "next/link";
+import type { CSSProperties } from "react";
+import { Badge, Box, Button, Divider, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { notFound } from "next/navigation";
+import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
@@ -29,6 +32,29 @@ import {
 } from "@/app/admin/school-actions";
 
 export const dynamic = "force-dynamic";
+
+const inSm: CSSProperties = {
+  marginTop: 4,
+  borderRadius: "var(--mantine-radius-md)",
+  border: "1px solid var(--mantine-color-gray-4)",
+  padding: "6px 10px",
+  fontSize: "var(--mantine-font-size-sm)",
+};
+
+const inFull: CSSProperties = { ...inSm, width: "100%", boxSizing: "border-box" as const };
+
+const mono: CSSProperties = {
+  ...inFull,
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+};
+
+const selectMd: CSSProperties = { ...inSm, minWidth: "12rem", maxWidth: "18rem" };
+
+const listRowBox: CSSProperties = {
+  padding: "var(--mantine-spacing-sm) var(--mantine-spacing-md)",
+  borderRadius: "var(--mantine-radius-md)",
+  border: "1px solid var(--mantine-color-gray-3)",
+};
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -109,440 +135,520 @@ export default async function AdminInstitutionDetailPage({ params }: Props) {
     .orderBy(asc(appUsers.email));
 
   return (
-    <div>
-      <Link href="/admin/institutions" className="text-sm font-medium text-teal-800 underline">
-        ← Schools
-      </Link>
-      <h1 className="pe-app-h1 pe-app-h1-mt4">{inst.name}</h1>
-      <p className="text-sm text-stone-600">
-        Programme site: {inst.siteName} ({inst.siteCode})
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <NextMantineAnchor href="/admin/institutions" size="sm" fw={500}>
+            ← Schools
+          </NextMantineAnchor>
+          <Title order={1}>{inst.name}</Title>
+          <Text size="sm" c="dimmed">
+            Programme site: {inst.siteName} ({inst.siteCode})
+          </Text>
+        </Stack>
 
-      <section className="mt-10 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Classes</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Students can belong to several classes; staff filter reports by class.
-        </p>
-        <form action={adminCreateClass.bind(null, id)} className="mt-4 flex flex-wrap items-end gap-2">
-          <label className="text-xs font-medium text-stone-700">
-            Class name
-            <input name="name" required className="ml-1 rounded border border-stone-300 px-2 py-1 text-sm" />
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Code <span className="text-stone-500">(optional)</span>
-            <input name="code" className="ml-1 rounded border border-stone-300 px-2 py-1 text-sm" />
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Add class
-          </button>
-        </form>
-        <ul className="mt-4 space-y-2">
-          {classRows.map((c) => (
-            <li
-              key={c.id}
-              className="flex items-center justify-between rounded-lg border border-stone-100 px-3 py-2 text-sm"
-            >
-              <span>
-                <span className="font-medium text-stone-900">{c.name}</span>
-                {c.code ? <span className="text-stone-500"> ({c.code})</span> : null}
-              </span>
-              <form action={adminDeleteClass.bind(null, c.id, id)}>
-                <button type="submit" className="text-xs text-red-700 underline">
-                  Remove
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-        {classRows.length === 0 ? (
-          <p className="mt-3 text-sm text-stone-500">No classes yet.</p>
-        ) : null}
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Staff & teachers</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Assigned users can enter scores and manage students for this school.
-        </p>
-        <form action={adminAssignStaff} className="mt-4 flex flex-wrap items-end gap-2">
-          <input type="hidden" name="institutionId" value={id} />
-          <label className="text-xs font-medium text-stone-700">
-            User
-            <select
-              name="userId"
-              required
-              className="ml-1 mt-1 block max-w-xs rounded border border-stone-300 px-2 py-1 text-sm"
-            >
-              <option value="">Select…</option>
-              {allUsers.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.email} — {u.name}
-                </option>
+        <Paper withBorder shadow="sm" radius="lg" p="xl">
+          <Stack gap="md">
+            <Title order={2} size="h5">
+              Classes
+            </Title>
+            <Text size="xs" c="dimmed">
+              Students can belong to several classes; staff filter reports by class.
+            </Text>
+            <Box component="form" action={adminCreateClass.bind(null, id)}>
+              <Group wrap="wrap" align="flex-end" gap="md">
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-class-name" display="block">
+                    Class name
+                  </Text>
+                  <input id="new-class-name" name="name" required style={inSm} />
+                </Box>
+                <Box>
+                  <label htmlFor="new-class-code" style={{ display: "block", marginBottom: 4 }}>
+                    <Text component="span" size="xs" fw={500}>
+                      Code{" "}
+                    </Text>
+                    <Text component="span" size="xs" c="dimmed">
+                      (optional)
+                    </Text>
+                  </label>
+                  <input id="new-class-code" name="code" style={inSm} />
+                </Box>
+                <Button type="submit" color="dark">
+                  Add class
+                </Button>
+              </Group>
+            </Box>
+            <Stack gap="sm">
+              {classRows.map((c) => (
+                <Group key={c.id} justify="space-between" align="center" wrap="wrap" gap="sm" style={listRowBox}>
+                  <Text size="sm">
+                    <Text component="span" fw={600}>
+                      {c.name}
+                    </Text>
+                    {c.code ? (
+                      <Text component="span" c="dimmed">
+                        {" "}
+                        ({c.code})
+                      </Text>
+                    ) : null}
+                  </Text>
+                  <Box component="form" action={adminDeleteClass.bind(null, c.id, id)}>
+                    <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                      Remove
+                    </Button>
+                  </Box>
+                </Group>
               ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Role
-            <select name="role" className="ml-1 mt-1 block rounded border border-stone-300 px-2 py-1 text-sm">
-              <option value="teacher">Teacher</option>
-              <option value="management">Management</option>
-            </select>
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Assign
-          </button>
-        </form>
-        <ul className="mt-4 space-y-2 text-sm">
-          {staffRows.map((s) => (
-            <li
-              key={s.rowId}
-              className="flex items-center justify-between rounded-lg border border-stone-100 px-3 py-2"
-            >
-              <span>
-                <span className="font-medium">{s.name}</span>{" "}
-                <span className="text-stone-600">{s.email}</span>{" "}
-                <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs uppercase text-stone-700">
-                  {s.role}
-                </span>
-              </span>
-              <form action={adminRemoveStaff.bind(null, s.rowId, id)}>
-                <button type="submit" className="text-xs text-red-700 underline">
-                  Remove
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-      </section>
+            </Stack>
+            {classRows.length === 0 ? (
+              <Text size="sm" c="dimmed">
+                No classes yet.
+              </Text>
+            ) : null}
+          </Stack>
+        </Paper>
 
-      <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Attendance setup</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Message shown to families above their child&apos;s attendance (bell times, expectations,
-          how to report absences). Staff record marks on{" "}
-          <Link href="/attendance" className="font-semibold text-teal-800 underline">
-            Attendance
-          </Link>
-          .
-        </p>
-        <form action={adminSaveAttendanceFamilyMessage.bind(null, id)} className="mt-4 space-y-3">
-          <label className="block text-xs font-medium text-stone-700">
-            Family-facing notes
-            <textarea
-              name="familyInstructions"
-              rows={4}
-              defaultValue={attendanceSettings?.familyInstructions ?? ""}
-              placeholder="e.g. School day 8:30–15:00. Report absences before 9:00."
-              className="mt-1 w-full rounded border border-stone-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Save attendance message
-          </button>
-        </form>
-
-        <h3 className="mt-8 text-xs font-semibold uppercase tracking-wide text-stone-600">
-          Family accounts (guardians)
-        </h3>
-        <p className="mt-1 text-xs text-stone-600">
-          Link a parent or guardian&apos;s login to a student so they can view attendance on{" "}
-          <strong className="font-medium text-stone-800">Family</strong> in the main menu. The
-          guardian must already have a user account.
-        </p>
-        <form action={adminLinkGuardianToStudent} className="mt-4 flex flex-wrap items-end gap-2">
-          <input type="hidden" name="institutionId" value={id} />
-          <label className="text-xs font-medium text-stone-700">
-            Student
-            <select
-              name="studentId"
-              required
-              className="ml-1 mt-1 block max-w-[14rem] rounded border border-stone-300 px-2 py-1 text-sm"
-            >
-              <option value="">Select…</option>
-              {studentRows.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.lastName}, {s.firstName}
-                </option>
+        <Paper withBorder shadow="sm" radius="lg" p="xl">
+          <Stack gap="md">
+            <Title order={2} size="h5">
+              Staff & teachers
+            </Title>
+            <Text size="xs" c="dimmed">
+              Assigned users can enter scores and manage students for this school.
+            </Text>
+            <Box component="form" action={adminAssignStaff}>
+              <input type="hidden" name="institutionId" value={id} />
+              <Group wrap="wrap" align="flex-end" gap="md">
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="assign-staff-user" display="block">
+                    User
+                  </Text>
+                  <select id="assign-staff-user" name="userId" required style={selectMd}>
+                    <option value="">Select…</option>
+                    {allUsers.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.email} — {u.name}
+                      </option>
+                    ))}
+                  </select>
+                </Box>
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="assign-staff-role" display="block">
+                    Role
+                  </Text>
+                  <select id="assign-staff-role" name="role" style={inSm}>
+                    <option value="teacher">Teacher</option>
+                    <option value="management">Management</option>
+                  </select>
+                </Box>
+                <Button type="submit" color="dark">
+                  Assign
+                </Button>
+              </Group>
+            </Box>
+            <Stack gap="sm">
+              {staffRows.map((s) => (
+                <Group key={s.rowId} justify="space-between" align="center" wrap="wrap" gap="sm" style={listRowBox}>
+                  <Group gap="xs" wrap="wrap">
+                    <Text size="sm" fw={600}>
+                      {s.name}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      {s.email}
+                    </Text>
+                    <Badge size="sm" variant="light" color="gray" tt="uppercase">
+                      {s.role}
+                    </Badge>
+                  </Group>
+                  <Box component="form" action={adminRemoveStaff.bind(null, s.rowId, id)}>
+                    <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                      Remove
+                    </Button>
+                  </Box>
+                </Group>
               ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Guardian account
-            <select
-              name="guardianUserId"
-              required
-              className="ml-1 mt-1 block max-w-[16rem] rounded border border-stone-300 px-2 py-1 text-sm"
-            >
-              <option value="">Select…</option>
-              {allUsers.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.email} — {u.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Relationship <span className="text-stone-500">(optional)</span>
-            <input
-              name="relationshipLabel"
-              placeholder="Mother, father…"
-              className="ml-1 mt-1 block w-32 rounded border border-stone-300 px-2 py-1 text-sm"
-            />
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Link guardian
-          </button>
-        </form>
-        <ul className="mt-4 space-y-2 text-sm">
-          {guardianRows.map((g) => (
-            <li
-              key={g.linkId}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 px-3 py-2"
-            >
-              <span>
-                <span className="font-medium text-stone-900">
-                  {g.studentFirst} {g.studentLast}
-                </span>
-                <span className="text-stone-600"> ← </span>
-                <span className="text-stone-800">{g.guardianName}</span>{" "}
-                <span className="text-stone-500">({g.guardianEmail})</span>
-                {g.relationshipLabel ? (
-                  <span className="ml-2 text-xs text-stone-500">{g.relationshipLabel}</span>
-                ) : null}
-              </span>
-              <form action={adminUnlinkGuardian.bind(null, g.linkId, id)}>
-                <button type="submit" className="text-xs text-red-700 underline">
-                  Unlink
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-        {guardianRows.length === 0 ? (
-          <p className="mt-3 text-sm text-stone-500">No guardian links yet.</p>
-        ) : null}
+            </Stack>
+          </Stack>
+        </Paper>
 
-        <h3 className="mt-8 text-xs font-semibold uppercase tracking-wide text-stone-600">
-          Student portal (learner login)
-        </h3>
-        <p className="mt-1 text-xs text-stone-600">
-          Link a student&apos;s <strong className="font-medium text-stone-800">own</strong> user
-          account so they can use <strong className="font-medium text-stone-800">Student</strong> in
-          the main menu (marks, attendance, downloads). One login can only be linked to one student.
-        </p>
-        <form action={adminLinkStudentPortal} className="mt-4 flex flex-wrap items-end gap-2">
-          <input type="hidden" name="institutionId" value={id} />
-          <label className="text-xs font-medium text-stone-700">
-            Student
-            <select
-              name="studentId"
-              required
-              className="ml-1 mt-1 block max-w-[14rem] rounded border border-stone-300 px-2 py-1 text-sm"
-            >
-              <option value="">Select…</option>
-              {studentRows.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.lastName}, {s.firstName}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Student login account
-            <select
-              name="portalUserId"
-              required
-              className="ml-1 mt-1 block max-w-[16rem] rounded border border-stone-300 px-2 py-1 text-sm"
-            >
-              <option value="">Select…</option>
-              {allUsers.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.email} — {u.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Link portal login
-          </button>
-        </form>
-        <ul className="mt-4 space-y-2 text-sm">
-          {studentRows.map((s) => {
-            const portal = s.portalUserId
-              ? allUsers.find((u) => u.id === s.portalUserId)
-              : null;
-            return (
-              <li
-                key={`portal-${s.id}`}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 px-3 py-2"
-              >
-                <span>
-                  <span className="font-medium text-stone-900">
-                    {s.lastName}, {s.firstName}
-                  </span>
-                  {portal ? (
-                    <span className="text-stone-600">
-                      {" "}
-                      → <span className="text-stone-800">{portal.email}</span>
-                    </span>
-                  ) : (
-                    <span className="text-stone-500"> — no portal login</span>
-                  )}
-                </span>
-                {s.portalUserId ? (
-                  <form action={adminUnlinkStudentPortal.bind(null, s.id, id)}>
-                    <button type="submit" className="text-xs text-red-700 underline">
-                      Unlink portal
-                    </button>
-                  </form>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+        <Paper withBorder shadow="sm" radius="lg" p="xl">
+          <Stack gap="lg">
+            <Stack gap="xs">
+              <Title order={2} size="h5">
+                Attendance setup
+              </Title>
+              <Text size="xs" c="dimmed">
+                Message shown to families above their child&apos;s attendance (bell times, expectations,
+                how to report absences). Staff record marks on{" "}
+                <NextMantineAnchor href="/attendance" fw={600}>
+                  Attendance
+                </NextMantineAnchor>
+                .
+              </Text>
+            </Stack>
+            <Box component="form" action={adminSaveAttendanceFamilyMessage.bind(null, id)}>
+              <Stack gap="md">
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="family-instructions" display="block">
+                    Family-facing notes
+                  </Text>
+                  <textarea
+                    id="family-instructions"
+                    name="familyInstructions"
+                    rows={4}
+                    defaultValue={attendanceSettings?.familyInstructions ?? ""}
+                    placeholder="e.g. School day 8:30–15:00. Report absences before 9:00."
+                    style={{ ...inFull, minHeight: "6rem", resize: "vertical" as const }}
+                  />
+                </Box>
+                <Button type="submit" color="dark">
+                  Save attendance message
+                </Button>
+              </Stack>
+            </Box>
 
-      <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Syllabuses</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Each school keeps its own syllabus entries (topics, outcomes, terms). Staff see them under
-          Evaluations → syllabuses.
-        </p>
-        <form action={adminCreateSyllabus.bind(null, id)} className="mt-4 space-y-3">
-          <label className="block text-xs font-medium text-stone-700">
-            Title
-            <input
-              name="title"
-              required
-              placeholder="e.g. Year 9 English"
-              className="mt-1 w-full rounded border border-stone-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <label className="block text-xs font-medium text-stone-700">
-            Short summary <span className="font-normal text-stone-500">(optional)</span>
-            <input name="summary" className="mt-1 w-full rounded border border-stone-300 px-2 py-1.5 text-sm" />
-          </label>
-          <label className="block text-xs font-medium text-stone-700">
-            Content
-            <textarea
-              name="body"
-              required
-              rows={6}
-              placeholder="Outline units, learning outcomes, assessment weightings…"
-              className="mt-1 w-full rounded border border-stone-300 px-2 py-1.5 font-mono text-sm"
-            />
-          </label>
-          <label className="block text-xs font-medium text-stone-700">
-            Sort order
-            <input
-              name="sortOrder"
-              type="number"
-              defaultValue={0}
-              className="mt-1 w-24 rounded border border-stone-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Add syllabus
-          </button>
-        </form>
+            <Divider />
 
-        <ul className="mt-8 space-y-6 border-t border-stone-100 pt-6">
-          {syllabusRows.map((sy) => (
-            <li key={sy.id} className="rounded-lg border border-stone-100 bg-stone-50/80 p-4">
-              <form action={adminUpdateSyllabus.bind(null, sy.id, id)} className="space-y-3">
-                <label className="block text-xs font-medium text-stone-700">
-                  Title
+            <Stack gap="md">
+              <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={0.5}>
+                Family accounts (guardians)
+              </Text>
+              <Text size="xs" c="dimmed">
+                Link a parent or guardian&apos;s login to a student so they can view attendance on{" "}
+                <Text component="span" fw={600} c="dark">
+                  Family
+                </Text>{" "}
+                in the main menu. The guardian must already have a user account.
+              </Text>
+              <Box component="form" action={adminLinkGuardianToStudent}>
+                <input type="hidden" name="institutionId" value={id} />
+                <Group wrap="wrap" align="flex-end" gap="md">
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="link-guardian-student" display="block">
+                      Student
+                    </Text>
+                    <select id="link-guardian-student" name="studentId" required style={selectMd}>
+                      <option value="">Select…</option>
+                      {studentRows.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.lastName}, {s.firstName}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="link-guardian-user" display="block">
+                      Guardian account
+                    </Text>
+                    <select id="link-guardian-user" name="guardianUserId" required style={selectMd}>
+                      <option value="">Select…</option>
+                      {allUsers.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.email} — {u.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Box>
+                    <label htmlFor="link-guardian-rel" style={{ display: "block", marginBottom: 4 }}>
+                      <Text component="span" size="xs" fw={500}>
+                        Relationship{" "}
+                      </Text>
+                      <Text component="span" size="xs" c="dimmed">
+                        (optional)
+                      </Text>
+                    </label>
+                    <input
+                      id="link-guardian-rel"
+                      name="relationshipLabel"
+                      placeholder="Mother, father…"
+                      style={{ ...inSm, width: "8rem" }}
+                    />
+                  </Box>
+                  <Button type="submit" color="teal">
+                    Link guardian
+                  </Button>
+                </Group>
+              </Box>
+              <Stack gap="sm">
+                {guardianRows.map((g) => (
+                  <Group key={g.linkId} justify="space-between" align="center" wrap="wrap" gap="sm" style={listRowBox}>
+                    <Text size="sm">
+                      <Text component="span" fw={600}>
+                        {g.studentFirst} {g.studentLast}
+                      </Text>
+                      <Text component="span" c="dimmed">
+                        {" "}
+                        ←{" "}
+                      </Text>
+                      <Text component="span">{g.guardianName}</Text>{" "}
+                      <Text component="span" c="dimmed">
+                        ({g.guardianEmail})
+                      </Text>
+                      {g.relationshipLabel ? (
+                        <Text component="span" size="xs" c="dimmed" ml="xs">
+                          {g.relationshipLabel}
+                        </Text>
+                      ) : null}
+                    </Text>
+                    <Box component="form" action={adminUnlinkGuardian.bind(null, g.linkId, id)}>
+                      <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                        Unlink
+                      </Button>
+                    </Box>
+                  </Group>
+                ))}
+              </Stack>
+              {guardianRows.length === 0 ? (
+                <Text size="sm" c="dimmed">
+                  No guardian links yet.
+                </Text>
+              ) : null}
+            </Stack>
+
+            <Divider />
+
+            <Stack gap="md">
+              <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={0.5}>
+                Student portal (learner login)
+              </Text>
+              <Text size="xs" c="dimmed">
+                Link a student&apos;s{" "}
+                <Text component="span" fw={600} c="dark">
+                  own
+                </Text>{" "}
+                user account so they can use{" "}
+                <Text component="span" fw={600} c="dark">
+                  Student
+                </Text>{" "}
+                in the main menu (marks, attendance, downloads). One login can only be linked to one student.
+              </Text>
+              <Box component="form" action={adminLinkStudentPortal}>
+                <input type="hidden" name="institutionId" value={id} />
+                <Group wrap="wrap" align="flex-end" gap="md">
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="portal-student" display="block">
+                      Student
+                    </Text>
+                    <select id="portal-student" name="studentId" required style={selectMd}>
+                      <option value="">Select…</option>
+                      {studentRows.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.lastName}, {s.firstName}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="portal-user" display="block">
+                      Student login account
+                    </Text>
+                    <select id="portal-user" name="portalUserId" required style={selectMd}>
+                      <option value="">Select…</option>
+                      {allUsers.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.email} — {u.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Button type="submit" color="dark">
+                    Link portal login
+                  </Button>
+                </Group>
+              </Box>
+              <Stack gap="sm">
+                {studentRows.map((s) => {
+                  const portal = s.portalUserId ? allUsers.find((u) => u.id === s.portalUserId) : null;
+                  return (
+                    <Group
+                      key={`portal-${s.id}`}
+                      justify="space-between"
+                      align="center"
+                      wrap="wrap"
+                      gap="sm"
+                      style={listRowBox}
+                    >
+                      <Text size="sm">
+                        <Text component="span" fw={600}>
+                          {s.lastName}, {s.firstName}
+                        </Text>
+                        {portal ? (
+                          <Text component="span" c="dimmed">
+                            {" "}
+                            → <Text component="span" c="dark">{portal.email}</Text>
+                          </Text>
+                        ) : (
+                          <Text component="span" c="dimmed">
+                            {" "}
+                            — no portal login
+                          </Text>
+                        )}
+                      </Text>
+                      {s.portalUserId ? (
+                        <Box component="form" action={adminUnlinkStudentPortal.bind(null, s.id, id)}>
+                          <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                            Unlink portal
+                          </Button>
+                        </Box>
+                      ) : null}
+                    </Group>
+                  );
+                })}
+              </Stack>
+            </Stack>
+          </Stack>
+        </Paper>
+
+        <Paper withBorder shadow="sm" radius="lg" p="xl">
+          <Stack gap="md">
+            <Title order={2} size="h5">
+              Syllabuses
+            </Title>
+            <Text size="xs" c="dimmed">
+              Each school keeps its own syllabus entries (topics, outcomes, terms). Staff see them under
+              Evaluations → syllabuses.
+            </Text>
+            <Box component="form" action={adminCreateSyllabus.bind(null, id)}>
+              <Stack gap="md">
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-syl-title" display="block">
+                    Title
+                  </Text>
                   <input
+                    id="new-syl-title"
                     name="title"
                     required
-                    defaultValue={sy.title}
-                    className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-1.5 text-sm"
+                    placeholder="e.g. Year 9 English"
+                    style={inFull}
                   />
-                </label>
-                <label className="block text-xs font-medium text-stone-700">
-                  Summary
-                  <input
-                    name="summary"
-                    defaultValue={sy.summary ?? ""}
-                    className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-1.5 text-sm"
-                  />
-                </label>
-                <label className="block text-xs font-medium text-stone-700">
-                  Content
+                </Box>
+                <Box>
+                  <label htmlFor="new-syl-summary" style={{ display: "block", marginBottom: 4 }}>
+                    <Text component="span" size="xs" fw={500}>
+                      Short summary{" "}
+                    </Text>
+                    <Text component="span" size="xs" c="dimmed">
+                      (optional)
+                    </Text>
+                  </label>
+                  <input id="new-syl-summary" name="summary" style={inFull} />
+                </Box>
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-syl-body" display="block">
+                    Content
+                  </Text>
                   <textarea
+                    id="new-syl-body"
                     name="body"
                     required
-                    rows={5}
-                    defaultValue={sy.body}
-                    className="mt-1 w-full rounded border border-stone-300 bg-white px-2 py-1.5 font-mono text-sm"
+                    rows={6}
+                    placeholder="Outline units, learning outcomes, assessment weightings…"
+                    style={{ ...mono, minHeight: "8rem", resize: "vertical" as const }}
                   />
-                </label>
-                <label className="block text-xs font-medium text-stone-700">
-                  Sort order
-                  <input
-                    name="sortOrder"
-                    type="number"
-                    defaultValue={sy.sortOrder}
-                    className="mt-1 w-24 rounded border border-stone-300 bg-white px-2 py-1.5 text-sm"
-                  />
-                </label>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    type="submit"
-                    className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-              <form action={adminDeleteSyllabus.bind(null, sy.id, id)} className="mt-2">
-                <button type="submit" className="text-xs text-red-700 underline">
-                  Delete syllabus
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-        {syllabusRows.length === 0 ? (
-          <p className="mt-4 text-sm text-stone-500">No syllabuses yet — add one above.</p>
-        ) : null}
-      </section>
+                </Box>
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-syl-sort" display="block">
+                    Sort order
+                  </Text>
+                  <input id="new-syl-sort" name="sortOrder" type="number" defaultValue={0} style={{ ...inSm, width: "6rem" }} />
+                </Box>
+                <Button type="submit" color="dark">
+                  Add syllabus
+                </Button>
+              </Stack>
+            </Box>
 
-      <p className="mt-8 text-sm text-stone-600">
-        <Link href={`/evaluations/syllabuses/${id}`} className="font-semibold text-teal-800 underline">
-          View syllabuses (staff)
-        </Link>
-        {" · "}
-        <Link href={`/evaluations/students/${id}`} className="font-semibold text-teal-800 underline">
-          Manage students & enrollments
-        </Link>{" "}
-        (staff) ·{" "}
-        <Link href="/students" className="font-semibold text-teal-800 underline">
-          Student information
-        </Link>
-        {" · "}
-        <Link href="/evaluations" className="font-semibold text-teal-800 underline">
-          Evaluation reports
-        </Link>
-      </p>
-    </div>
+            <Stack gap="lg" mt="md" pt="xl" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
+              {syllabusRows.map((sy) => (
+                <Paper key={sy.id} withBorder p="md" radius="md" bg="gray.0">
+                  <Stack gap="md">
+                    <Box component="form" action={adminUpdateSyllabus.bind(null, sy.id, id)}>
+                      <Stack gap="md">
+                        <Box>
+                          <Text component="label" size="xs" fw={500} htmlFor={`syl-title-${sy.id}`} display="block">
+                            Title
+                          </Text>
+                          <input id={`syl-title-${sy.id}`} name="title" required defaultValue={sy.title} style={inFull} />
+                        </Box>
+                        <Box>
+                          <Text component="label" size="xs" fw={500} htmlFor={`syl-sum-${sy.id}`} display="block">
+                            Summary
+                          </Text>
+                          <input id={`syl-sum-${sy.id}`} name="summary" defaultValue={sy.summary ?? ""} style={inFull} />
+                        </Box>
+                        <Box>
+                          <Text component="label" size="xs" fw={500} htmlFor={`syl-body-${sy.id}`} display="block">
+                            Content
+                          </Text>
+                          <textarea
+                            id={`syl-body-${sy.id}`}
+                            name="body"
+                            required
+                            rows={5}
+                            defaultValue={sy.body}
+                            style={{ ...mono, minHeight: "7rem", resize: "vertical" as const }}
+                          />
+                        </Box>
+                        <Box>
+                          <Text component="label" size="xs" fw={500} htmlFor={`syl-sort-${sy.id}`} display="block">
+                            Sort order
+                          </Text>
+                          <input
+                            id={`syl-sort-${sy.id}`}
+                            name="sortOrder"
+                            type="number"
+                            defaultValue={sy.sortOrder}
+                            style={{ ...inSm, width: "6rem" }}
+                          />
+                        </Box>
+                        <Button type="submit" variant="default">
+                          Save
+                        </Button>
+                      </Stack>
+                    </Box>
+                    <Box component="form" action={adminDeleteSyllabus.bind(null, sy.id, id)}>
+                      <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                        Delete syllabus
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+            {syllabusRows.length === 0 ? (
+              <Text size="sm" c="dimmed">
+                No syllabuses yet — add one above.
+              </Text>
+            ) : null}
+          </Stack>
+        </Paper>
+
+        <Group gap="xs" wrap="wrap">
+          <NextMantineAnchor href={`/evaluations/syllabuses/${id}`} size="sm" fw={600}>
+            View syllabuses (staff)
+          </NextMantineAnchor>
+          <Text component="span" size="sm" c="dimmed">
+            ·
+          </Text>
+          <NextMantineAnchor href={`/evaluations/students/${id}`} size="sm" fw={600}>
+            Manage students & enrollments
+          </NextMantineAnchor>
+          <Text component="span" size="sm" c="dimmed">
+            (staff) ·
+          </Text>
+          <NextMantineAnchor href="/students" size="sm" fw={600}>
+            Student information
+          </NextMantineAnchor>
+          <Text component="span" size="sm" c="dimmed">
+            ·
+          </Text>
+          <NextMantineAnchor href="/evaluations" size="sm" fw={600}>
+            Evaluation reports
+          </NextMantineAnchor>
+        </Group>
+      </Stack>
+    </AppPage>
   );
 }

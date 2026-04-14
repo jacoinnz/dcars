@@ -1,21 +1,47 @@
-import Link from "next/link";
+import type { CSSProperties } from "react";
 import { endOfDay, format, startOfDay, subMonths } from "date-fns";
 import { asc, eq, inArray } from "drizzle-orm";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  GridCol,
+  Group,
+  Paper,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from "@mantine/core";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { classes, institutions, sites, students } from "@/db/schema";
 import { addPerformanceRecord } from "@/app/evaluations/actions";
+import { AppPage } from "@/components/app-page";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { fetchPerformanceForReport } from "@/lib/evaluation-report";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
-import { AppPage } from "@/components/app-page";
-import { Stack, Text, Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Evaluations — Youth programme",
+};
+
+const fieldInputStyle: CSSProperties = {
+  marginTop: 4,
+  borderRadius: "var(--mantine-radius-md)",
+  border: "1px solid var(--mantine-color-gray-4)",
+  padding: "6px 8px",
+  fontSize: "var(--mantine-font-size-sm)",
+  width: "100%",
 };
 
 function parseClassIds(sp: Record<string, string | string[] | undefined>): string[] {
@@ -98,290 +124,359 @@ export default async function EvaluationsPage({
 
   return (
     <AppPage>
-      <Stack gap="lg">
-      <NextMantineAnchor href="/students" size="sm" fw={500}>
-        ← Student information
-      </NextMantineAnchor>
-      <Title order={1}>Evaluation reports</Title>
-      <Text c="dimmed" size="sm" maw={520}>
-        Filter by school and optionally by one or more classes. Scores are averaged as a percentage
-        of the maximum. Staff assigned to a school can enter results; programme site access allows
-        read-only visibility where configured.
-      </Text>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <NextMantineAnchor href="/students" size="sm" fw={500}>
+            ← Student information
+          </NextMantineAnchor>
+          <Title order={1}>Evaluation reports</Title>
+          <Text c="dimmed" size="sm" maw={560}>
+            Filter by school and optionally by one or more classes. Scores are averaged as a percentage
+            of the maximum. Staff assigned to a school can enter results; programme site access allows
+            read-only visibility where configured.
+          </Text>
+        </Stack>
 
-      {viewableIds.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          No schools are available yet. Super admins can add schools under{" "}
-          <Link href="/admin/institutions" className="font-semibold underline">
-            Admin → Schools
-          </Link>{" "}
-          and assign staff.
-        </p>
-      ) : null}
-
-      <form
-        className="mt-8 flex flex-wrap items-end gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm"
-        method="get"
-      >
-        <label className="text-xs font-medium text-stone-700">
-          School
-          <select
-            name="institutionId"
-            required
-            defaultValue={institutionId || undefined}
-            className="ml-1 mt-1 block min-w-[14rem] rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-          >
-            <option value="">Select…</option>
-            {institutionOptions.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.name} — {o.siteName}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-xs font-medium text-stone-700">
-          From
-          <input
-            type="date"
-            name="from"
-            defaultValue={fromInput}
-            className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-          />
-        </label>
-        <label className="text-xs font-medium text-stone-700">
-          To
-          <input
-            type="date"
-            name="to"
-            defaultValue={toInput}
-            className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-          />
-        </label>
-        {institutionId && classRows.length > 0 ? (
-          <fieldset className="min-w-[12rem]">
-            <legend className="text-xs font-medium text-stone-700">Classes (optional)</legend>
-            <div className="mt-1 max-h-28 space-y-1 overflow-y-auto rounded border border-stone-200 bg-stone-50 px-2 py-2 text-sm">
-              {classRows.map((c) => (
-                <label key={c.id} className="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="classId"
-                    value={c.id}
-                    defaultChecked={classIds.includes(c.id)}
-                  />
-                  <span>{c.name}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+        {viewableIds.length === 0 ? (
+          <Alert color="yellow" title="No schools available yet">
+            <Text size="sm">
+              Super admins can add schools under{" "}
+              <NextMantineAnchor href="/admin/institutions" fw={600}>
+                Admin → Schools
+              </NextMantineAnchor>{" "}
+              and assign staff.
+            </Text>
+          </Alert>
         ) : null}
-        <button
-          type="submit"
-          className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-800"
-        >
-          Apply
-        </button>
-      </form>
 
-      {institutionId && viewableIds.includes(institutionId) ? (
-        <p className="mt-4 text-sm text-stone-600">
-          <Link
-            href={`/evaluations/syllabuses/${institutionId}`}
-            className="font-semibold text-teal-800 underline"
-          >
-            View syllabuses for this school
-          </Link>
-        </p>
-      ) : null}
-
-      {institutionId && report && viewableIds.includes(institutionId) ? (
-        <div className="mt-10 space-y-8">
-          <section className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase text-stone-500">School average</p>
-              <Text size="xl" fw={600} mt={4}>
-                {report.schoolAvgPct === null
-                  ? "—"
-                  : `${Math.round(report.schoolAvgPct * 10) / 10}%`}
-              </Text>
-            </div>
-            <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:col-span-2">
-              <p className="text-xs font-semibold uppercase text-stone-500">By class</p>
-              <ul className="mt-2 space-y-1 text-sm text-stone-800">
-                {report.byClass.map((c) => (
-                  <li key={c.classId || c.className}>
-                    <span className="font-medium">{c.className}</span>:{" "}
-                    {Math.round(c.avgPct * 10) / 10}% ({c.recordCount} scores)
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
-          <section className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            <div className="border-b border-stone-200 px-4 py-3">
-              <h2 className="text-sm font-semibold text-stone-900">By student</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-stone-50 text-xs uppercase text-stone-600">
-                  <tr>
-                    <th className="px-4 py-3">Student</th>
-                    <th className="px-4 py-3">Avg %</th>
-                    <th className="px-4 py-3">Scores</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.byStudent.map((s) => (
-                    <tr key={s.studentId} className="border-t border-stone-100">
-                      <td className="px-4 py-3">
-                        {s.lastName}, {s.firstName}
-                      </td>
-                      <td className="px-4 py-3">{Math.round(s.avgPct * 10) / 10}%</td>
-                      <td className="px-4 py-3 text-stone-600">{s.recordCount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {report.byStudent.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-stone-600">No scores in this period.</p>
-            ) : null}
-          </section>
-
-          <section className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            <div className="border-b border-stone-200 px-4 py-3">
-              <h2 className="text-sm font-semibold text-stone-900">Score lines</h2>
-            </div>
-            <div className="overflow-x-auto max-h-96 overflow-y-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="sticky top-0 bg-stone-50 text-xs uppercase text-stone-600">
-                  <tr>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Student</th>
-                    <th className="px-4 py-3">Class</th>
-                    <th className="px-4 py-3">Category</th>
-                    <th className="px-4 py-3">Score</th>
-                    <th className="px-4 py-3">%</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.rows.map((r) => (
-                    <tr key={r.id} className="border-t border-stone-100">
-                      <td className="whitespace-nowrap px-4 py-2 text-stone-700">
-                        {format(r.recordedAt, "yyyy-MM-dd")}
-                      </td>
-                      <td className="px-4 py-2">
-                        {r.lastName}, {r.firstName}
-                      </td>
-                      <td className="px-4 py-2 text-stone-600">{r.className ?? "—"}</td>
-                      <td className="px-4 py-2">{r.category}</td>
-                      <td className="px-4 py-2">
-                        {r.score} / {r.maxScore}
-                      </td>
-                      <td className="px-4 py-2">{Math.round(r.pct * 10) / 10}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-      ) : null}
-
-      {institutionId && canManage ? (
-        <section className="mt-12 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-          <h2 className="text-sm font-semibold text-stone-900">Add score</h2>
-          <form action={addPerformanceRecord} className="mt-4 grid gap-3 sm:grid-cols-2">
-            <input type="hidden" name="institutionId" value={institutionId} />
-            <label className="text-xs font-medium text-stone-700 sm:col-span-2">
-              Student
-              <select
-                name="studentId"
-                required
-                className="mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-              >
-                <option value="">Select…</option>
-                {studentOptions.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs font-medium text-stone-700 sm:col-span-2">
-              Class (optional — leave blank for school-wide)
-              <select
-                name="classId"
-                className="mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-              >
-                <option value="">—</option>
-                {classRows.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs font-medium text-stone-700">
-              Category
-              <input
-                name="category"
-                required
-                placeholder="e.g. Term 1 project"
-                className="mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-              />
-            </label>
-            <label className="text-xs font-medium text-stone-700">
-              Score / max
-              <div className="mt-1 flex gap-2">
-                <input
-                  name="score"
-                  type="number"
+        <Paper component="form" method="get" withBorder shadow="sm" radius="lg" p="lg">
+          <Stack gap="lg">
+            <Group wrap="wrap" align="flex-end" gap="md">
+              <Box>
+                <Text component="label" size="xs" fw={500} htmlFor="eval-institution" display="block">
+                  School
+                </Text>
+                <select
+                  id="eval-institution"
+                  name="institutionId"
                   required
-                  className="w-24 rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-                />
+                  defaultValue={institutionId || undefined}
+                  style={{
+                    ...fieldInputStyle,
+                    marginTop: 4,
+                    minWidth: "14rem",
+                    width: "auto",
+                  }}
+                >
+                  <option value="">Select…</option>
+                  {institutionOptions.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name} — {o.siteName}
+                    </option>
+                  ))}
+                </select>
+              </Box>
+              <Box>
+                <Text component="label" size="xs" fw={500} htmlFor="eval-from" display="block">
+                  From
+                </Text>
                 <input
-                  name="maxScore"
-                  type="number"
-                  defaultValue={100}
-                  className="w-24 rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
+                  id="eval-from"
+                  type="date"
+                  name="from"
+                  defaultValue={fromInput}
+                  style={{ ...fieldInputStyle, width: "auto" }}
                 />
-              </div>
-            </label>
-            <label className="text-xs font-medium text-stone-700 sm:col-span-2">
-              Recorded date
-              <input
-                type="datetime-local"
-                name="recordedAt"
-                defaultValue={format(now, "yyyy-MM-dd'T'HH:mm")}
-                className="mt-1 w-full max-w-xs rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-              />
-            </label>
-            <label className="text-xs font-medium text-stone-700 sm:col-span-2">
-              Notes
-              <input name="notes" className="mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm" />
-            </label>
-            <button
-              type="submit"
-              className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white sm:col-span-2"
-            >
-              Save score
-            </button>
-          </form>
-        </section>
-      ) : null}
+              </Box>
+              <Box>
+                <Text component="label" size="xs" fw={500} htmlFor="eval-to" display="block">
+                  To
+                </Text>
+                <input
+                  id="eval-to"
+                  type="date"
+                  name="to"
+                  defaultValue={toInput}
+                  style={{ ...fieldInputStyle, width: "auto" }}
+                />
+              </Box>
+              <Button type="submit" color="dark">
+                Apply
+              </Button>
+            </Group>
 
-      {institutionId && canManage ? (
-        <p className="mt-8 text-sm text-stone-600">
-          <Link
-            href={`/evaluations/students/${institutionId}`}
-            className="font-semibold text-teal-800 underline"
-          >
-            Manage students & class enrollments
-          </Link>
-        </p>
-      ) : null}
+            {institutionId && classRows.length > 0 ? (
+              <Box>
+                <Text size="xs" fw={500} display="block" mb={6}>
+                  Classes (optional)
+                </Text>
+                <Box
+                  style={{
+                    maxHeight: "7rem",
+                    overflowY: "auto",
+                    borderRadius: "var(--mantine-radius-md)",
+                    border: "1px solid var(--mantine-color-gray-3)",
+                    backgroundColor: "var(--mantine-color-gray-0)",
+                    padding: "var(--mantine-spacing-xs) var(--mantine-spacing-sm)",
+                  }}
+                >
+                  <Stack gap={6}>
+                    {classRows.map((c) => (
+                      <label
+                        key={c.id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "var(--mantine-spacing-xs)",
+                          cursor: "pointer",
+                          fontSize: "var(--mantine-font-size-sm)",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          name="classId"
+                          value={c.id}
+                          defaultChecked={classIds.includes(c.id)}
+                        />
+                        <span>{c.name}</span>
+                      </label>
+                    ))}
+                  </Stack>
+                </Box>
+              </Box>
+            ) : null}
+          </Stack>
+        </Paper>
+
+        {institutionId && viewableIds.includes(institutionId) ? (
+          <Text size="sm" c="dimmed">
+            <NextMantineAnchor href={`/evaluations/syllabuses/${institutionId}`} fw={600}>
+              View syllabuses for this school
+            </NextMantineAnchor>
+          </Text>
+        ) : null}
+
+        {institutionId && report && viewableIds.includes(institutionId) ? (
+          <Stack gap="xl">
+            <Grid gap="md">
+              <GridCol span={{ base: 12, sm: 4 }}>
+                <Paper withBorder shadow="sm" radius="lg" p="md" h="100%">
+                  <Text size="xs" fw={600} tt="uppercase" c="dimmed">
+                    School average
+                  </Text>
+                  <Text size="xl" fw={600} mt="sm">
+                    {report.schoolAvgPct === null
+                      ? "—"
+                      : `${Math.round(report.schoolAvgPct * 10) / 10}%`}
+                  </Text>
+                </Paper>
+              </GridCol>
+              <GridCol span={{ base: 12, sm: 8 }}>
+                <Paper withBorder shadow="sm" radius="lg" p="md" h="100%">
+                  <Text size="xs" fw={600} tt="uppercase" c="dimmed">
+                    By class
+                  </Text>
+                  <Stack gap={4} mt="sm">
+                    {report.byClass.map((c) => (
+                      <Text key={c.classId || c.className} size="sm">
+                        <Text component="span" fw={600}>
+                          {c.className}
+                        </Text>
+                        {`: ${Math.round(c.avgPct * 10) / 10}% (${c.recordCount} scores)`}
+                      </Text>
+                    ))}
+                  </Stack>
+                </Paper>
+              </GridCol>
+            </Grid>
+
+            <Paper withBorder shadow="sm" radius="lg" style={{ overflow: "hidden" }}>
+              <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+                <Title order={2} size="h5">
+                  By student
+                </Title>
+              </Box>
+              <div style={{ overflowX: "auto" }}>
+                <Table striped highlightOnHover>
+                  <TableThead>
+                    <TableTr>
+                      <TableTh>Student</TableTh>
+                      <TableTh>Avg %</TableTh>
+                      <TableTh>Scores</TableTh>
+                    </TableTr>
+                  </TableThead>
+                  <TableTbody>
+                    {report.byStudent.map((s) => (
+                      <TableTr key={s.studentId}>
+                        <TableTd>
+                          {s.lastName}, {s.firstName}
+                        </TableTd>
+                        <TableTd>{Math.round(s.avgPct * 10) / 10}%</TableTd>
+                        <TableTd c="dimmed">{s.recordCount}</TableTd>
+                      </TableTr>
+                    ))}
+                  </TableTbody>
+                </Table>
+              </div>
+              {report.byStudent.length === 0 ? (
+                <Box p="lg">
+                  <Text size="sm" c="dimmed">
+                    No scores in this period.
+                  </Text>
+                </Box>
+              ) : null}
+            </Paper>
+
+            <Paper withBorder shadow="sm" radius="lg" style={{ overflow: "hidden" }}>
+              <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+                <Title order={2} size="h5">
+                  Score lines
+                </Title>
+              </Box>
+              <Box style={{ overflow: "auto", maxHeight: "24rem" }}>
+                <Table striped highlightOnHover>
+                  <TableThead>
+                    <TableTr>
+                      <TableTh>Date</TableTh>
+                      <TableTh>Student</TableTh>
+                      <TableTh>Class</TableTh>
+                      <TableTh>Category</TableTh>
+                      <TableTh>Score</TableTh>
+                      <TableTh>%</TableTh>
+                    </TableTr>
+                  </TableThead>
+                  <TableTbody>
+                    {report.rows.map((r) => (
+                      <TableTr key={r.id}>
+                        <TableTd style={{ whiteSpace: "nowrap" }} c="dimmed">
+                          {format(r.recordedAt, "yyyy-MM-dd")}
+                        </TableTd>
+                        <TableTd>
+                          {r.lastName}, {r.firstName}
+                        </TableTd>
+                        <TableTd c="dimmed">{r.className ?? "—"}</TableTd>
+                        <TableTd>{r.category}</TableTd>
+                        <TableTd>
+                          {r.score} / {r.maxScore}
+                        </TableTd>
+                        <TableTd>{Math.round(r.pct * 10) / 10}%</TableTd>
+                      </TableTr>
+                    ))}
+                  </TableTbody>
+                </Table>
+              </Box>
+            </Paper>
+          </Stack>
+        ) : null}
+
+        {institutionId && canManage ? (
+          <Paper withBorder shadow="sm" radius="lg" p="xl">
+            <Stack gap="md">
+              <Title order={2} size="h5">
+                Add score
+              </Title>
+              <Box component="form" action={addPerformanceRecord}>
+                <input type="hidden" name="institutionId" value={institutionId} />
+                <Stack gap="md">
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="eval-student" display="block">
+                      Student
+                    </Text>
+                    <select
+                      id="eval-student"
+                      name="studentId"
+                      required
+                      style={fieldInputStyle}
+                      defaultValue=""
+                    >
+                      <option value="">Select…</option>
+                      {studentOptions.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="eval-class" display="block">
+                      Class (optional — leave blank for school-wide)
+                    </Text>
+                    <select id="eval-class" name="classId" style={fieldInputStyle} defaultValue="">
+                      <option value="">—</option>
+                      {classRows.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Box>
+                  <Grid gap="md">
+                    <GridCol span={{ base: 12, sm: 6 }}>
+                      <Text component="label" size="xs" fw={500} htmlFor="eval-category" display="block">
+                        Category
+                      </Text>
+                      <input
+                        id="eval-category"
+                        name="category"
+                        required
+                        placeholder="e.g. Term 1 project"
+                        style={fieldInputStyle}
+                      />
+                    </GridCol>
+                    <GridCol span={{ base: 12, sm: 6 }}>
+                      <Text size="xs" fw={500} display="block" mb={4}>
+                        Score / max
+                      </Text>
+                      <Group gap="sm" wrap="nowrap">
+                        <input
+                          name="score"
+                          type="number"
+                          required
+                          style={{ ...fieldInputStyle, maxWidth: "6rem" }}
+                        />
+                        <input
+                          name="maxScore"
+                          type="number"
+                          defaultValue={100}
+                          style={{ ...fieldInputStyle, maxWidth: "6rem" }}
+                        />
+                      </Group>
+                    </GridCol>
+                  </Grid>
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="eval-recorded" display="block">
+                      Recorded date
+                    </Text>
+                    <input
+                      id="eval-recorded"
+                      type="datetime-local"
+                      name="recordedAt"
+                      defaultValue={format(now, "yyyy-MM-dd'T'HH:mm")}
+                      style={{ ...fieldInputStyle, maxWidth: "22rem" }}
+                    />
+                  </Box>
+                  <Box>
+                    <Text component="label" size="xs" fw={500} htmlFor="eval-notes" display="block">
+                      Notes
+                    </Text>
+                    <input id="eval-notes" name="notes" style={fieldInputStyle} />
+                  </Box>
+                  <Button type="submit" color="teal">
+                    Save score
+                  </Button>
+                </Stack>
+              </Box>
+            </Stack>
+          </Paper>
+        ) : null}
+
+        {institutionId && canManage ? (
+          <Text size="sm" c="dimmed">
+            <NextMantineAnchor href={`/evaluations/students/${institutionId}`} fw={600}>
+              Manage students & class enrollments
+            </NextMantineAnchor>
+          </Text>
+        ) : null}
       </Stack>
     </AppPage>
   );

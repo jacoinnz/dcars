@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { Stack, Text, Title } from "@mantine/core";
+import type { CSSProperties } from "react";
+import { Alert, Box, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { asc, eq } from "drizzle-orm";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import {
@@ -14,6 +15,20 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Schools — Admin",
+};
+
+const fieldInputStyle: CSSProperties = {
+  marginTop: 4,
+  borderRadius: "var(--mantine-radius-md)",
+  border: "1px solid var(--mantine-color-gray-4)",
+  padding: "6px 10px",
+  fontSize: "var(--mantine-font-size-sm)",
+  minWidth: "10rem",
+};
+
+const fieldSelectStyle: CSSProperties = {
+  ...fieldInputStyle,
+  minWidth: "14rem",
 };
 
 export default async function AdminInstitutionsPage() {
@@ -35,123 +50,163 @@ export default async function AdminInstitutionsPage() {
 
   return (
     <AppPage>
-      <Stack gap="lg">
-      <Title order={1}>Schools & classes</Title>
-      <Text c="dimmed" size="sm" maw={520}>
-        Create a school under a programme site, then add classes and assign staff on the school detail
-        page. Staff can record evaluations and manage students from Evaluations in the main app.
-      </Text>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Schools & classes</Title>
+          <Text c="dimmed" size="sm" maw={560}>
+            Create a school under a programme site, then add classes and assign staff on the school detail
+            page. Staff can record evaluations and manage students from Evaluations in the main app.
+          </Text>
+        </Stack>
 
-      <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Add school</h2>
-        {siteList.length === 0 ? (
-          <p className="mt-3 text-sm text-amber-800">
-            Create a programme site under <Link href="/admin/sites">Sites</Link> first.
-          </p>
-        ) : null}
-        <form action={adminCreateInstitution} className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="text-xs font-medium text-stone-700">
-            Programme site
-            <select
-              name="siteId"
-              required
-              className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-            >
-              {siteList.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({s.code})
-                </option>
+        <Paper withBorder shadow="sm" radius="lg" p="xl">
+          <Stack gap="md">
+            <Title order={2} size="h5">
+              Add school
+            </Title>
+            {siteList.length === 0 ? (
+              <Alert color="yellow" title="Add a site first">
+                <Text size="sm">
+                  Create a programme site under{" "}
+                  <NextMantineAnchor href="/admin/sites" fw={600}>
+                    Sites
+                  </NextMantineAnchor>{" "}
+                  first.
+                </Text>
+              </Alert>
+            ) : null}
+            <Box component="form" action={adminCreateInstitution}>
+              <Group wrap="wrap" align="flex-end" gap="md">
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-inst-site" display="block">
+                    Programme site
+                  </Text>
+                  <select id="new-inst-site" name="siteId" required disabled={siteList.length === 0} style={fieldSelectStyle}>
+                    {siteList.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.code})
+                      </option>
+                    ))}
+                  </select>
+                </Box>
+                <Box>
+                  <Text component="label" size="xs" fw={500} htmlFor="new-inst-name" display="block">
+                    School name
+                  </Text>
+                  <input id="new-inst-name" name="name" required disabled={siteList.length === 0} style={fieldInputStyle} />
+                </Box>
+                <Box>
+                  <label htmlFor="new-inst-code" style={{ display: "block", marginBottom: 4 }}>
+                    <Text component="span" size="xs" fw={500}>
+                      Code{" "}
+                    </Text>
+                    <Text component="span" size="xs" c="dimmed">
+                      (optional)
+                    </Text>
+                  </label>
+                  <input id="new-inst-code" name="code" disabled={siteList.length === 0} style={fieldInputStyle} />
+                </Box>
+                <Button type="submit" color="dark" disabled={siteList.length === 0}>
+                  Create
+                </Button>
+              </Group>
+            </Box>
+          </Stack>
+        </Paper>
+
+        <Paper withBorder shadow="sm" radius="lg" style={{ overflow: "hidden" }}>
+          <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+            <Title order={2} size="h5">
+              Schools
+            </Title>
+          </Box>
+          {rows.length === 0 ? (
+            <Box p="lg">
+              <Text size="sm" c="dimmed">
+                No schools yet.
+              </Text>
+            </Box>
+          ) : (
+            <Stack gap={0}>
+              {rows.map((r, idx) => (
+                <Box
+                  key={r.id}
+                  p="md"
+                  style={{
+                    borderTop: idx > 0 ? "1px solid var(--mantine-color-gray-3)" : undefined,
+                  }}
+                >
+                  <Stack gap="md">
+                    <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
+                      <Box style={{ minWidth: "12rem" }}>
+                        <Text size="sm">
+                          <NextMantineAnchor href={`/admin/institutions/${r.id}`} fw={600}>
+                            {r.name}
+                          </NextMantineAnchor>
+                          {r.code ? (
+                            <Text span c="dimmed" ml={6}>
+                              ({r.code})
+                            </Text>
+                          ) : null}
+                        </Text>
+                        <Text size="xs" c="dimmed" mt={4}>
+                          Site: {r.siteName} ({r.siteCode})
+                        </Text>
+                      </Box>
+                      <Box component="form" action={adminUpdateInstitution.bind(null, r.id)}>
+                        <Group wrap="wrap" align="flex-end" gap="sm">
+                          <Box>
+                            <Text
+                              component="label"
+                              size="xs"
+                              c="dimmed"
+                              htmlFor={`inst-name-${r.id}`}
+                              display="block"
+                            >
+                              Name
+                            </Text>
+                            <input
+                              id={`inst-name-${r.id}`}
+                              name="name"
+                              defaultValue={r.name}
+                              required
+                              style={{ ...fieldInputStyle, minWidth: "8rem" }}
+                            />
+                          </Box>
+                          <Box>
+                            <Text
+                              component="label"
+                              size="xs"
+                              c="dimmed"
+                              htmlFor={`inst-code-${r.id}`}
+                              display="block"
+                            >
+                              Code
+                            </Text>
+                            <input
+                              id={`inst-code-${r.id}`}
+                              name="code"
+                              defaultValue={r.code ?? ""}
+                              style={{ ...fieldInputStyle, minWidth: "6rem" }}
+                            />
+                          </Box>
+                          <Button type="submit" variant="default" size="compact-sm">
+                            Save
+                          </Button>
+                        </Group>
+                      </Box>
+                    </Group>
+                    <Box component="form" action={adminDeleteInstitution.bind(null, r.id)}>
+                      <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                        Delete school
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Box>
               ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            School name
-            <input
-              name="name"
-              required
-              className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Code <span className="font-normal text-stone-500">(optional)</span>
-            <input name="code" className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm" />
-          </label>
-          <button
-            type="submit"
-            disabled={siteList.length === 0}
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-800 disabled:opacity-50"
-          >
-            Create
-          </button>
-        </form>
-      </section>
-
-      <section className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-        <div className="border-b border-stone-200 px-4 py-3">
-          <h2 className="text-sm font-semibold text-stone-900">Schools</h2>
-        </div>
-        <ul className="divide-y divide-stone-100">
-          {rows.map((r) => (
-            <li key={r.id} className="px-4 py-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <Link
-                    href={`/admin/institutions/${r.id}`}
-                    className="font-semibold text-teal-800 underline"
-                  >
-                    {r.name}
-                  </Link>
-                  {r.code ? (
-                    <span className="ml-2 text-sm text-stone-500">({r.code})</span>
-                  ) : null}
-                  <p className="text-xs text-stone-600">
-                    Site: {r.siteName} ({r.siteCode})
-                  </p>
-                </div>
-                <form
-                  action={adminUpdateInstitution.bind(null, r.id)}
-                  className="flex flex-wrap items-end gap-2"
-                >
-                  <label className="text-xs text-stone-700">
-                    Name
-                    <input
-                      name="name"
-                      defaultValue={r.name}
-                      required
-                      className="ml-1 block rounded border border-stone-300 px-2 py-1 text-sm"
-                    />
-                  </label>
-                  <label className="text-xs text-stone-700">
-                    Code
-                    <input
-                      name="code"
-                      defaultValue={r.code ?? ""}
-                      className="ml-1 block rounded border border-stone-300 px-2 py-1 text-sm"
-                    />
-                  </label>
-                  <button
-                    type="submit"
-                    className="rounded border border-stone-300 bg-stone-50 px-2 py-1 text-xs font-medium"
-                  >
-                    Save
-                  </button>
-                </form>
-              </div>
-              <form action={adminDeleteInstitution.bind(null, r.id)} className="mt-2">
-                <button
-                  type="submit"
-                  className="text-xs font-medium text-red-700 underline hover:text-red-900"
-                >
-                  Delete school
-                </button>
-              </form>
-            </li>
-          ))}
-        </ul>
-        {rows.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-stone-600">No schools yet.</p>
-        ) : null}
-      </section>
+            </Stack>
+          )}
+        </Paper>
       </Stack>
     </AppPage>
   );

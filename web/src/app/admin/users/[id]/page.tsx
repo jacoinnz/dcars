@@ -1,5 +1,19 @@
-import Link from "next/link";
-import { Stack, Text, Title } from "@mantine/core";
+import type { CSSProperties } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from "@mantine/core";
 import { notFound } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
@@ -9,6 +23,15 @@ import { appUsers, siteUserPermissions, sites } from "@/db/schema";
 import { adminSaveUserSitePermissions, adminUpdateUser } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
+
+const fieldInputStyle: CSSProperties = {
+  marginTop: 4,
+  borderRadius: "var(--mantine-radius-md)",
+  border: "1px solid var(--mantine-color-gray-4)",
+  padding: "8px 12px",
+  fontSize: "var(--mantine-font-size-sm)",
+  width: "100%",
+};
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -29,159 +52,173 @@ export default async function AdminUserDetailPage({ params }: Props) {
 
   return (
     <AppPage>
-      <Stack gap="lg">
-      <NextMantineAnchor href="/admin/users" size="sm" fw={500}>
-        ← Users
-      </NextMantineAnchor>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <NextMantineAnchor href="/admin/users" size="sm" fw={500}>
+            ← Users
+          </NextMantineAnchor>
+          <Title order={1}>Edit user</Title>
+          <Text size="sm" c="dimmed">
+            {user.email}
+          </Text>
+        </Stack>
 
-      <Title order={1} mt="md">
-        Edit user
-      </Title>
-      <Text size="sm" c="dimmed">
-        {user.email}
-      </Text>
+        <Paper component="form" action={adminUpdateUser.bind(null, id)} withBorder shadow="sm" radius="lg" p="xl" maw={560}>
+          <Stack gap="md">
+            <Title order={3} size="h5">
+              Account
+            </Title>
+            <Box>
+              <Text component="label" size="sm" fw={500} htmlFor="edit-user-email" display="block">
+                Email
+              </Text>
+              <input
+                id="edit-user-email"
+                name="email"
+                type="email"
+                defaultValue={user.email}
+                required
+                style={fieldInputStyle}
+              />
+            </Box>
+            <Box>
+              <Text component="label" size="sm" fw={500} htmlFor="edit-user-name" display="block">
+                Display name
+              </Text>
+              <input id="edit-user-name" name="name" defaultValue={user.name} required style={fieldInputStyle} />
+            </Box>
+            <Box>
+              <Text component="label" size="sm" fw={500} htmlFor="edit-user-password" display="block">
+                New password (leave blank to keep current)
+              </Text>
+              <input
+                id="edit-user-password"
+                name="newPassword"
+                type="password"
+                autoComplete="new-password"
+                style={fieldInputStyle}
+              />
+            </Box>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--mantine-spacing-sm)",
+                fontSize: "var(--mantine-font-size-sm)",
+                cursor: "pointer",
+              }}
+            >
+              <input name="isSuperAdmin" type="checkbox" defaultChecked={user.isSuperAdmin} />
+              <span>Super admin</span>
+            </label>
+            <Button type="submit" color="dark" mt="xs">
+              Save account
+            </Button>
+          </Stack>
+        </Paper>
 
-      <form action={adminUpdateUser.bind(null, id)} className="mt-8 max-w-lg space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Account</h2>
-        <label className="block text-sm font-medium text-stone-800">
-          Email
-          <input
-            name="email"
-            type="email"
-            defaultValue={user.email}
-            required
-            className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Display name
-          <input
-            name="name"
-            defaultValue={user.name}
-            required
-            className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          New password (leave blank to keep current)
-          <input
-            name="newPassword"
-            type="password"
-            autoComplete="new-password"
-            className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="flex items-center gap-2 text-sm text-stone-800">
-          <input
-            name="isSuperAdmin"
-            type="checkbox"
-            defaultChecked={user.isSuperAdmin}
-            className="rounded border-stone-300"
-          />
-          Super admin
-        </label>
-        <button
-          type="submit"
-          className="rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-stone-800"
-        >
-          Save account
-        </button>
-      </form>
-
-      {user.isSuperAdmin ? (
-        <p className="mt-8 max-w-2xl rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
-          Super admins have full access to all sites. Per-site permissions are cleared while this
-          role is enabled.
-        </p>
-      ) : (
-        <form
-          action={adminSaveUserSitePermissions.bind(null, id)}
-          className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
-        >
-          <div className="border-b border-stone-200 px-4 py-3">
-            <h2 className="text-sm font-semibold text-stone-900">Site permissions</h2>
-            <p className="mt-1 text-xs text-stone-600">
-              View affects dashboards and reports; Create is required for participant registration.
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-600">
-                <tr>
-                  <th className="px-4 py-3">Site</th>
-                  <th className="px-4 py-3">View</th>
-                  <th className="px-4 py-3">Create</th>
-                  <th className="px-4 py-3">Edit</th>
-                  <th className="px-4 py-3">Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {siteRows.map((s) => {
-                  const p = permBySite.get(s.id);
-                  return (
-                    <tr key={s.id} className="border-t border-stone-100">
-                      <td className="px-4 py-3 font-medium text-stone-900">
-                        {s.name}{" "}
-                        <span className="text-stone-500">({s.code})</span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <input
-                          name={`site_${s.id}_view`}
-                          type="checkbox"
-                          defaultChecked={p?.canView ?? false}
-                          className="rounded border-stone-300"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input
-                          name={`site_${s.id}_create`}
-                          type="checkbox"
-                          defaultChecked={p?.canCreate ?? false}
-                          className="rounded border-stone-300"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input
-                          name={`site_${s.id}_update`}
-                          type="checkbox"
-                          defaultChecked={p?.canUpdate ?? false}
-                          className="rounded border-stone-300"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input
-                          name={`site_${s.id}_delete`}
-                          type="checkbox"
-                          defaultChecked={p?.canDelete ?? false}
-                          className="rounded border-stone-300"
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {siteRows.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-stone-600">
-              No sites defined yet.{" "}
-              <Link href="/admin/sites" className="font-semibold text-teal-800 underline">
-                Add sites
-              </Link>{" "}
-              first.
-            </p>
-          ) : (
-            <div className="border-t border-stone-200 px-4 py-4">
-              <button
-                type="submit"
-                className="rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"
-              >
-                Save permissions
-              </button>
+        {user.isSuperAdmin ? (
+          <Alert color="gray" title="Super admin" maw={672}>
+            <Text size="sm">
+              Super admins have full access to all sites. Per-site permissions are cleared while this role is
+              enabled.
+            </Text>
+          </Alert>
+        ) : (
+          <Paper
+            component="form"
+            action={adminSaveUserSitePermissions.bind(null, id)}
+            withBorder
+            shadow="sm"
+            radius="lg"
+            style={{ overflow: "hidden" }}
+            maw={900}
+          >
+            <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+              <Title order={3} size="h5">
+                Site permissions
+              </Title>
+              <Text size="xs" c="dimmed" mt={6}>
+                View affects dashboards and reports; Create is required for participant registration.
+              </Text>
+            </Box>
+            <div style={{ overflowX: "auto" }}>
+              <Table striped highlightOnHover>
+                <TableThead>
+                  <TableTr>
+                    <TableTh>Site</TableTh>
+                    <TableTh ta="center">View</TableTh>
+                    <TableTh ta="center">Create</TableTh>
+                    <TableTh ta="center">Edit</TableTh>
+                    <TableTh ta="center">Delete</TableTh>
+                  </TableTr>
+                </TableThead>
+                <TableTbody>
+                  {siteRows.map((s) => {
+                    const p = permBySite.get(s.id);
+                    return (
+                      <TableTr key={s.id}>
+                        <TableTd>
+                          <Text fw={500} size="sm" component="span">
+                            {s.name}
+                          </Text>{" "}
+                          <Text span c="dimmed" size="sm">
+                            ({s.code})
+                          </Text>
+                        </TableTd>
+                        <TableTd ta="center">
+                          <input
+                            name={`site_${s.id}_view`}
+                            type="checkbox"
+                            defaultChecked={p?.canView ?? false}
+                          />
+                        </TableTd>
+                        <TableTd ta="center">
+                          <input
+                            name={`site_${s.id}_create`}
+                            type="checkbox"
+                            defaultChecked={p?.canCreate ?? false}
+                          />
+                        </TableTd>
+                        <TableTd ta="center">
+                          <input
+                            name={`site_${s.id}_update`}
+                            type="checkbox"
+                            defaultChecked={p?.canUpdate ?? false}
+                          />
+                        </TableTd>
+                        <TableTd ta="center">
+                          <input
+                            name={`site_${s.id}_delete`}
+                            type="checkbox"
+                            defaultChecked={p?.canDelete ?? false}
+                          />
+                        </TableTd>
+                      </TableTr>
+                    );
+                  })}
+                </TableTbody>
+              </Table>
             </div>
-          )}
-        </form>
-      )}
+            {siteRows.length === 0 ? (
+              <Box p="lg">
+                <Text size="sm" c="dimmed">
+                  No sites defined yet.{" "}
+                  <NextMantineAnchor href="/admin/sites" fw={600}>
+                    Add sites
+                  </NextMantineAnchor>{" "}
+                  first.
+                </Text>
+              </Box>
+            ) : (
+              <Box p="md" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
+                <Button type="submit" color="teal">
+                  Save permissions
+                </Button>
+              </Box>
+            )}
+          </Paper>
+        )}
       </Stack>
     </AppPage>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Box, NavLink, ScrollArea, Stack, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
@@ -26,32 +26,53 @@ function useHashFragment() {
   return hash;
 }
 
-function navLinkIsActive(pathname: string, href: string, currentHash: string) {
-  const i = href.indexOf("#");
-  const pathPart = i >= 0 ? href.slice(0, i) : href;
-  const frag = i >= 0 ? href.slice(i + 1) : null;
+/** Split `href` into pathname (no query), `tab` query, and hash fragment (without `#`). */
+function splitNavHref(href: string): { path: string; tab: string | null; hashFrag: string | null } {
+  const hashIdx = href.indexOf("#");
+  const beforeHash = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+  const hashFrag = hashIdx >= 0 ? href.slice(hashIdx + 1) : null;
+  const qIdx = beforeHash.indexOf("?");
+  const path = (qIdx >= 0 ? beforeHash.slice(0, qIdx) : beforeHash) || "/";
+  const query = qIdx >= 0 ? beforeHash.slice(qIdx + 1) : "";
+  const tab = query ? new URLSearchParams(query).get("tab") : null;
+  return { path, tab, hashFrag };
+}
+
+function navLinkIsActive(
+  pathname: string,
+  href: string,
+  currentHash: string,
+  searchParams: Pick<URLSearchParams, "get">,
+) {
+  const { path, tab, hashFrag } = splitNavHref(href);
 
   const pathMatches =
-    pathPart === "/"
+    path === "/"
       ? pathname === "/"
-      : pathPart === "/admin"
+      : path === "/admin"
         ? pathname === "/admin"
-        : pathname === pathPart || pathname.startsWith(`${pathPart}/`);
+        : pathname === path || pathname.startsWith(`${path}/`);
   if (!pathMatches) return false;
 
-  if (frag === null) {
-    return currentHash === "" || currentHash === "#";
+  if (tab !== null) {
+    return searchParams.get("tab") === tab;
   }
-  return currentHash === `#${frag}` || currentHash === frag;
+
+  if (hashFrag !== null && hashFrag !== "") {
+    return currentHash === `#${hashFrag}` || currentHash === hashFrag;
+  }
+
+  return true;
 }
 
 function subtreeHasActiveChild(
   pathname: string,
   hash: string,
+  searchParams: Pick<URLSearchParams, "get">,
   children: SidebarNavLink[],
 ): boolean {
   return children.some(
-    (c) => Boolean(c.href && navLinkIsActive(pathname, c.href, hash)),
+    (c) => Boolean(c.href && navLinkIsActive(pathname, c.href, hash, searchParams)),
   );
 }
 
@@ -65,10 +86,11 @@ const navShellStyles = {
 function SidebarLeafNavLink(props: { item: SidebarNavLink }) {
   const pathname = usePathname();
   const hash = useHashFragment();
+  const searchParams = useSearchParams();
   const { item } = props;
   if (!item.href) return null;
 
-  const active = navLinkIsActive(pathname, item.href, hash);
+  const active = navLinkIsActive(pathname, item.href, hash, searchParams);
 
   return (
     <NavLink
@@ -96,10 +118,11 @@ function SidebarLeafNavLink(props: { item: SidebarNavLink }) {
 function SidebarBranchNavLink(props: { item: SidebarNavLink }) {
   const pathname = usePathname();
   const hash = useHashFragment();
+  const searchParams = useSearchParams();
   const { item } = props;
   const children = item.children!;
-  const hasActiveChild = subtreeHasActiveChild(pathname, hash, children);
-  const selfActive = item.href ? navLinkIsActive(pathname, item.href, hash) : false;
+  const hasActiveChild = subtreeHasActiveChild(pathname, hash, searchParams, children);
+  const selfActive = item.href ? navLinkIsActive(pathname, item.href, hash, searchParams) : false;
   const branchActive = selfActive || hasActiveChild;
 
   const [opened, setOpened] = useState(hasActiveChild);

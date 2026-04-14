@@ -1,6 +1,20 @@
 import { format } from "date-fns";
 import { and, asc, eq, inArray } from "drizzle-orm";
-import { Alert, Box, Button, Paper, Stack, Table, Text, Title } from "@mantine/core";
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from "@mantine/core";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { attendanceRecords, institutions, sites, students } from "@/db/schema";
@@ -99,7 +113,7 @@ export default async function AttendancePage({
         </Stack>
 
         {manageable.length === 0 ? (
-          <Alert color="yellow" mt="md">
+          <Alert color="yellow" mt="md" title="No schools assigned">
             You are not assigned as staff for any school. Ask an administrator to add you under Admin →
             Schools → Staff.
           </Alert>
@@ -178,24 +192,26 @@ export default async function AttendancePage({
                 {format(new Date(`${dateStr}T12:00:00`), "EEEE d MMM yyyy")}
               </Title>
             </Box>
-            <Table.ScrollContainer minWidth={500}>
+            <div style={{ overflowX: "auto", minWidth: 0 }}>
               <Table striped highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Student</Table.Th>
-                    <Table.Th>Status</Table.Th>
-                    <Table.Th style={{ maxWidth: 320 }}>Note</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
+                <TableThead>
+                  <TableTr>
+                    <TableTh>Student</TableTh>
+                    <TableTh>Status</TableTh>
+                    <TableTh style={{ maxWidth: 320 }}>Note</TableTh>
+                  </TableTr>
+                </TableThead>
+                <TableTbody>
                   {studRows.map((s) => {
                     const ex = existing.get(s.id);
                     return (
-                      <Table.Tr key={s.id}>
-                        <Table.Td fw={600}>
-                          {s.lastName}, {s.firstName}
-                        </Table.Td>
-                        <Table.Td>
+                      <TableTr key={s.id}>
+                        <TableTd>
+                          <Text component="span" fw={600}>
+                            {s.lastName}, {s.firstName}
+                          </Text>
+                        </TableTd>
+                        <TableTd>
                           <select
                             name={`s_${s.id}`}
                             defaultValue={ex?.status ?? ""}
@@ -213,8 +229,8 @@ export default async function AttendancePage({
                               </option>
                             ))}
                           </select>
-                        </Table.Td>
-                        <Table.Td style={{ maxWidth: 320 }}>
+                        </TableTd>
+                        <TableTd style={{ maxWidth: 320 }}>
                           <input
                             name={`n_${s.id}`}
                             defaultValue={ex?.notes ?? ""}
@@ -227,13 +243,13 @@ export default async function AttendancePage({
                               fontSize: "var(--mantine-font-size-sm)",
                             }}
                           />
-                        </Table.Td>
-                      </Table.Tr>
+                        </TableTd>
+                      </TableTr>
                     );
                   })}
-                </Table.Tbody>
+                </TableTbody>
               </Table>
-            </Table.ScrollContainer>
+            </div>
             <Box p="md" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
               <Button type="submit" color="teal">
                 Save attendance

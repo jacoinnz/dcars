@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { Alert, Checkbox, Table, Text } from "@mantine/core";
+import { Alert, Checkbox, Table, TableScrollContainer, Text } from "@mantine/core";
 import { setStudentEnrollment } from "@/app/evaluations/actions";
 
 type Student = { id: string; firstName: string; lastName: string };
@@ -32,7 +32,7 @@ export function StudentClassMatrix(props: {
 
   return (
     <>
-      <Table.ScrollContainer minWidth={480}>
+      <TableScrollContainer minWidth={480}>
         <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing="sm" horizontalSpacing="sm">
           <Table.Thead>
             <Table.Tr>
@@ -71,7 +71,7 @@ export function StudentClassMatrix(props: {
             ))}
           </Table.Tbody>
         </Table>
-      </Table.ScrollContainer>
+      </TableScrollContainer>
       {pending ? (
         <Text size="xs" c="dimmed" mt="xs">
           Saving…

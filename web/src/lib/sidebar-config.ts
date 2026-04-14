@@ -14,7 +14,7 @@ export type SidebarNavSection = {
 };
 export type SidebarNavConfig = { version: 1; sections: SidebarNavSection[] };
 
-export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v10";
+export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v11";
 export const SIDEBAR_CONFIG_EVENT = "dcaars-sidebar-config";
 
 const LOCKED_SECTION_IDS = new Set([
@@ -58,7 +58,24 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         title: "Students & school",
         locked: true,
         items: [
-          { id: "lnk-students", href: "/students", label: "Students", locked: true },
+          {
+            id: "grp-students-info",
+            label: "Students Info",
+            locked: true,
+            children: [
+              { id: "lnk-stu-t1", href: "/students?tab=add-student", label: "Add Student", locked: true },
+              { id: "lnk-stu-t2", href: "/students?tab=student-list", label: "Student List", locked: true },
+              { id: "lnk-stu-t3", href: "/students?tab=multi-class", label: "Multi Class Student", locked: true },
+              { id: "lnk-stu-t4", href: "/students?tab=delete-record", label: "Delete Student Record", locked: true },
+              { id: "lnk-stu-t5", href: "/students?tab=unassigned", label: "Unassigned Student", locked: true },
+              { id: "lnk-stu-t6", href: "/students?tab=student-attendance", label: "Student Attendance", locked: true },
+              { id: "lnk-stu-t7", href: "/students?tab=student-group", label: "Student Group", locked: true },
+              { id: "lnk-stu-t8", href: "/students?tab=student-promote", label: "Student Promote", locked: true },
+              { id: "lnk-stu-t9", href: "/students?tab=disabled-students", label: "Disabled Students", locked: true },
+              { id: "lnk-stu-t10", href: "/students?tab=subject-attendance", label: "Subject Wise Attendance", locked: true },
+              { id: "lnk-stu-t11", href: "/students?tab=student-export", label: "Student Export", locked: true },
+            ],
+          },
           {
             id: "grp-stu-assess",
             label: "Attendance & assessments",

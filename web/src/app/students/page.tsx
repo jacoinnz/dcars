@@ -1,8 +1,9 @@
-import { Alert, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Suspense } from "react";
+import { Alert, Loader, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
-import { HubLinkCard } from "@/components/hub-link-card";
+import { StudentsInfoTabs } from "@/components/students-info-tabs";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
@@ -12,8 +13,19 @@ import { getViewableInstitutionIds } from "@/lib/school-access";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Student information — Youth programme",
+  title: "Students Info — Youth programme",
 };
+
+function TabsFallback() {
+  return (
+    <Stack align="center" py="xl" gap="md">
+      <Loader size="sm" />
+      <Text size="sm" c="dimmed">
+        Loading…
+      </Text>
+    </Stack>
+  );
+}
 
 export default async function StudentsHubPage() {
   const session = await getServerSessionWithBypass();
@@ -43,14 +55,13 @@ export default async function StudentsHubPage() {
             .where(inArray(institutions.id, viewableIds))
             .orderBy(asc(institutions.name));
   } catch (err) {
-    const digest = typeof err === "object" && err !== null && "digest" in err ? String((err as { digest?: unknown }).digest) : "";
+    const digest =
+      typeof err === "object" && err !== null && "digest" in err
+        ? String((err as { digest?: unknown }).digest)
+        : "";
     console.error("[students]", digest ? `${digest} ` : "", err);
     loadError =
-      err instanceof Error
-        ? err.message
-        : typeof err === "string"
-          ? err
-          : "Unknown error";
+      err instanceof Error ? err.message : typeof err === "string" ? err : "Unknown error";
   }
 
   if (loadError) {
@@ -58,7 +69,7 @@ export default async function StudentsHubPage() {
     return (
       <AppPage>
         <Stack gap="md">
-          <Title order={1}>Student information</Title>
+          <Title order={1}>Students Info</Title>
           <Alert color="red" title="This page couldn’t load">
             <Text size="sm">
               {devDetail ??
@@ -77,110 +88,18 @@ export default async function StudentsHubPage() {
 
   return (
     <AppPage>
-      <Stack gap="xl">
+      <Stack gap="lg">
         <Stack gap="xs">
-          <Title order={1}>Student information</Title>
-          <Text c="dimmed" size="sm" maw={520}>
-            Registration, rosters, attendance, and academic reporting — start here for anything tied to
-            young people in schools on the programme.
+          <Title order={1}>Students Info</Title>
+          <Text c="dimmed" size="sm" maw={560}>
+            Registration, rosters, attendance, and academic reporting — use the tabs below for common tasks. Per-school
+            tools open from each school card where you have access.
           </Text>
         </Stack>
 
-        <Stack component="section" gap="md">
-          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
-            Data entry &amp; daily records
-          </Text>
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-            <HubLinkCard href="/entry" variant="live">
-              <Text fw={600} size="sm">
-                Participant registration
-              </Text>
-              <Text size="sm" c="dimmed" mt="xs">
-                Submit a new youth registration; records can later be linked to a school student
-                profile.
-              </Text>
-            </HubLinkCard>
-            <HubLinkCard href="/students/attendance" variant="live">
-              <Text fw={600} size="sm">
-                Student attendance
-              </Text>
-              <Text size="sm" c="dimmed" mt="xs">
-                Staff daily roll, student portal, and family views — open the hub to choose where to
-                go.
-              </Text>
-            </HubLinkCard>
-          </SimpleGrid>
-        </Stack>
-
-        <Stack component="section" gap="md">
-          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
-            Student admission, rosters &amp; classes
-          </Text>
-          {schoolRows.length === 0 ? (
-            <Alert color="yellow" title="No schools visible">
-              No schools are visible to your account yet. Super admins can add schools under{" "}
-              <NextMantineAnchor href="/admin/institutions" fw={600}>
-                Admin → Schools
-              </NextMantineAnchor>
-              .
-            </Alert>
-          ) : (
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
-              {schoolRows.map((s) => (
-                <Paper key={s.id} withBorder shadow="sm" p="lg" radius="lg">
-                  <Text fw={600} size="sm">
-                    {s.name}{" "}
-                    <Text component="span" fw={400} c="dimmed">
-                      — {s.siteName}
-                    </Text>
-                  </Text>
-                  <Stack gap={6} mt="sm">
-                    <NextMantineAnchor href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
-                      Manage students — list, admission &amp; classes
-                    </NextMantineAnchor>
-                    <NextMantineAnchor href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
-                      Syllabuses
-                    </NextMantineAnchor>
-                  </Stack>
-                </Paper>
-              ))}
-            </SimpleGrid>
-          )}
-        </Stack>
-
-        <Stack component="section" gap="md">
-          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
-            Reports &amp; families
-          </Text>
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-            <HubLinkCard href="/evaluations" variant="live">
-              <Text fw={600} size="sm">
-                Evaluation reports
-              </Text>
-              <Text size="sm" c="dimmed" mt="xs">
-                Filter scores by school, class, and date range; enter performance where you have staff
-                access.
-              </Text>
-            </HubLinkCard>
-            <HubLinkCard href="/reports" variant="live">
-              <Text fw={600} size="sm">
-                Programme reports (PDF)
-              </Text>
-              <Text size="sm" c="dimmed" mt="xs">
-                Export a dated PDF summary for funders or internal review.
-              </Text>
-            </HubLinkCard>
-            <HubLinkCard href="/family" variant="live">
-              <Text fw={600} size="sm">
-                Family attendance
-              </Text>
-              <Text size="sm" c="dimmed" mt="xs">
-                Guardian view: see linked children&apos;s attendance when your school has connected your
-                account.
-              </Text>
-            </HubLinkCard>
-          </SimpleGrid>
-        </Stack>
+        <Suspense fallback={<TabsFallback />}>
+          <StudentsInfoTabs schoolRows={schoolRows} />
+        </Suspense>
 
         <Text size="sm" c="dimmed" mt="md">
           <NextMantineAnchor href="/admin/institutions" fw={600}>

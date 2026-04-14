@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   Stack,
   Table,
+  TableScrollContainer,
   Text,
   TextInput,
   Title,
@@ -229,7 +230,7 @@ export function DashboardPageContent(props: {
             Attendance rate is present ÷ registered for the selected window (session-level sums).
           </Text>
         </Box>
-        <Table.ScrollContainer minWidth={640}>
+        <TableScrollContainer minWidth={640}>
           <Table striped highlightOnHover>
             <Table.Thead>
               <Table.Tr>
@@ -265,7 +266,7 @@ export function DashboardPageContent(props: {
               ))}
             </Table.Tbody>
           </Table>
-        </Table.ScrollContainer>
+        </TableScrollContainer>
       </Paper>
 
       <Text size="sm" c="dimmed">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Paper, Stack, Table, Text, TextInput } from "@mantine/core";
+import { Paper, Stack, Table, TableScrollContainer, Text, TextInput } from "@mantine/core";
 
 export type StudentListRow = {
   id: string;
@@ -75,7 +75,7 @@ export function StudentListTable(props: {
           </Text>
         </Paper>
       ) : (
-        <Table.ScrollContainer minWidth={720}>
+        <TableScrollContainer minWidth={720}>
           <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing="sm" horizontalSpacing="md">
             <Table.Thead>
               <Table.Tr>
@@ -129,7 +129,7 @@ export function StudentListTable(props: {
               })}
             </Table.Tbody>
           </Table>
-        </Table.ScrollContainer>
+        </TableScrollContainer>
       )}
     </Stack>
   );

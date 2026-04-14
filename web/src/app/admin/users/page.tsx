@@ -1,8 +1,22 @@
-import Link from "next/link";
-import { Group, Stack, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+  Title,
+} from "@mantine/core";
 import { asc } from "drizzle-orm";
 import { AppPage } from "@/components/app-page";
-import { NextMantineButtonLink } from "@/components/next-mantine-links";
+import { NextMantineAnchor, NextMantineButtonLink } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { appUsers } from "@/db/schema";
 import { adminDeleteUser } from "@/app/admin/actions";
@@ -21,7 +35,7 @@ export default async function AdminUsersPage() {
 
   return (
     <AppPage>
-      <Stack gap="lg">
+      <Stack gap="xl">
         <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
           <Stack gap="xs">
             <Title order={1}>Users</Title>
@@ -35,56 +49,66 @@ export default async function AdminUsersPage() {
           </NextMantineButtonLink>
         </Group>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-        <table className="min-w-full text-left text-sm">
-          <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-600">
-            <tr>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((u) => (
-              <tr key={u.id} className="border-t border-stone-100">
-                <td className="px-4 py-3 font-medium text-stone-900">{u.email}</td>
-                <td className="px-4 py-3 text-stone-800">{u.name}</td>
-                <td className="px-4 py-3 text-stone-800">
-                  {u.isSuperAdmin ? (
-                    <span className="rounded-full bg-teal-100 px-2 py-0.5 text-xs font-semibold text-teal-900">
-                      Super admin
-                    </span>
-                  ) : (
-                    <span className="text-stone-500">Standard</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/admin/users/${u.id}`}
-                    className="font-semibold text-teal-800 underline"
-                  >
-                    Edit
-                  </Link>
-                  {session?.user?.id !== u.id ? (
-                    <form action={adminDeleteUser.bind(null, u.id)} className="mt-2 inline">
-                      <button
-                        type="submit"
-                        className="text-xs font-medium text-red-700 underline hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </form>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {rows.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-stone-600">No users yet.</p>
-        ) : null}
-      </div>
+        <Paper withBorder shadow="sm" radius="lg" style={{ overflow: "hidden" }}>
+          <div style={{ overflowX: "auto" }}>
+            <Table striped highlightOnHover>
+              <TableThead>
+                <TableTr>
+                  <TableTh>Email</TableTh>
+                  <TableTh>Name</TableTh>
+                  <TableTh>Role</TableTh>
+                  <TableTh style={{ width: "8rem" }} />
+                </TableTr>
+              </TableThead>
+              <TableTbody>
+                {rows.map((u) => (
+                  <TableTr key={u.id}>
+                    <TableTd>
+                      <Text fw={500} size="sm">
+                        {u.email}
+                      </Text>
+                    </TableTd>
+                    <TableTd>
+                      <Text size="sm">{u.name}</Text>
+                    </TableTd>
+                    <TableTd>
+                      {u.isSuperAdmin ? (
+                        <Badge color="teal" variant="light" size="sm">
+                          Super admin
+                        </Badge>
+                      ) : (
+                        <Text size="sm" c="dimmed">
+                          Standard
+                        </Text>
+                      )}
+                    </TableTd>
+                    <TableTd>
+                      <Stack gap={6} align="flex-end">
+                        <NextMantineAnchor href={`/admin/users/${u.id}`} fw={600} size="sm">
+                          Edit
+                        </NextMantineAnchor>
+                        {session?.user?.id !== u.id ? (
+                          <Box component="form" action={adminDeleteUser.bind(null, u.id)}>
+                            <Button type="submit" variant="subtle" color="red" size="compact-xs">
+                              Delete
+                            </Button>
+                          </Box>
+                        ) : null}
+                      </Stack>
+                    </TableTd>
+                  </TableTr>
+                ))}
+              </TableTbody>
+            </Table>
+          </div>
+          {rows.length === 0 ? (
+            <Box p="lg">
+              <Text size="sm" c="dimmed">
+                No users yet.
+              </Text>
+            </Box>
+          ) : null}
+        </Paper>
       </Stack>
     </AppPage>
   );
