@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  turbopack: {
-    root: process.cwd(),
-  },
-};
+/** Keep config minimal so Vercel can set `outputFileTracingRoot` without conflicting with `turbopack.root`. */
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
