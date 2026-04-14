@@ -11,7 +11,7 @@ export function ParticipantExcelImport() {
   );
 
   return (
-    <section className="mx-auto max-w-2xl rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+    <section className="w-full rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
       <h2 className="text-lg font-semibold text-stone-900">Import from Excel</h2>
       <p className="mt-2 text-sm text-stone-600">
         Download the template, fill the <strong className="font-medium">Registrations</strong> sheet

@@ -96,7 +96,7 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
       },
       {
         key: "complaint-phone-call-log",
-        title: "Complaint phone call log",
+        title: "Complaint",
         description: "Log complaints received by phone with follow-up (planned).",
         status: "planned",
       },

@@ -350,6 +350,27 @@ export const noticeBoardItems = pgTable("notice_board_items", {
   createdByUserId: text("created_by_user_id").references(() => appUsers.id, { onDelete: "set null" }),
 });
 
+/** Visitor sign-in/out register (front office). */
+export const visitorBookEntries = pgTable("visitor_book_entries", {
+  id: text("id").primaryKey(),
+  siteId: text("site_id")
+    .notNull()
+    .references(() => sites.id, { onDelete: "cascade" }),
+  visitorName: text("visitor_name").notNull(),
+  phone: text("phone"),
+  company: text("company"),
+  purpose: text("purpose").notNull(),
+  personToSee: text("person_to_see"),
+  idType: text("id_type"),
+  idNumber: text("id_number"),
+  badgeNumber: text("badge_number"),
+  timeIn: timestamp("time_in", { withTimezone: true, mode: "date" }).notNull(),
+  timeOut: timestamp("time_out", { withTimezone: true, mode: "date" }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull(),
+  createdByUserId: text("created_by_user_id").references(() => appUsers.id, { onDelete: "set null" }),
+});
+
 /** School notices: holidays, events, out-of-class activities. */
 export const institutionNotices = pgTable("institution_notices", {
   id: text("id").primaryKey(),

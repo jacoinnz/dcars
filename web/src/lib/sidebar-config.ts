@@ -145,7 +145,7 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
                 {
                   id: "lnk-admin-compl",
                   href: "/admin/module/complaint-phone-call-log",
-                  label: "Complaint phone call log",
+                  label: "Complaint",
                   locked: true,
                 },
                 { id: "lnk-admin-stu-id", href: "/admin/module/student-id-card", label: "Student ID card", locked: true },

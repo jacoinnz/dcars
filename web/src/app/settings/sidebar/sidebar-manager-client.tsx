@@ -194,18 +194,6 @@ function SortableLinkRow(props: {
           }`}
         />
       </label>
-      <label className="min-w-[8rem] flex-1 text-[10px] font-medium text-stone-500">
-        Path
-        <input
-          value={props.item.href}
-          onChange={(e) => props.onChange({ href: e.target.value })}
-          readOnly={Boolean(props.item.locked)}
-          className={`mt-0.5 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm ${
-            props.item.locked ? "bg-stone-100 text-stone-600" : "bg-white"
-          }`}
-          placeholder="/path"
-        />
-      </label>
       {props.item.locked ? null : (
         <button
           type="button"

@@ -20,7 +20,7 @@ export function ParticipantEntryForm(props: {
   return (
     <form
       action={formAction}
-      className="mx-auto max-w-2xl space-y-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+      className="w-full space-y-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
     >
       <div className="space-y-1">
         <h1 className="text-xl font-semibold text-stone-900">Participant registration</h1>

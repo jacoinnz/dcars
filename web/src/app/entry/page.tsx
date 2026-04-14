@@ -24,7 +24,7 @@ export default async function EntryPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-12">
+        <div className="grid gap-8 lg:grid-cols-[2fr_1fr] lg:items-start">
           <ParticipantEntryForm sites={sites} defaultDateOfEntry={defaultDateOfEntry} />
           <ParticipantExcelImport />
         </div>
