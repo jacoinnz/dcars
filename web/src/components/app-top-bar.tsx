@@ -1,8 +1,10 @@
 "use client";
 
+import { IconSearch } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Anchor, Box, Group, Loader, Paper, Text, TextInput } from "@mantine/core";
 
 type StudentHit = {
   id: string;
@@ -82,105 +84,148 @@ export function AppTopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-stone-200 bg-white/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6">
-      <div className="relative min-w-0 flex-1" ref={wrapRef}>
-        <label className="relative block">
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-stone-400">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </span>
-          <input
-            type="search"
-            name="app-search"
-            autoComplete="off"
-            placeholder="Search students, roll no., phone, schools…"
-            className="w-full max-w-xl rounded-xl border border-stone-200 bg-stone-50 py-2 pl-10 pr-3 text-sm text-stone-900 placeholder:text-stone-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-            aria-label="Search students and schools"
-          />
-        </label>
+    <Box
+      component="header"
+      pos="sticky"
+      top={0}
+      style={{ zIndex: 30 }}
+      className="flex h-14 shrink-0 items-center gap-3 border-b border-stone-200 bg-white/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6"
+    >
+      <Box ref={wrapRef} pos="relative" style={{ minWidth: 0 }} flex={1}>
+        <TextInput
+          type="search"
+          name="app-search"
+          autoComplete="off"
+          placeholder="Search students, roll no., phone, schools…"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          aria-label="Search students and schools"
+          leftSection={<IconSearch size={18} stroke={1.5} />}
+          radius="md"
+          styles={{
+            input: {
+              backgroundColor: "var(--mantine-color-gray-0)",
+              borderColor: "var(--mantine-color-gray-3)",
+              maxWidth: "36rem",
+            },
+          }}
+        />
 
         {open && (query.trim().length >= 2 || loading || unauthorized) ? (
-          <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-[min(70vh,28rem)] overflow-auto rounded-xl border border-stone-200 bg-white py-2 shadow-lg md:w-[min(100%,28rem)]">
+          <Paper
+            shadow="md"
+            p={0}
+            withBorder
+            radius="md"
+            pos="absolute"
+            left={0}
+            right={0}
+            top="100%"
+            mt={4}
+            style={{
+              zIndex: 40,
+              maxHeight: "min(70vh, 28rem)",
+              overflow: "auto",
+            }}
+            maw={{ base: "100%", md: 448 }}
+          >
             {unauthorized ? (
-              <p className="px-4 py-3 text-sm text-stone-600">
-                <Link href="/login" className="font-semibold text-teal-800 underline">
+              <Text size="sm" c="dimmed" px="md" py="sm">
+                <Anchor component={Link} href="/login" fw={600} c="teal.8">
                   Sign in
-                </Link>{" "}
+                </Anchor>{" "}
                 to search the directory.
-              </p>
+              </Text>
             ) : loading ? (
-              <p className="px-4 py-3 text-sm text-stone-500">Searching…</p>
+              <Group px="md" py="sm" gap="xs">
+                <Loader size="sm" />
+                <Text size="sm" c="dimmed">
+                  Searching…
+                </Text>
+              </Group>
             ) : students.length === 0 && schools.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-stone-500">No matches for that search.</p>
+              <Text size="sm" c="dimmed" px="md" py="sm">
+                No matches for that search.
+              </Text>
             ) : (
-              <ul className="text-sm">
+              <Box component="ul" p={0} m={0} style={{ listStyle: "none" }}>
                 {schools.length > 0 ? (
                   <>
-                    <li className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wide text-stone-400">
+                    <Text component="li" fz={10} fw={600} tt="uppercase" c="dimmed" px="sm" py={4}>
                       Schools
-                    </li>
+                    </Text>
                     {schools.map((s) => (
-                      <li key={s.id}>
-                        <Link
+                      <Box component="li" key={s.id}>
+                        <Anchor
+                          component={Link}
                           href={`/evaluations/students/${s.id}`}
-                          className="block px-4 py-2 text-stone-800 hover:bg-teal-50"
+                          display="block"
+                          px="md"
+                          py="sm"
+                          c="dark"
+                          style={{ textDecoration: "none" }}
                           onClick={() => {
                             setOpen(false);
                             setQuery("");
                           }}
                         >
-                          <span className="font-medium">{s.name}</span>
-                          <span className="ml-2 text-xs text-stone-500">Student centre</span>
-                        </Link>
-                      </li>
+                          <Text span fw={500}>
+                            {s.name}
+                          </Text>
+                          <Text span ml="sm" size="xs" c="dimmed">
+                            Student centre
+                          </Text>
+                        </Anchor>
+                      </Box>
                     ))}
                   </>
                 ) : null}
                 {students.length > 0 ? (
                   <>
-                    <li className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-stone-400">
+                    <Text component="li" fz={10} fw={600} tt="uppercase" c="dimmed" px="sm" py={4} mt="xs">
                       Students
-                    </li>
+                    </Text>
                     {students.map((s) => (
-                      <li key={s.id}>
-                        <Link
+                      <Box component="li" key={s.id}>
+                        <Anchor
+                          component={Link}
                           href={`/evaluations/students/${s.institutionId}`}
-                          className="block px-4 py-2 text-stone-800 hover:bg-teal-50"
+                          display="block"
+                          px="md"
+                          py="sm"
+                          c="dark"
+                          style={{ textDecoration: "none" }}
                           onClick={() => {
                             setOpen(false);
                             setQuery("");
                           }}
                         >
-                          <span className="font-medium">
+                          <Text span fw={500}>
                             {s.firstName} {s.middleName ? `${s.middleName} ` : ""}
                             {s.lastName}
-                          </span>
+                          </Text>
                           {s.admissionNumber ? (
-                            <span className="ml-2 text-xs text-stone-500">#{s.admissionNumber}</span>
+                            <Text span ml="sm" size="xs" c="dimmed">
+                              #{s.admissionNumber}
+                            </Text>
                           ) : null}
-                          <span className="mt-0.5 block text-xs text-stone-500">{s.schoolName}</span>
-                        </Link>
-                      </li>
+                          <Text size="xs" c="dimmed" display="block" mt={2}>
+                            {s.schoolName}
+                          </Text>
+                        </Anchor>
+                      </Box>
                     ))}
                   </>
                 ) : null}
-              </ul>
+              </Box>
             )}
-          </div>
+          </Paper>
         ) : null}
-      </div>
-    </header>
+      </Box>
+    </Box>
   );
 }

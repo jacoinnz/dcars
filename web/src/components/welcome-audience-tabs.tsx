@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useState } from "react";
+import { Anchor, Card, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { AudienceTabCounts } from "@/lib/audience-tab-counts";
 
 type TabId = "students" | "teachers" | "parents" | "staff";
@@ -34,161 +35,216 @@ export function WelcomeAudienceTabs(props: {
   const counts = props.tabCounts ?? emptyCounts;
 
   return (
-    <section
+    <Card
+      component="section"
       id={props.sectionId}
-      className="mb-10 scroll-mt-24 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"
+      withBorder
+      radius="lg"
+      p="lg"
+      shadow="sm"
+      mb="xl"
+      className="scroll-mt-24"
     >
-      <h1 className="text-2xl font-semibold text-stone-900">
+      <Title order={1} size="h2">
         Welcome{greeting}
-      </h1>
-      <p className="mt-2 text-sm text-stone-600">
+      </Title>
+      <Text size="sm" c="dimmed" mt="xs">
         Select who you are working with today — quick links open the right area of the programme.
-      </p>
+      </Text>
 
-      <div
-        className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
-        role="tablist"
-        aria-label="Audience"
-      >
+      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md" mt="lg">
         {tabs.map((t) => {
           const isActive = active === t.id;
           const n = counts[t.id];
           return (
-            <button
+            <Card
               key={t.id}
+              component="button"
               type="button"
               role="tab"
               aria-selected={isActive}
               aria-label={`${t.label}, ${n.toLocaleString()} in your programme scope`}
-              className={`rounded-xl border-2 px-3 py-4 text-center text-sm font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 sm:px-4 ${
-                isActive
-                  ? "border-teal-600 bg-teal-50/80 text-teal-950 ring-1 ring-teal-200"
-                  : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900"
-              }`}
+              withBorder
+              padding="md"
+              radius="md"
               onClick={() => setActive(t.id)}
+              style={{
+                cursor: "pointer",
+                borderWidth: 2,
+                borderColor: isActive ? "var(--mantine-color-teal-6)" : "var(--mantine-color-gray-3)",
+                backgroundColor: isActive ? "var(--mantine-color-teal-0)" : "var(--mantine-color-white)",
+                boxShadow: isActive ? "0 0 0 1px rgba(13, 148, 136, 0.25)" : undefined,
+              }}
             >
-              <span className="block leading-tight">{t.label}</span>
-              <span
-                className={`mt-2 block tabular-nums text-lg sm:text-xl ${
-                  isActive ? "text-teal-800" : "text-stone-500"
-                }`}
+              <Text size="sm" fw={600} ta="center">
+                {t.label}
+              </Text>
+              <Text
+                size="xl"
+                fw={600}
+                ta="center"
+                mt="xs"
+                c={isActive ? "teal.8" : "dimmed"}
+                style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {n.toLocaleString()}
-              </span>
-            </button>
+              </Text>
+            </Card>
           );
         })}
-      </div>
+      </SimpleGrid>
 
       {props.children}
 
-      <div className="mt-6 text-sm text-stone-700" role="tabpanel">
+      <Stack gap="xs" mt="lg" role="tabpanel">
         {active === "students" ? (
-          <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Link href="/students" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/students" fw={600} c="teal.8" underline="always">
                 Student information
-              </Link>
-              <span className="text-stone-500"> — admission, lists, classes</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — admission, lists, classes
+              </Text>
             </li>
             <li>
-              <Link href="/students/attendance" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/students/attendance" fw={600} c="teal.8" underline="always">
                 Student attendance
-              </Link>
-              <span className="text-stone-500"> — daily roll</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — daily roll
+              </Text>
             </li>
             <li>
-              <Link href="/evaluations" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/evaluations" fw={600} c="teal.8" underline="always">
                 Evaluations
-              </Link>
-              <span className="text-stone-500"> — scores & classes</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — scores & classes
+              </Text>
             </li>
             <li>
-              <Link href="/examinations" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/examinations" fw={600} c="teal.8" underline="always">
                 Examinations
-              </Link>
-              <span className="text-stone-500"> — exams & marks</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — exams & marks
+              </Text>
             </li>
           </ul>
         ) : null}
 
         {active === "teachers" ? (
-          <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Link href="/teachers" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/teachers" fw={600} c="teal.8" underline="always">
                 Teachers hub
-              </Link>
-              <span className="text-stone-500"> — resources & planned tools</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — resources & planned tools
+              </Text>
             </li>
             <li>
-              <Link href="/teacher-content" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/teacher-content" fw={600} c="teal.8" underline="always">
                 Teacher content
-              </Link>
-              <span className="text-stone-500"> — uploads & downloads</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — uploads & downloads
+              </Text>
             </li>
             <li>
-              <Link href="/evaluations" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/evaluations" fw={600} c="teal.8" underline="always">
                 Evaluations
-              </Link>
-              <span className="text-stone-500"> — class assessment</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — class assessment
+              </Text>
             </li>
           </ul>
         ) : null}
 
         {active === "parents" ? (
-          <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Link href="/parents" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/parents" fw={600} c="teal.8" underline="always">
                 Parents portal
-              </Link>
-              <span className="text-stone-500"> — overview & marks</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — overview & marks
+              </Text>
             </li>
             <li>
-              <Link href="/family" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/family" fw={600} c="teal.8" underline="always">
                 Family attendance
-              </Link>
-              <span className="text-stone-500"> — linked children</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — linked children
+              </Text>
             </li>
             <li>
-              <Link href="/communications" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/communications" fw={600} c="teal.8" underline="always">
                 Communications
-              </Link>
-              <span className="text-stone-500"> — school messages</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — school messages
+              </Text>
             </li>
           </ul>
         ) : null}
 
         {active === "staff" ? (
-          <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Link href="/hr" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/hr" fw={600} c="teal.8" underline="always">
                 Human resources
-              </Link>
-              <span className="text-stone-500"> — HR hub & roadmap</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — HR hub & roadmap
+              </Text>
             </li>
             <li>
-              <Link href="/hr/directory" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/hr/directory" fw={600} c="teal.8" underline="always">
                 Staff directory
-              </Link>
-              <span className="text-stone-500"> — who is assigned where</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — who is assigned where
+              </Text>
             </li>
             <li>
-              <Link href="/attendance" className="font-medium text-teal-800 underline hover:text-teal-950">
+              <Anchor component={Link} href="/attendance" fw={600} c="teal.8" underline="always">
                 Student attendance (register)
-              </Link>
-              <span className="text-stone-500"> — record roll by school</span>
+              </Anchor>
+              <Text span size="sm" c="dimmed">
+                {" "}
+                — record roll by school
+              </Text>
             </li>
             {props.isSuperAdmin ? (
               <li>
-                <Link href="/admin" className="font-medium text-teal-800 underline hover:text-teal-950">
+                <Anchor component={Link} href="/admin" fw={600} c="teal.8" underline="always">
                   Administration
-                </Link>
-                <span className="text-stone-500"> — sites, schools, users</span>
+                </Anchor>
+                <Text span size="sm" c="dimmed">
+                  {" "}
+                  — sites, schools, users
+                </Text>
               </li>
             ) : null}
           </ul>
         ) : null}
-      </div>
-    </section>
+      </Stack>
+    </Card>
   );
 }

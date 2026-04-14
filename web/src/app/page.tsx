@@ -1,15 +1,12 @@
-import Link from "next/link";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { getServerSession } from "next-auth/next";
 import { getProgramTotals } from "@/lib/aggregates";
 import { getDefaultMissingReportAlerts } from "@/lib/alerts";
 import { authOptions } from "@/lib/auth-options";
-import { CalendarTodoPanel } from "@/components/calendar-todo-panel";
-import { NoticeBoard } from "@/components/notice-board";
-import { WelcomeAudienceTabs } from "@/components/welcome-audience-tabs";
 import { getAudienceTabCounts } from "@/lib/audience-tab-counts";
 import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
+import { HomePageContent } from "./home-page-content";
 
 export const dynamic = "force-dynamic";
 
@@ -33,97 +30,14 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
-      <WelcomeAudienceTabs userName={welcomeName} isSuperAdmin={isSuperAdmin} tabCounts={tabCounts}>
-        <>
-          <NoticeBoard items={notices} showManageLink={isSuperAdmin} embedded />
-          <CalendarTodoPanel storageKey={todoStorageKey} />
-        </>
-      </WelcomeAudienceTabs>
-
-      <div className="mt-10 max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-800">
-          Youth development programme
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">
-          Less spreadsheet work, clearer visibility across sites
-        </h1>
-        <p className="mt-3 text-base leading-relaxed text-stone-600">
-          Register each young person with a unique ID; session metrics and PDF exports support
-          programme reporting.
-        </p>
-      </div>
-
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-            This month — participant registrations
-          </p>
-          <p className="mt-2 text-3xl font-semibold text-stone-900">
-            {totals.participantRegistrations}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-            Session reports
-          </p>
-          <p className="mt-2 text-3xl font-semibold text-stone-900">{totals.reports}</p>
-        </div>
-        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-            Youth present (sum)
-          </p>
-          <p className="mt-2 text-3xl font-semibold text-stone-900">{totals.youthPresent}</p>
-        </div>
-        <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Sites</p>
-          <p className="mt-2 text-3xl font-semibold text-stone-900">{totals.sites}</p>
-        </div>
-      </div>
-
-      <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50 p-6">
-        <h2 className="text-sm font-semibold text-amber-950">Missing data (last 7 days)</h2>
-        <p className="mt-1 text-sm text-amber-950/90">
-          Sites with no session report dated within the last week (rolling from today).
-        </p>
-        {alerts.length === 0 ? (
-          <p className="mt-4 text-sm font-medium text-emerald-900">
-            All sites have at least one recent report. Nice work.
-          </p>
-        ) : (
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-amber-950">
-            {alerts.map((a) => (
-              <li key={a.siteId}>
-                <span className="font-medium">{a.siteName}</span> ({a.siteCode})
-                {a.daysSinceLastReport === null
-                  ? " — no submissions yet"
-                  : ` — last report ${a.daysSinceLastReport} day(s) ago`}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <div className="mt-10 flex flex-wrap gap-3">
-        <Link
-          href="/entry"
-          className="inline-flex items-center justify-center rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"
-        >
-          Register participant
-        </Link>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center justify-center rounded-xl border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-900 shadow-sm transition hover:border-teal-300 hover:bg-teal-50"
-        >
-          Open dashboard
-        </Link>
-        <Link
-          href="/reports"
-          className="inline-flex items-center justify-center rounded-xl border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-900 shadow-sm transition hover:border-teal-300 hover:bg-teal-50"
-        >
-          Export PDF
-        </Link>
-      </div>
-    </div>
+    <HomePageContent
+      welcomeName={welcomeName}
+      isSuperAdmin={isSuperAdmin}
+      tabCounts={tabCounts}
+      notices={notices}
+      todoStorageKey={todoStorageKey}
+      totals={totals}
+      alerts={alerts}
+    />
   );
 }

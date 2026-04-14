@@ -1,17 +1,10 @@
 import { Suspense } from "react";
 import { LoginForm } from "@/components/login-form";
+import { LoginFormFallback } from "./login-fallback";
 
 export const metadata = {
   title: "Sign in — Youth programme",
 };
-
-function LoginFormFallback() {
-  return (
-    <div className="mx-auto max-w-md rounded-2xl border border-stone-200 bg-white p-8 text-sm text-stone-600 shadow-sm">
-      Loading…
-    </div>
-  );
-}
 
 export default function LoginPage() {
   return (

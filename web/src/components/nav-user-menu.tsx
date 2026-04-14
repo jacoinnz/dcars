@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { Badge, Button, Group, Stack, Text } from "@mantine/core";
 
 export function NavUserMenu(props: {
   email: string | null;
@@ -13,72 +14,106 @@ export function NavUserMenu(props: {
 
   if (!props.email) {
     return (
-      <Link
+      <Button
+        component={Link}
         href="/login"
-        className={
+        variant={v === "sidebar" ? "outline" : "default"}
+        color={v === "sidebar" ? "gray" : undefined}
+        fullWidth={v === "sidebar"}
+        radius="md"
+        size="sm"
+        styles={
           v === "sidebar"
-            ? "block w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-center text-sm font-medium text-stone-100 hover:bg-stone-700"
-            : "rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:border-teal-400"
+            ? {
+                root: {
+                  borderColor: "#57534e",
+                  backgroundColor: "#292524",
+                  color: "#f5f5f4",
+                },
+              }
+            : undefined
         }
       >
         Sign in
-      </Link>
+      </Button>
     );
   }
 
   if (v === "sidebar") {
     return (
-      <div className="space-y-2">
-        <p className="truncate text-xs text-stone-400" title={props.email}>
+      <Stack gap="sm">
+        <Text size="xs" c="dimmed" truncate title={props.email}>
           {props.email}
           {props.isSuperAdmin ? (
-            <span className="ml-1 rounded bg-teal-900/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-teal-100">
+            <Badge ml={6} size="xs" variant="light" color="teal" tt="uppercase">
               Admin
-            </span>
+            </Badge>
           ) : null}
-        </p>
-        <Link
+        </Text>
+        <Button
+          component={Link}
           href="/settings/sidebar"
-          className="block w-full rounded-lg border border-stone-600 bg-stone-900 px-3 py-2 text-center text-sm font-medium text-teal-100 hover:border-teal-600 hover:bg-stone-800"
+          variant="outline"
+          color="teal"
+          fullWidth
+          radius="md"
+          size="sm"
+          styles={{
+            root: {
+              borderColor: "#57534e",
+              backgroundColor: "#1c1917",
+              color: "#ccfbf1",
+            },
+          }}
         >
           Sidebar manager
-        </Link>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-sm text-stone-200 hover:bg-stone-700"
+          variant="outline"
+          color="gray"
+          fullWidth
+          radius="md"
+          size="sm"
+          styles={{
+            root: {
+              borderColor: "#57534e",
+              backgroundColor: "#292524",
+              color: "#e7e5e4",
+            },
+          }}
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
           Sign out
-        </button>
-      </div>
+        </Button>
+      </Stack>
     );
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="max-w-[14rem] truncate text-xs text-stone-600" title={props.email}>
+    <Group gap="xs" wrap="wrap" align="center">
+      <Text size="xs" c="dimmed" maw={224} truncate title={props.email}>
         {props.email}
         {props.isSuperAdmin ? (
-          <span className="ml-1 rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-teal-900">
+          <Badge ml={6} size="xs" variant="light" color="teal" tt="uppercase">
             Admin
-          </span>
+          </Badge>
         ) : null}
-      </span>
+      </Text>
       {props.isSuperAdmin ? (
-        <Link
-          href="/admin"
-          className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-900 hover:bg-teal-100"
-        >
+        <Button component={Link} href="/admin" variant="light" color="teal" size="compact-sm" radius="xl">
           Admin
-        </Link>
+        </Button>
       ) : null}
-      <button
+      <Button
         type="button"
-        className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1.5 text-sm text-stone-800 hover:border-stone-300"
+        variant="default"
+        size="compact-sm"
+        radius="xl"
         onClick={() => signOut({ callbackUrl: "/login" })}
       >
         Sign out
-      </button>
-    </div>
+      </Button>
+    </Group>
   );
 }

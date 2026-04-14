@@ -1,10 +1,28 @@
 import { z } from "zod";
 
-const phoneLike = z
-  .string()
-  .min(7, "Enter a valid phone number")
-  .max(40)
-  .regex(/^[\d\s\-+().]+$/, "Use digits and common phone characters only");
+/** Trim, NFKC-normalize (full-width digits → ASCII), strip invisible chars. */
+function normalizePhoneInput(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  let s = String(v).trim().normalize("NFKC");
+  s = s.replace(/[\u200B-\u200D\uFEFF]/g, "");
+  return s;
+}
+
+function countPhoneDigits(s: string): number {
+  return s.replace(/\D/g, "").length;
+}
+
+/** Allow common formatting; validity is based on digit count, not raw string length. */
+const phoneCharsOk = /^[\d\s\-+()./x,#;:]*$/i;
+
+const phoneLike = z.preprocess(
+  normalizePhoneInput,
+  z
+    .string()
+    .max(40)
+    .refine((s) => countPhoneDigits(s) >= 5 && countPhoneDigits(s) <= 18, "Enter a valid phone number")
+    .refine((s) => phoneCharsOk.test(s), "Use digits and common phone characters only"),
+);
 
 const optionalMiddle = z.preprocess(
   (v) => (v === "" || v === null || v === undefined ? undefined : v),
@@ -20,12 +38,15 @@ const optionalDateYmd = z.preprocess(
 );
 
 const optionalPhoneLoose = z.preprocess(
-  emptyToUndef,
+  (v) => {
+    const n = normalizePhoneInput(emptyToUndef(v) ?? "");
+    return n === "" ? undefined : n;
+  },
   z
     .string()
-    .min(5, "Enter a valid phone number")
     .max(40)
-    .regex(/^[\d\s\-+().]+$/, "Use digits and common phone characters only")
+    .refine((s) => countPhoneDigits(s) >= 5 && countPhoneDigits(s) <= 18, "Enter a valid phone number")
+    .refine((s) => phoneCharsOk.test(s), "Use digits and common phone characters only")
     .optional(),
 );
 

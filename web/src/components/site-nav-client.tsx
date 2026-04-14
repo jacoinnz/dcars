@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Anchor, Box, ScrollArea, Stack, Text } from "@mantine/core";
 import {
   getDefaultSidebarConfig,
   loadSidebarConfig,
@@ -43,22 +44,37 @@ function navLinkIsActive(pathname: string, href: string, currentHash: string) {
   return currentHash === `#${frag}` || currentHash === frag;
 }
 
-function NavLink(props: { href: string; children: ReactNode }) {
+function SidebarNavLink(props: { href: string; children: ReactNode }) {
   const pathname = usePathname();
   const hash = useHashFragment();
   const active = navLinkIsActive(pathname, props.href, hash);
 
   return (
-    <Link
+    <Anchor
+      component={Link}
       href={props.href}
-      className={`block rounded-lg px-3 py-2 text-sm transition ${
-        active
-          ? "bg-teal-900/60 font-medium text-white"
-          : "text-stone-300 hover:bg-stone-800/80 hover:text-white"
-      }`}
+      size="sm"
+      fw={active ? 600 : 400}
+      display="block"
+      px="sm"
+      py={8}
+      style={{
+        borderRadius: "var(--mantine-radius-md)",
+        textDecoration: "none",
+        color: active ? "#fafaf9" : "#d6d3d1",
+        backgroundColor: active ? "rgba(13, 148, 136, 0.45)" : undefined,
+      }}
+      styles={{
+        root: {
+          "&:hover": {
+            color: "var(--mantine-color-white)",
+            backgroundColor: active ? "rgba(13, 148, 136, 0.45)" : "rgba(41, 37, 36, 0.8)",
+          },
+        },
+      }}
     >
       {props.children}
-    </Link>
+    </Anchor>
   );
 }
 
@@ -85,36 +101,55 @@ export function SiteNavClient(props: {
   }, [props.isSuperAdmin]);
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-b border-stone-800 bg-stone-950 md:h-screen md:w-60 md:border-b-0 md:border-r md:border-stone-800">
-      <div className="border-b border-stone-800 px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-400">Youth programme</p>
-        <p className="mt-1 text-[11px] text-stone-500">Data entry &amp; reporting</p>
-      </div>
+    <Box
+      component="aside"
+      className="flex w-full shrink-0 flex-col border-b border-stone-800 bg-stone-950 md:h-screen md:w-60 md:border-b-0 md:border-r"
+    >
+      <Box
+        p="md"
+        style={{
+          borderBottom: "1px solid var(--mantine-color-dark-7)",
+        }}
+      >
+        <Text size="xs" fw={600} tt="uppercase" c="teal.4" lts={1}>
+          Youth programme
+        </Text>
+        <Text fz={11} c="dimmed" mt={4}>
+          Data entry &amp; reporting
+        </Text>
+      </Box>
 
-      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 py-4">
-        {config.sections.map((section) => (
-          <div key={section.id}>
-            <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-stone-500">
-              {section.title}
-            </p>
-            <ul className="space-y-0.5">
-              {section.items.map((item) => (
-                <li key={item.id}>
-                  <NavLink href={item.href}>{item.label}</NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </nav>
+      <ScrollArea flex={1} type="scroll" offsetScrollbars>
+        <Stack gap="lg" px="sm" py="md">
+          {config.sections.map((section) => (
+            <Box key={section.id}>
+              <Text fz={10} fw={600} tt="uppercase" c="dimmed" lts={1} px="xs" mb="xs">
+                {section.title}
+              </Text>
+              <Stack gap={4}>
+                {section.items.map((item) => (
+                  <SidebarNavLink key={item.id} href={item.href}>
+                    {item.label}
+                  </SidebarNavLink>
+                ))}
+              </Stack>
+            </Box>
+          ))}
+        </Stack>
+      </ScrollArea>
 
-      <div className="border-t border-stone-800 p-3">
+      <Box
+        p="sm"
+        style={{
+          borderTop: "1px solid var(--mantine-color-dark-7)",
+        }}
+      >
         <NavUserMenu
           email={props.email}
           isSuperAdmin={props.isSuperAdmin}
           variant="sidebar"
         />
-      </div>
-    </aside>
+      </Box>
+    </Box>
   );
 }

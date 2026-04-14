@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { format } from "date-fns";
+import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import type { NoticeBoardItemRow } from "@/lib/notice-board";
 
 export function NoticeBoard(props: {
@@ -13,66 +16,79 @@ export function NoticeBoard(props: {
   const { items, showManageLink, embedded, anchorId } = props;
 
   return (
-    <section
+    <Paper
+      component="section"
       id={anchorId}
-      className={`rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50/90 to-white p-6 shadow-sm scroll-mt-24 ${
-        embedded ? "mt-6 mb-0 rounded-xl" : "mb-10"
-      }`}
+      withBorder
+      radius={embedded ? "md" : "lg"}
+      p="lg"
+      shadow="sm"
+      mb={embedded ? 0 : "xl"}
+      mt={embedded ? "lg" : 0}
+      className="scroll-mt-24"
+      style={{
+        borderColor: "rgba(251, 191, 36, 0.45)",
+        background: "linear-gradient(to bottom, rgba(255, 251, 235, 0.95), var(--mantine-color-white))",
+      }}
       aria-labelledby="notice-board-heading"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <Group justify="space-between" align="flex-start" wrap="wrap" gap="md">
         <div>
-          <h2 id="notice-board-heading" className="text-lg font-semibold text-amber-950">
+          <Title order={2} id="notice-board-heading" size="h4" c="yellow.9">
             Notice board
-          </h2>
-          <p className="mt-1 text-sm text-amber-950/80">
+          </Title>
+          <Text size="sm" mt={4} c="yellow.9" style={{ opacity: 0.85 }}>
             Programme announcements for students, staff, and families.
-          </p>
+          </Text>
         </div>
         {showManageLink ? (
-          <Link
+          <Button
+            component={Link}
             href="/admin/notices"
-            className="shrink-0 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-950 shadow-sm transition hover:border-amber-400 hover:bg-amber-50"
+            size="xs"
+            fw={600}
+            variant="outline"
+            color="yellow"
+            radius="xl"
           >
             Add Notice
-          </Link>
+          </Button>
         ) : null}
-      </div>
+      </Group>
 
       {items.length === 0 ? (
-        <p className="mt-5 text-sm text-stone-600">No notices at the moment.</p>
+        <Text size="sm" c="dimmed" mt="lg">
+          No notices at the moment.
+        </Text>
       ) : (
-        <ul className="mt-5 flex flex-col gap-4">
+        <Stack gap="md" mt="lg">
           {items.map((n) => (
-            <li
-              key={n.id}
-              className="rounded-xl border border-stone-200/80 bg-white/90 p-4 shadow-sm"
-            >
-              <div className="flex flex-wrap items-baseline justify-between gap-2 gap-y-1">
-                <p className="font-semibold text-stone-900">{n.title}</p>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500">
+            <Paper key={n.id} withBorder p="md" radius="md" shadow="xs" bg="white" style={{ opacity: 0.95 }}>
+              <Group justify="space-between" align="flex-start" wrap="wrap" gap="xs">
+                <Text fw={600}>{n.title}</Text>
+                <Group gap="xs">
                   {n.pinned ? (
-                    <span className="rounded-full bg-teal-100 px-2 py-0.5 font-semibold text-teal-900">
+                    <Badge size="sm" color="teal" variant="light">
                       Pinned
-                    </span>
+                    </Badge>
                   ) : null}
-                  <time dateTime={n.createdAt.toISOString()}>
+                  <Text size="xs" c="dimmed" component="time" dateTime={n.createdAt.toISOString()}>
                     {format(n.createdAt, "d MMM yyyy")}
-                  </time>
+                  </Text>
                   {n.expiresAt ? (
-                    <span className="text-stone-400">
+                    <Text size="xs" c="dimmed">
                       · expires {format(n.expiresAt, "d MMM yyyy")}
-                    </span>
+                    </Text>
                   ) : null}
-                </div>
-              </div>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-700">
+                </Group>
+              </Group>
+              <Text size="sm" mt="sm" style={{ whiteSpace: "pre-wrap" }} lh={1.6}>
                 {n.body}
-              </p>
-            </li>
+              </Text>
+            </Paper>
           ))}
-        </ul>
+        </Stack>
       )}
-    </section>
+    </Paper>
   );
 }
