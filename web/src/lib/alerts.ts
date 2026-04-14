@@ -1,7 +1,8 @@
-import { gte, sql } from "drizzle-orm";
+import { gte, inArray, sql } from "drizzle-orm";
 import { subDays } from "date-fns";
 import { getDb } from "@/db";
 import { sessionReports, sites } from "@/db/schema";
+import type { SiteScope } from "@/lib/site-scope";
 
 export type MissingDataAlert = {
   siteId: string;
@@ -13,7 +14,14 @@ export type MissingDataAlert = {
 /**
  * Sites with no session report on or after `since` (inclusive).
  */
-export async function getSitesWithMissingReportsSince(since: Date): Promise<MissingDataAlert[]> {
+export async function getSitesWithMissingReportsSince(
+  since: Date,
+  siteScope: SiteScope = "all",
+): Promise<MissingDataAlert[]> {
+  if (Array.isArray(siteScope) && siteScope.length === 0) {
+    return [];
+  }
+
   const db = getDb();
   const sinceStr = since.toISOString().slice(0, 10);
   const today = new Date();
@@ -26,7 +34,10 @@ export async function getSitesWithMissingReportsSince(since: Date): Promise<Miss
 
   const reported = new Set(reportedSiteIds.map((r) => r.siteId));
 
-  const allSites = await db.select().from(sites);
+  const allSites =
+    siteScope === "all"
+      ? await db.select().from(sites)
+      : await db.select().from(sites).where(inArray(sites.id, siteScope));
 
   const missing = allSites.filter((s) => !reported.has(s.id));
 
@@ -59,7 +70,7 @@ export async function getSitesWithMissingReportsSince(since: Date): Promise<Miss
   });
 }
 
-export async function getDefaultMissingReportAlerts() {
+export async function getDefaultMissingReportAlerts(siteScope: SiteScope = "all") {
   const since = subDays(new Date(), 7);
-  return getSitesWithMissingReportsSince(since);
+  return getSitesWithMissingReportsSince(since, siteScope);
 }

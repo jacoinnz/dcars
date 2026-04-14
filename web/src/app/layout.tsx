@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Session data entry, aggregation, and reporting across programme sites.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

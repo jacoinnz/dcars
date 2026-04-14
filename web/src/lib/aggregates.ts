@@ -1,4 +1,4 @@
-import { and, count, eq, gte, lte, sum } from "drizzle-orm";
+import { and, count, eq, gte, inArray, lte, sql, sum } from "drizzle-orm";
 import { getDb } from "@/db";
 import { participantEntries, sessionReports, sites } from "@/db/schema";
 
@@ -13,13 +13,29 @@ export type SiteSummary = {
   participantRegistrations: number;
 };
 
+/** `siteScope`: `"all"` or a list of site IDs the user may view. Empty list → no rows. */
 export async function getSiteSummaries(params: {
   from: Date;
   to: Date;
+  siteScope?: "all" | string[];
 }): Promise<SiteSummary[]> {
   const db = getDb();
   const fromStr = params.from.toISOString().slice(0, 10);
   const toStr = params.to.toISOString().slice(0, 10);
+  const scope = params.siteScope ?? "all";
+
+  if (Array.isArray(scope) && scope.length === 0) {
+    return [];
+  }
+
+  const siteFilter =
+    scope === "all" ? sql`true` : inArray(sites.id, scope);
+
+  const participantWhere = [
+    gte(participantEntries.dateOfEntry, fromStr),
+    lte(participantEntries.dateOfEntry, toStr),
+    ...(scope === "all" ? [] : [inArray(participantEntries.siteId, scope)]),
+  ];
 
   const [rows, participantRows] = await Promise.all([
     db
@@ -40,6 +56,7 @@ export async function getSiteSummaries(params: {
           lte(sessionReports.sessionDate, toStr),
         ),
       )
+      .where(siteFilter)
       .groupBy(sites.id, sites.name, sites.code),
     db
       .select({
@@ -47,12 +64,7 @@ export async function getSiteSummaries(params: {
         c: count(participantEntries.id),
       })
       .from(participantEntries)
-      .where(
-        and(
-          gte(participantEntries.dateOfEntry, fromStr),
-          lte(participantEntries.dateOfEntry, toStr),
-        ),
-      )
+      .where(and(...participantWhere))
       .groupBy(participantEntries.siteId),
   ]);
 
@@ -75,7 +87,11 @@ export async function getSiteSummaries(params: {
   });
 }
 
-export async function getProgramTotals(params: { from: Date; to: Date }) {
+export async function getProgramTotals(params: {
+  from: Date;
+  to: Date;
+  siteScope?: "all" | string[];
+}) {
   const summaries = await getSiteSummaries(params);
   return {
     sites: summaries.length,

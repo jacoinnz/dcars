@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { endOfMonth, format, startOfMonth } from "date-fns";
+import { getServerSession } from "next-auth/next";
 import { getSiteSummaries, getProgramTotals } from "@/lib/aggregates";
+import { authOptions } from "@/lib/auth-options";
+import { getSessionSiteScope } from "@/lib/site-scope";
+
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Dashboard — Youth programme",
+};
 
 export default async function DashboardPage({
   searchParams,
@@ -8,6 +17,11 @@ export default async function DashboardPage({
   searchParams: Promise<{ from?: string; to?: string }>;
 }) {
   const sp = await searchParams;
+  const session = await getServerSession(authOptions);
+  const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
+  const scopeCtx = await getSessionSiteScope();
+  const siteScope = scopeCtx?.siteScope ?? "all";
+
   const now = new Date();
   const from = sp.from
     ? new Date(`${sp.from}T00:00:00.000Z`)
@@ -15,8 +29,8 @@ export default async function DashboardPage({
   const to = sp.to ? new Date(`${sp.to}T23:59:59.999Z`) : endOfMonth(now);
 
   const [rows, totals] = await Promise.all([
-    getSiteSummaries({ from, to }),
-    getProgramTotals({ from, to }),
+    getSiteSummaries({ from, to, siteScope }),
+    getProgramTotals({ from, to, siteScope }),
   ]);
 
   const fromStr = format(from, "yyyy-MM-dd");
@@ -27,8 +41,12 @@ export default async function DashboardPage({
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">Dashboard</h1>
-          <p className="text-sm text-stone-600">
-            Session metrics and participant registrations by site ({fromStr} → {toStr}).
+          <p className="max-w-2xl text-sm text-stone-600">
+            Programme overview: session metrics and participant registrations by site for{" "}
+            <span className="font-medium text-stone-800">
+              {fromStr} → {toStr}
+            </span>
+            . Use quick access below for school operations (similar layout to common MIS home screens).
           </p>
         </div>
         <form className="flex flex-wrap items-end gap-2" method="get">
@@ -58,6 +76,74 @@ export default async function DashboardPage({
           </button>
         </form>
       </div>
+
+      <section className="mb-10">
+        <h2 className="text-sm font-semibold text-stone-900">Quick access</h2>
+        <p className="mt-1 text-xs text-stone-600">
+          Jump to the main modules without leaving your workflow.
+        </p>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {(
+            [
+              {
+                href: "/students",
+                title: "Student information",
+                body: "Admission, student list, and classes by school.",
+              },
+              {
+                href: "/students/attendance",
+                title: "Student attendance",
+                body: "Staff roll, learner and family attendance views.",
+              },
+              {
+                href: "/examinations",
+                title: "Examinations",
+                body: "Exam periods, timetables, seat plans, and marks.",
+              },
+              {
+                href: "/evaluations",
+                title: "Evaluations",
+                body: "Scores, classes, and performance records.",
+              },
+              {
+                href: "/hr",
+                title: "Human resources",
+                body: "Staff directory and HR roadmap items.",
+              },
+              {
+                href: "/communications",
+                title: "Communications",
+                body: "School and site messaging tools.",
+              },
+              {
+                href: "/reports",
+                title: "PDF reports",
+                body: "Programme exports for funders and review.",
+              },
+              ...(isSuperAdmin
+                ? [
+                    {
+                      href: "/admin",
+                      title: "Administration",
+                      body: "Sites, schools, users, and permissions.",
+                    },
+                  ]
+                : []),
+            ] as const
+          ).map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className="block h-full rounded-2xl border border-stone-200 bg-white p-4 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
+              >
+                <p className="text-sm font-semibold text-stone-900">{item.title}</p>
+                <p className="mt-1 text-xs text-stone-600">{item.body}</p>
+                <p className="mt-2 text-xs font-medium text-teal-800">Open →</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
@@ -90,7 +176,7 @@ export default async function DashboardPage({
 
       <section className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
         <div className="border-b border-stone-200 px-4 py-3">
-          <h2 className="text-sm font-semibold text-stone-900">By site</h2>
+          <h2 className="text-sm font-semibold text-stone-900">Programme metrics by site</h2>
           <p className="text-xs text-stone-600">
             Attendance rate is present ÷ registered for the selected window (session-level sums).
           </p>

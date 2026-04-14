@@ -1,8 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { participantEntries } from "@/db/schema";
+import { authOptions } from "@/lib/auth-options";
+import { canOnSite } from "@/lib/permissions";
 import { participantEntryFormSchema } from "@/lib/validation";
 
 export type ActionState =
@@ -52,6 +55,23 @@ export async function submitParticipantEntry(
   }
 
   const data = parsed.data;
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false, message: "You must be signed in to save an entry." };
+  }
+  const allowed = await canOnSite(
+    session.user.id,
+    Boolean(session.user.isSuperAdmin),
+    data.siteId,
+    "create",
+  );
+  if (!allowed) {
+    return {
+      ok: false,
+      message: "You do not have permission to register participants for this site.",
+    };
+  }
+
   const db = getDb();
   const id = crypto.randomUUID();
 

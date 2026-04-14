@@ -2,16 +2,20 @@ import Link from "next/link";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { getProgramTotals } from "@/lib/aggregates";
 import { getDefaultMissingReportAlerts } from "@/lib/alerts";
+import { getSessionSiteScope } from "@/lib/site-scope";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const scopeCtx = await getSessionSiteScope();
+  const siteScope = scopeCtx?.siteScope ?? "all";
+
   const now = new Date();
   const from = startOfMonth(now);
   const to = endOfMonth(now);
   const [totals, alerts] = await Promise.all([
-    getProgramTotals({ from, to }),
-    getDefaultMissingReportAlerts(),
+    getProgramTotals({ from, to, siteScope }),
+    getDefaultMissingReportAlerts(siteScope),
   ]);
 
   return (
