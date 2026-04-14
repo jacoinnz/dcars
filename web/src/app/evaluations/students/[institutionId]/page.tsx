@@ -1,11 +1,13 @@
-import Link from "next/link";
 import { format } from "date-fns";
 import { notFound, redirect } from "next/navigation";
 import { asc, eq, inArray } from "drizzle-orm";
+import { Paper, Stack, Text, Title } from "@mantine/core";
 import { getDb } from "@/db";
 import { classes, institutions, studentClasses, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
+import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { StudentAdmissionForm } from "@/components/student-admission-form";
 import { StudentClassMatrix } from "@/components/student-class-matrix";
 import { StudentListTable } from "@/components/student-list-table";
@@ -30,15 +32,17 @@ export default async function EvaluationStudentsPage({ params }: Props) {
   const canManage = await canManageInstitution(userId, isSuperAdmin, institutionId);
   if (!canManage) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <p className="text-sm text-stone-700">
-          You can view reports for this school, but only assigned staff can manage students. Ask an
-          administrator to add you under Admin → Schools → this school.
-        </p>
-        <Link href="/students" className="mt-4 inline-block text-teal-800 underline">
-          Back to student information
-        </Link>
-      </div>
+      <AppPage>
+        <Stack gap="md" maw={560}>
+          <Text size="sm" c="dark.6">
+            You can view reports for this school, but only assigned staff can manage students. Ask an administrator to
+            add you under Admin → Schools → this school.
+          </Text>
+          <NextMantineAnchor href="/students" size="sm" fw={600}>
+            ← Back to student information
+          </NextMantineAnchor>
+        </Stack>
+      </AppPage>
     );
   }
 
@@ -100,58 +104,76 @@ export default async function EvaluationStudentsPage({ params }: Props) {
   }));
 
   return (
-    <div className="pe-app-page">
-      <Link href="/students" className="text-sm font-medium text-teal-800 underline">
-        ← Student information
-      </Link>
-      <h1 className="pe-app-h1 pe-app-h1-mt4">Manage students — {school.name}</h1>
-      <p className="mt-2 text-sm text-stone-600">
-        View the student roster, admit new learners, and set class membership. Students can belong to
-        multiple classes.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <NextMantineAnchor href="/students" size="sm" fw={600}>
+            ← Student information
+          </NextMantineAnchor>
+          <Title order={1} size="h2" fw={700}>
+            Manage students — {school.name}
+          </Title>
+          <Text size="sm" c="dimmed" maw={640} lh={1.65}>
+            View the student roster, admit new learners, and set class membership. Students can belong to multiple
+            classes.
+          </Text>
+        </Stack>
 
-      <section className="mt-10 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Student list</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Search and review everyone on file: name, roll/admission number, contact, classes, and admission date.
-        </p>
-        <div className="mt-4">
-          <StudentListTable students={listRows} classNamesByStudentId={classNamesByStudentId} />
-        </div>
-      </section>
+        <Paper withBorder shadow="sm" p={{ base: "md", lg: "xl" }} radius="lg">
+          <Stack gap="md">
+            <div>
+              <Title order={2} size="h5" fw={600}>
+                Student list
+              </Title>
+              <Text size="xs" c="dimmed" mt={6}>
+                Search and review everyone on file: name, roll number, contact, classes, and admission date.
+              </Text>
+            </div>
+            <StudentListTable students={listRows} classNamesByStudentId={classNamesByStudentId} />
+          </Stack>
+        </Paper>
 
-      <section className="mt-8">
-        <h2 className="text-sm font-semibold text-stone-900">Admit new student</h2>
-        <p className="mt-1 text-xs text-stone-600">Full admission form — profile, contacts, documents, and previous school.</p>
-        <div className="mt-4">
-        <StudentAdmissionForm
-          institutionId={institutionId}
-          schoolName={school.name}
-          defaultAdmissionDate={format(new Date(), "yyyy-MM-dd")}
-        />
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-stone-900">Class membership</h2>
-        <p className="mt-1 text-xs text-stone-600">
-          Check every class each student attends. This drives evaluation filters.
-        </p>
-        <div className="mt-4">
-          <StudentClassMatrix
-            students={studRows.map((s) => ({
-              id: s.id,
-              firstName: s.firstName,
-              lastName: s.lastName,
-            }))}
-            classes={classRows.map((c) => ({ id: c.id, name: c.name }))}
-            enrolled={enrolled.map((e) => ({
-              studentId: e.studentId,
-              classId: e.classId,
-            }))}
+        <Stack gap="md">
+          <div>
+            <Title order={2} size="h5" fw={600}>
+              Admit new student
+            </Title>
+            <Text size="xs" c="dimmed" mt={6}>
+              Full admission form — profile, contacts, documents, and previous school.
+            </Text>
+          </div>
+          <StudentAdmissionForm
+            institutionId={institutionId}
+            schoolName={school.name}
+            defaultAdmissionDate={format(new Date(), "yyyy-MM-dd")}
           />
-        </div>
-      </section>
-    </div>
+        </Stack>
+
+        <Paper withBorder shadow="sm" p={{ base: "md", lg: "xl" }} radius="lg">
+          <Stack gap="md">
+            <div>
+              <Title order={2} size="h5" fw={600}>
+                Class membership
+              </Title>
+              <Text size="xs" c="dimmed" mt={6}>
+                Set which classes each student attends. This drives evaluation filters.
+              </Text>
+            </div>
+            <StudentClassMatrix
+              students={studRows.map((s) => ({
+                id: s.id,
+                firstName: s.firstName,
+                lastName: s.lastName,
+              }))}
+              classes={classRows.map((c) => ({ id: c.id, name: c.name }))}
+              enrolled={enrolled.map((e) => ({
+                studentId: e.studentId,
+                classId: e.classId,
+              }))}
+            />
+          </Stack>
+        </Paper>
+      </Stack>
+    </AppPage>
   );
 }

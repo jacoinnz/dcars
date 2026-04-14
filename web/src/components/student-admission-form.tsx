@@ -1,8 +1,35 @@
 "use client";
 
 import { useActionState } from "react";
+import {
+  Alert,
+  Button,
+  Code,
+  Divider,
+  NativeSelect,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import type { StudentAdmissionState } from "@/app/evaluations/actions";
 import { submitStudentAdmission } from "@/app/evaluations/actions";
+
+function fe(fieldErrors: Record<string, string[]> | undefined, key: string) {
+  return fieldErrors?.[key]?.join(" ");
+}
+
+const GENDER_OPTIONS = [
+  { value: "", label: "Select…", disabled: true },
+  { value: "Female", label: "Female" },
+  { value: "Male", label: "Male" },
+  { value: "Non-binary", label: "Non-binary" },
+  { value: "Prefer not to say", label: "Prefer not to say" },
+  { value: "Other", label: "Other" },
+];
 
 export function StudentAdmissionForm(props: {
   institutionId: string;
@@ -17,492 +44,378 @@ export function StudentAdmissionForm(props: {
   const fieldErrors = state?.ok === false ? state.fieldErrors : undefined;
 
   return (
-    <form
+    <Paper
+      component="form"
       action={formAction}
-      className="space-y-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+      withBorder
+      shadow="sm"
+      p={{ base: "md", sm: "xl" }}
+      radius="lg"
     >
       <input type="hidden" name="institutionId" value={props.institutionId} />
 
-      <div className="space-y-1 border-b border-stone-100 pb-4">
-        <h2 className="text-lg font-semibold text-stone-900">Student admission</h2>
-        <p className="text-sm text-stone-600">
-          Complete the learner profile for <span className="font-medium text-stone-800">{props.schoolName}</span>.
-          Required fields are marked; the rest help with records and family contact (similar layout to common school
-          MIS admission screens).
-        </p>
-      </div>
+      <Stack gap="xl">
+        <Stack gap={6}>
+          <Title order={2} size="h4" fw={600}>
+            New student admission
+          </Title>
+          <Text size="sm" c="dimmed" maw={640} lh={1.6}>
+            Complete the learner profile for <Text span fw={600} c="dark.7">{props.schoolName}</Text>.
+            Required fields are marked with an asterisk; other fields support records and family contact.
+          </Text>
+        </Stack>
 
-      {state?.ok ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
-          <p>{state.message}</p>
-          {state.studentId ? (
-            <p className="mt-2 font-mono text-xs break-all text-emerald-950">Student ID: {state.studentId}</p>
-          ) : null}
-        </div>
-      ) : null}
+        {state?.ok ? (
+          <Alert color="green" title="Saved" variant="light">
+            <Text size="sm">{state.message}</Text>
+            {state.studentId ? (
+              <Code block mt="sm" style={{ wordBreak: "break-all" }}>
+                Student ID: {state.studentId}
+              </Code>
+            ) : null}
+          </Alert>
+        ) : null}
 
-      {!state?.ok && state?.message ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-          {state.message}
-        </div>
-      ) : null}
+        {!state?.ok && state?.message ? (
+          <Alert color="yellow" title="Could not save" variant="light">
+            {state.message}
+          </Alert>
+        ) : null}
 
-      <fieldset className="space-y-4 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Admission &amp; identity</legend>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Admission date</span>
-            <input
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Admission & identity
+          </Title>
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+            <TextInput
               name="admissionDate"
               type="date"
+              label="Admission date"
               defaultValue={props.defaultAdmissionDate}
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "admissionDate")}
             />
-            {fieldErrors?.admissionDate ? (
-              <span className="text-xs text-red-700">{fieldErrors.admissionDate.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Admission / roll number</span>
-            <input
+            <TextInput
               name="admissionNumber"
-              autoComplete="off"
+              label="Admission / roll number"
               placeholder="e.g. 2026-0142"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              autoComplete="off"
+              error={fe(fieldErrors, "admissionNumber")}
             />
-            {fieldErrors?.admissionNumber ? (
-              <span className="text-xs text-red-700">{fieldErrors.admissionNumber.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-      </fieldset>
+          </SimpleGrid>
+        </Stack>
 
-      <fieldset className="space-y-4 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Student name</legend>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">First name *</span>
-            <input
+        <Divider />
+
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Student name
+          </Title>
+          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
+            <TextInput
               name="firstName"
+              label="First name"
               required
               autoComplete="given-name"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "firstName")}
             />
-            {fieldErrors?.firstName ? (
-              <span className="text-xs text-red-700">{fieldErrors.firstName.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Middle name</span>
-            <input
+            <TextInput
               name="middleName"
-              autoComplete="additional-name"
+              label="Middle name"
               placeholder="Optional"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              autoComplete="additional-name"
+              error={fe(fieldErrors, "middleName")}
             />
-            {fieldErrors?.middleName ? (
-              <span className="text-xs text-red-700">{fieldErrors.middleName.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Last name *</span>
-            <input
+            <TextInput
               name="lastName"
+              label="Last name"
               required
               autoComplete="family-name"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "lastName")}
             />
-            {fieldErrors?.lastName ? (
-              <span className="text-xs text-red-700">{fieldErrors.lastName.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Date of birth</span>
-            <input name="dateOfBirth" type="date" className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm" />
-            {fieldErrors?.dateOfBirth ? (
-              <span className="text-xs text-red-700">{fieldErrors.dateOfBirth.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Gender</span>
-            <select name="gender" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" defaultValue="">
-              <option value="">Select…</option>
-              <option value="Female">Female</option>
-              <option value="Male">Male</option>
-              <option value="Non-binary">Non-binary</option>
-              <option value="Prefer not to say">Prefer not to say</option>
-              <option value="Other">Other</option>
-            </select>
-            {fieldErrors?.gender ? (
-              <span className="text-xs text-red-700">{fieldErrors.gender.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Blood group</span>
-            <input
+          </SimpleGrid>
+          <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
+            <TextInput
+              name="dateOfBirth"
+              type="date"
+              label="Date of birth"
+              error={fe(fieldErrors, "dateOfBirth")}
+            />
+            <NativeSelect
+              name="gender"
+              label="Gender"
+              data={GENDER_OPTIONS}
+              defaultValue=""
+              error={fe(fieldErrors, "gender")}
+            />
+            <TextInput
               name="bloodGroup"
+              label="Blood group"
               placeholder="e.g. O+"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "bloodGroup")}
             />
-            {fieldErrors?.bloodGroup ? (
-              <span className="text-xs text-red-700">{fieldErrors.bloodGroup.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-      </fieldset>
+          </SimpleGrid>
+        </Stack>
 
-      <fieldset className="space-y-4 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Contact &amp; address</legend>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Student email</span>
-            <input
+        <Divider />
+
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Contact & address
+          </Title>
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+            <TextInput
               name="email"
               type="email"
+              label="Student email"
               autoComplete="email"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "email")}
             />
-            {fieldErrors?.email ? (
-              <span className="text-xs text-red-700">{fieldErrors.email.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Student phone</span>
-            <input
+            <TextInput
               name="phone"
               type="tel"
               inputMode="tel"
+              label="Student phone"
               autoComplete="tel"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
+              error={fe(fieldErrors, "phone")}
             />
-            {fieldErrors?.phone ? (
-              <span className="text-xs text-red-700">{fieldErrors.phone.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-        <label className="block space-y-1">
-          <span className="text-sm font-medium text-stone-800">Address</span>
-          <textarea
+          </SimpleGrid>
+          <Textarea
             name="address"
+            label="Address"
+            placeholder="Street, town, postcode"
             rows={3}
             autoComplete="street-address"
-            className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
-            placeholder="Street, town, postcode"
+            error={fe(fieldErrors, "address")}
           />
-          {fieldErrors?.address ? (
-            <span className="text-xs text-red-700">{fieldErrors.address.join(" ")}</span>
-          ) : null}
-        </label>
-      </fieldset>
+        </Stack>
 
-      <fieldset className="space-y-5 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Parent &amp; guardian information</legend>
-        <p className="text-sm text-stone-600">
-          Contact details for parents and, if applicable, a local guardian or nominee (same structure as typical school
-          admission forms).
-        </p>
+        <Divider />
 
-        <div className="space-y-3 rounded-xl border border-stone-200 bg-stone-50/80 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-stone-600">Father</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Full name</span>
-              <input
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Parent & guardian
+          </Title>
+          <Text size="sm" c="dimmed" maw={640}>
+            Contact details for parents and, if applicable, a local guardian (same structure as typical school
+            admission forms).
+          </Text>
+
+          <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Stack gap="md">
+              <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
+                Father
+              </Text>
+              <TextInput
                 name="fatherName"
+                label="Full name"
                 autoComplete="section-father name"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+                error={fe(fieldErrors, "fatherName")}
               />
-              {fieldErrors?.fatherName ? (
-                <span className="text-xs text-red-700">{fieldErrors.fatherName.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Occupation</span>
-              <input name="fatherOccupation" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" />
-              {fieldErrors?.fatherOccupation ? (
-                <span className="text-xs text-red-700">{fieldErrors.fatherOccupation.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Phone</span>
-              <input
-                name="fatherPhone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="section-father tel"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-              />
-              {fieldErrors?.fatherPhone ? (
-                <span className="text-xs text-red-700">{fieldErrors.fatherPhone.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Email</span>
-              <input
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                <TextInput
+                  name="fatherOccupation"
+                  label="Occupation"
+                  error={fe(fieldErrors, "fatherOccupation")}
+                />
+                <TextInput
+                  name="fatherPhone"
+                  type="tel"
+                  inputMode="tel"
+                  label="Phone"
+                  autoComplete="section-father tel"
+                  error={fe(fieldErrors, "fatherPhone")}
+                />
+              </SimpleGrid>
+              <TextInput
                 name="fatherEmail"
                 type="email"
+                label="Email"
                 autoComplete="section-father email"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+                error={fe(fieldErrors, "fatherEmail")}
               />
-              {fieldErrors?.fatherEmail ? (
-                <span className="text-xs text-red-700">{fieldErrors.fatherEmail.join(" ")}</span>
-              ) : null}
-            </label>
-          </div>
-        </div>
+            </Stack>
+          </Paper>
 
-        <div className="space-y-3 rounded-xl border border-stone-200 bg-stone-50/80 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-stone-600">Mother</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Full name</span>
-              <input
+          <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Stack gap="md">
+              <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
+                Mother
+              </Text>
+              <TextInput
                 name="motherName"
+                label="Full name"
                 autoComplete="section-mother name"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+                error={fe(fieldErrors, "motherName")}
               />
-              {fieldErrors?.motherName ? (
-                <span className="text-xs text-red-700">{fieldErrors.motherName.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Occupation</span>
-              <input name="motherOccupation" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" />
-              {fieldErrors?.motherOccupation ? (
-                <span className="text-xs text-red-700">{fieldErrors.motherOccupation.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Phone</span>
-              <input
-                name="motherPhone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="section-mother tel"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-              />
-              {fieldErrors?.motherPhone ? (
-                <span className="text-xs text-red-700">{fieldErrors.motherPhone.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Email</span>
-              <input
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                <TextInput
+                  name="motherOccupation"
+                  label="Occupation"
+                  error={fe(fieldErrors, "motherOccupation")}
+                />
+                <TextInput
+                  name="motherPhone"
+                  type="tel"
+                  inputMode="tel"
+                  label="Phone"
+                  autoComplete="section-mother tel"
+                  error={fe(fieldErrors, "motherPhone")}
+                />
+              </SimpleGrid>
+              <TextInput
                 name="motherEmail"
                 type="email"
+                label="Email"
                 autoComplete="section-mother email"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+                error={fe(fieldErrors, "motherEmail")}
               />
-              {fieldErrors?.motherEmail ? (
-                <span className="text-xs text-red-700">{fieldErrors.motherEmail.join(" ")}</span>
-              ) : null}
-            </label>
-          </div>
-        </div>
+            </Stack>
+          </Paper>
 
-        <div className="space-y-3 rounded-xl border border-stone-200 bg-stone-50/80 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-stone-600">Guardian / local guardian</h3>
-          <p className="text-xs text-stone-600">
-            Use when someone other than the parents above is the primary contact for school matters (e.g. grandparent,
-            foster carer).
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Guardian name</span>
-              <input name="guardianName" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" />
-              {fieldErrors?.guardianName ? (
-                <span className="text-xs text-red-700">{fieldErrors.guardianName.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1 sm:col-span-2">
-              <span className="text-sm font-medium text-stone-800">Relationship to student</span>
-              <input
-                name="guardianRelationship"
-                placeholder="e.g. Grandmother, uncle, foster parent"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-              />
-              {fieldErrors?.guardianRelationship ? (
-                <span className="text-xs text-red-700">{fieldErrors.guardianRelationship.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Phone</span>
-              <input name="guardianPhone" type="tel" inputMode="tel" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" />
-              {fieldErrors?.guardianPhone ? (
-                <span className="text-xs text-red-700">{fieldErrors.guardianPhone.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Email</span>
-              <input name="guardianEmail" type="email" className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm" />
-              {fieldErrors?.guardianEmail ? (
-                <span className="text-xs text-red-700">{fieldErrors.guardianEmail.join(" ")}</span>
-              ) : null}
-            </label>
-          </div>
-        </div>
-      </fieldset>
+          <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Stack gap="sm">
+              <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
+                Guardian / local contact
+              </Text>
+              <Text size="xs" c="dimmed">
+                When someone other than the parents is the primary contact (e.g. grandparent, foster carer).
+              </Text>
+              <Stack gap="md">
+                <TextInput name="guardianName" label="Guardian name" error={fe(fieldErrors, "guardianName")} />
+                <TextInput
+                  name="guardianRelationship"
+                  label="Relationship to student"
+                  placeholder="e.g. Grandmother, uncle"
+                  error={fe(fieldErrors, "guardianRelationship")}
+                />
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                  <TextInput
+                    name="guardianPhone"
+                    type="tel"
+                    inputMode="tel"
+                    label="Phone"
+                    error={fe(fieldErrors, "guardianPhone")}
+                  />
+                  <TextInput
+                    name="guardianEmail"
+                    type="email"
+                    label="Email"
+                    error={fe(fieldErrors, "guardianEmail")}
+                  />
+                </SimpleGrid>
+              </Stack>
+            </Stack>
+          </Paper>
+        </Stack>
 
-      <fieldset className="space-y-4 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Documents &amp; references</legend>
-        <p className="text-sm text-stone-600">
-          Record document details supplied at admission (certificate numbers, ID references, dates). File uploads are
-          not stored here yet — use this as your checklist and reference log.
-        </p>
-        <div className="space-y-4 rounded-xl border border-stone-200 bg-stone-50/80 p-4">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Birth certificate</span>
-            <input
+        <Divider />
+
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Documents & references
+          </Title>
+          <Text size="sm" c="dimmed">
+            Record document details supplied at admission. File uploads are not stored here yet — use this as a
+            checklist and reference log.
+          </Text>
+          <Stack gap="md">
+            <TextInput
               name="documentBirthCert"
-              placeholder="Registration number, issuing authority, or date issued"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              label="Birth certificate"
+              placeholder="Registration number, authority, or date issued"
+              error={fe(fieldErrors, "documentBirthCert")}
             />
-            {fieldErrors?.documentBirthCert ? (
-              <span className="text-xs text-red-700">{fieldErrors.documentBirthCert.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">National ID / passport</span>
-            <input
+            <TextInput
               name="documentNationalId"
+              label="National ID / passport"
               placeholder="Document number and type"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              error={fe(fieldErrors, "documentNationalId")}
             />
-            {fieldErrors?.documentNationalId ? (
-              <span className="text-xs text-red-700">{fieldErrors.documentNationalId.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Transfer / leaving certificate</span>
-            <input
+            <TextInput
               name="documentTransferCert"
+              label="Transfer / leaving certificate"
               placeholder="Reference from previous school (if applicable)"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              error={fe(fieldErrors, "documentTransferCert")}
             />
-            {fieldErrors?.documentTransferCert ? (
-              <span className="text-xs text-red-700">{fieldErrors.documentTransferCert.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Medical / immunization</span>
-            <textarea
+            <Textarea
               name="documentMedicalImmunization"
+              label="Medical / immunization"
+              placeholder="Health card ref, immunization summary, or clinic note"
               rows={2}
-              placeholder="Health card ref, immunization record summary, or clinic note"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              error={fe(fieldErrors, "documentMedicalImmunization")}
             />
-            {fieldErrors?.documentMedicalImmunization ? (
-              <span className="text-xs text-red-700">{fieldErrors.documentMedicalImmunization.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Other documents</span>
-            <textarea
+            <Textarea
               name="documentOtherNotes"
+              label="Other documents"
+              placeholder="Custody order, sponsorship letter, etc."
               rows={2}
-              placeholder="Any other papers on file (e.g. custody order, sponsorship letter)"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              error={fe(fieldErrors, "documentOtherNotes")}
             />
-            {fieldErrors?.documentOtherNotes ? (
-              <span className="text-xs text-red-700">{fieldErrors.documentOtherNotes.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-      </fieldset>
+          </Stack>
+        </Stack>
 
-      <fieldset className="space-y-5 border-0 p-0">
-        <legend className="text-sm font-semibold text-stone-900">Education &amp; previous school</legend>
-        <p className="text-sm text-stone-600">
-          If the learner is transferring from another institution, capture the last school&apos;s details (typical
-          admission transfer block).
-        </p>
+        <Divider />
 
-        <div className="space-y-4 rounded-xl border border-stone-200 bg-stone-50/80 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-stone-600">Previous school information</h3>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">School name</span>
-            <input
-              name="previousSchool"
-              placeholder="Full name of the last school or college"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-            />
-            {fieldErrors?.previousSchool ? (
-              <span className="text-xs text-red-700">{fieldErrors.previousSchool.join(" ")}</span>
-            ) : null}
-          </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">School address</span>
-            <textarea
-              name="previousSchoolAddress"
-              rows={2}
-              placeholder="Town, region, postcode / country if relevant"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-            />
-            {fieldErrors?.previousSchoolAddress ? (
-              <span className="text-xs text-red-700">{fieldErrors.previousSchoolAddress.join(" ")}</span>
-            ) : null}
-          </label>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Last class / grade / year</span>
-              <input
-                name="previousSchoolClassOrGrade"
-                placeholder="e.g. Year 9, Grade 7, Form 3"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+        <Stack gap="md">
+          <Title order={3} size="sm" fw={600} c="dark.7">
+            Education & previous school
+          </Title>
+          <Text size="sm" c="dimmed">
+            If the learner is transferring from another institution, capture the last school&apos;s details.
+          </Text>
+          <Paper withBorder p="md" radius="md" bg="gray.0">
+            <Stack gap="md">
+              <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
+                Previous school
+              </Text>
+              <TextInput
+                name="previousSchool"
+                label="School name"
+                placeholder="Full name of the last school or college"
+                error={fe(fieldErrors, "previousSchool")}
               />
-              {fieldErrors?.previousSchoolClassOrGrade ? (
-                <span className="text-xs text-red-700">{fieldErrors.previousSchoolClassOrGrade.join(" ")}</span>
-              ) : null}
-            </label>
-            <label className="block space-y-1">
-              <span className="text-sm font-medium text-stone-800">Date left school</span>
-              <input
-                name="previousSchoolDateLeft"
-                type="date"
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+              <Textarea
+                name="previousSchoolAddress"
+                label="School address"
+                placeholder="Town, region, postcode / country"
+                rows={2}
+                error={fe(fieldErrors, "previousSchoolAddress")}
               />
-              {fieldErrors?.previousSchoolDateLeft ? (
-                <span className="text-xs text-red-700">{fieldErrors.previousSchoolDateLeft.join(" ")}</span>
-              ) : null}
-            </label>
-          </div>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-stone-800">Reason for leaving / transfer</span>
-            <textarea
-              name="previousSchoolLeavingReason"
-              rows={2}
-              placeholder="e.g. Relocation, completion of phase, disciplinary transfer — as appropriate"
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-            />
-            {fieldErrors?.previousSchoolLeavingReason ? (
-              <span className="text-xs text-red-700">{fieldErrors.previousSchoolLeavingReason.join(" ")}</span>
-            ) : null}
-          </label>
-        </div>
-
-        <label className="block space-y-1">
-          <span className="text-sm font-medium text-stone-800">General admission notes</span>
-          <textarea
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                <TextInput
+                  name="previousSchoolClassOrGrade"
+                  label="Last class / grade / year"
+                  placeholder="e.g. Year 9, Grade 7"
+                  error={fe(fieldErrors, "previousSchoolClassOrGrade")}
+                />
+                <TextInput
+                  name="previousSchoolDateLeft"
+                  type="date"
+                  label="Date left school"
+                  error={fe(fieldErrors, "previousSchoolDateLeft")}
+                />
+              </SimpleGrid>
+              <Textarea
+                name="previousSchoolLeavingReason"
+                label="Reason for leaving / transfer"
+                rows={2}
+                error={fe(fieldErrors, "previousSchoolLeavingReason")}
+              />
+            </Stack>
+          </Paper>
+          <Textarea
             name="admissionNotes"
+            label="General admission notes"
+            placeholder="Medical alerts, learning needs, or other notes."
             rows={3}
-            className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
-            placeholder="Medical alerts, learning needs, or other notes not covered above."
+            error={fe(fieldErrors, "admissionNotes")}
           />
-          {fieldErrors?.admissionNotes ? (
-            <span className="text-xs text-red-700">{fieldErrors.admissionNotes.join(" ")}</span>
-          ) : null}
-        </label>
-      </fieldset>
+        </Stack>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {pending ? "Saving…" : "Submit admission"}
-      </button>
-    </form>
+        <Button type="submit" fullWidth size="md" color="teal" loading={pending} mt="xs">
+          Submit admission
+        </Button>
+      </Stack>
+    </Paper>
   );
 }

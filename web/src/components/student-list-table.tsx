@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Paper, Stack, Table, Text, TextInput } from "@mantine/core";
 
 export type StudentListRow = {
   id: string;
@@ -24,7 +25,7 @@ export function StudentListTable(props: {
     const s = q.trim().toLowerCase();
     if (!s) return props.students;
     return props.students.filter((st) => {
-      const classes = (props.classNamesByStudentId[st.id] ?? []).join(" ");
+      const classStr = (props.classNamesByStudentId[st.id] ?? []).join(" ");
       const blob = [
         st.firstName,
         st.middleName,
@@ -33,7 +34,7 @@ export function StudentListTable(props: {
         st.gender,
         st.phone,
         st.email,
-        classes,
+        classStr,
       ]
         .filter(Boolean)
         .join(" ")
@@ -54,69 +55,82 @@ export function StudentListTable(props: {
   }
 
   return (
-    <div>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label className="block w-full max-w-lg">
-          <span className="sr-only">Search students</span>
-          <input
-            type="search"
-            placeholder="Search by name, roll number, class, phone…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm shadow-sm"
-            autoComplete="off"
-          />
-        </label>
-        <p className="shrink-0 text-xs text-stone-500">
-          Showing {filtered.length} of {props.students.length}
-        </p>
-      </div>
+    <Stack gap="md">
+      <TextInput
+        label="Search students"
+        description={`Showing ${filtered.length} of ${props.students.length}`}
+        placeholder="Name, roll number, class, phone…"
+        value={q}
+        onChange={(e) => setQ(e.currentTarget.value)}
+        autoComplete="off"
+        size="sm"
+      />
 
       {filtered.length === 0 ? (
-        <p className="rounded-lg border border-stone-200 bg-stone-50 px-4 py-6 text-center text-sm text-stone-600">
-          {props.students.length === 0
-            ? "No students recorded yet. Admit a learner using the form below."
-            : "No students match your search."}
-        </p>
+        <Paper withBorder p="xl" radius="md" bg="gray.0">
+          <Text size="sm" c="dimmed" ta="center">
+            {props.students.length === 0
+              ? "No students recorded yet. Admit a learner using the form below."
+              : "No students match your search."}
+          </Text>
+        </Paper>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-600">
-              <tr>
-                <th className="whitespace-nowrap px-3 py-3">#</th>
-                <th className="whitespace-nowrap px-3 py-3">Student</th>
-                <th className="whitespace-nowrap px-3 py-3">Roll / adm. no.</th>
-                <th className="whitespace-nowrap px-3 py-3">Gender</th>
-                <th className="min-w-[7rem] px-3 py-3">Contact</th>
-                <th className="min-w-[8rem] px-3 py-3">Classes</th>
-                <th className="whitespace-nowrap px-3 py-3">Adm. date</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Table.ScrollContainer minWidth={720}>
+          <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing="sm" horizontalSpacing="md">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th style={{ width: 48 }}>#</Table.Th>
+                <Table.Th>Student</Table.Th>
+                <Table.Th>Roll / adm. no.</Table.Th>
+                <Table.Th>Gender</Table.Th>
+                <Table.Th>Contact</Table.Th>
+                <Table.Th>Classes</Table.Th>
+                <Table.Th>Adm. date</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
               {filtered.map((st, i) => {
                 const classes = props.classNamesByStudentId[st.id] ?? [];
                 return (
-                  <tr key={st.id} className="border-t border-stone-100">
-                    <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-stone-500">{i + 1}</td>
-                    <td className="px-3 py-2.5 font-medium text-stone-900">{displayName(st)}</td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-stone-700">
-                      {st.admissionNumber?.trim() || "—"}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-stone-700">{st.gender?.trim() || "—"}</td>
-                    <td className="max-w-[12rem] break-words px-3 py-2.5 text-stone-700">{contact(st)}</td>
-                    <td className="px-3 py-2.5 text-stone-700">
-                      {classes.length ? [...classes].sort((a, b) => a.localeCompare(b)).join(", ") : "—"}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-stone-700">
-                      {st.admissionDate?.trim() || "—"}
-                    </td>
-                  </tr>
+                  <Table.Tr key={st.id}>
+                    <Table.Td>
+                      <Text size="sm" c="dimmed" ff="monospace">
+                        {i + 1}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm" fw={500}>
+                        {displayName(st)}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">{st.admissionNumber?.trim() || "—"}</Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">{st.gender?.trim() || "—"}</Text>
+                    </Table.Td>
+                    <Table.Td maw={200}>
+                      <Text size="sm" style={{ wordBreak: "break-word" }}>
+                        {contact(st)}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">
+                        {classes.length ? [...classes].sort((a, b) => a.localeCompare(b)).join(", ") : "—"}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm" ff="monospace">
+                        {st.admissionDate?.trim() || "—"}
+                      </Text>
+                    </Table.Td>
+                  </Table.Tr>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
       )}
-    </div>
+    </Stack>
   );
 }

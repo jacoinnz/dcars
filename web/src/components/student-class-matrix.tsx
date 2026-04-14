@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { Alert, Checkbox, Table, Text } from "@mantine/core";
 import { setStudentEnrollment } from "@/app/evaluations/actions";
 
 type Student = { id: string; firstName: string; lastName: string };
@@ -23,52 +24,59 @@ export function StudentClassMatrix(props: {
 
   if (props.classes.length === 0) {
     return (
-      <p className="text-sm text-amber-800">
-        Add classes for this school in Admin → Schools first.
-      </p>
+      <Alert color="yellow" title="No classes yet" variant="light">
+        <Text size="sm">Add classes for this school in Admin → Schools first.</Text>
+      </Alert>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-stone-200 bg-stone-50 text-left text-xs uppercase text-stone-600">
-            <th className="px-2 py-2">Student</th>
-            {props.classes.map((c) => (
-              <th key={c.id} className="px-2 py-2 text-center">
-                {c.name}
-              </th>
+    <>
+      <Table.ScrollContainer minWidth={480}>
+        <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing="sm" horizontalSpacing="sm">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Student</Table.Th>
+              {props.classes.map((c) => (
+                <Table.Th key={c.id} ta="center" maw={120}>
+                  <Text size="xs" fw={600} lineClamp={2}>
+                    {c.name}
+                  </Text>
+                </Table.Th>
+              ))}
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {props.students.map((s) => (
+              <Table.Tr key={s.id}>
+                <Table.Td>
+                  <Text size="sm" fw={500}>
+                    {s.firstName} {s.lastName}
+                  </Text>
+                </Table.Td>
+                {props.classes.map((c) => {
+                  const on = set.has(key(s.id, c.id));
+                  return (
+                    <Table.Td key={c.id} ta="center">
+                      <Checkbox
+                        checked={on}
+                        disabled={pending}
+                        onChange={(e) => toggle(s.id, c.id, e.currentTarget.checked)}
+                        aria-label={`${s.firstName} ${s.lastName} in ${c.name}`}
+                      />
+                    </Table.Td>
+                  );
+                })}
+              </Table.Tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {props.students.map((s) => (
-            <tr key={s.id} className="border-b border-stone-100">
-              <td className="px-2 py-2 font-medium text-stone-900">
-                {s.firstName} {s.lastName}
-              </td>
-              {props.classes.map((c) => {
-                const on = set.has(key(s.id, c.id));
-                return (
-                  <td key={c.id} className="px-2 py-2 text-center">
-                    <input
-                      type="checkbox"
-                      checked={on}
-                      disabled={pending}
-                      onChange={(e) => toggle(s.id, c.id, e.target.checked)}
-                      aria-label={`${s.firstName} ${s.lastName} in ${c.name}`}
-                    />
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
       {pending ? (
-        <p className="mt-2 text-xs text-stone-500">Saving…</p>
+        <Text size="xs" c="dimmed" mt="xs">
+          Saving…
+        </Text>
       ) : null}
-    </div>
+    </>
   );
 }
