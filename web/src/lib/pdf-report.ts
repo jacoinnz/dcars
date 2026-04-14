@@ -10,6 +10,7 @@ export async function buildSummaryPdf(params: {
     reports: number;
     youthPresent: number;
     youthRegistered: number;
+    participantRegistrations: number;
   };
   rows: SiteSummary[];
 }) {
@@ -43,7 +44,7 @@ export async function buildSummaryPdf(params: {
   y -= 8;
 
   draw(
-    `Programme totals — reports: ${params.totals.reports}, youth present: ${params.totals.youthPresent}, youth registered (sum): ${params.totals.youthRegistered}, sites: ${params.totals.sites}`,
+    `Programme totals — participant registrations: ${params.totals.participantRegistrations}, reports: ${params.totals.reports}, youth present: ${params.totals.youthPresent}, youth registered (sum): ${params.totals.youthRegistered}, sites: ${params.totals.sites}`,
     10,
   );
   y -= 10;
@@ -57,7 +58,7 @@ export async function buildSummaryPdf(params: {
         ? "n/a"
         : `${Math.round(r.avgAttendanceRate * 1000) / 10}%`;
     draw(
-      `${r.siteName} (${r.siteCode}) — reports: ${r.reportCount}, present: ${r.totalYouthPresent}, avg attendance: ${rate}`,
+      `${r.siteName} (${r.siteCode}) — participants: ${r.participantRegistrations}, reports: ${r.reportCount}, present: ${r.totalYouthPresent}, avg attendance: ${rate}`,
       10,
     );
   }

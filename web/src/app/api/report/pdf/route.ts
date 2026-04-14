@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   ]);
 
   const pdfBytes = await buildSummaryPdf({
-    title: "Youth programme — session summary",
+    title: "Youth programme — summary",
     periodLabel: `${format(from, "yyyy-MM-dd")} → ${format(to, "yyyy-MM-dd")}`,
     generatedAt: new Date(),
     totals,

@@ -1,6 +1,6 @@
 # Youth programme — data entry and reporting
 
-Web app for multi-site session reporting: form entry, **Neon (Postgres)** storage, aggregation dashboard, PDF export, and missing-data alerts.
+Web app for multi-site **participant registration** (unique ID per row), optional legacy **session** metrics, **Neon (Postgres)** storage, dashboard, PDF export, and missing-session alerts.
 
 ## Prerequisites
 
@@ -51,4 +51,5 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Production notes
 
-- Add authentication, roles (facilitator vs programme admin), and audit logging before handling sensitive youth data.
+- Participant records include **PII** (names, contacts, DOB, ethnicity). Use **HTTPS**, restrict access, and comply with your jurisdiction’s youth-data rules before production use.
+- Add authentication, roles (facilitator vs programme admin), and audit logging for any production deployment.

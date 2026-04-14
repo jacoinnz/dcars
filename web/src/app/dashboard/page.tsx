@@ -28,7 +28,7 @@ export default async function DashboardPage({
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">Dashboard</h1>
           <p className="text-sm text-stone-600">
-            Aggregated session data across sites ({fromStr} → {toStr}).
+            Session metrics and participant registrations by site ({fromStr} → {toStr}).
           </p>
         </div>
         <form className="flex flex-wrap items-end gap-2" method="get">
@@ -59,7 +59,13 @@ export default async function DashboardPage({
         </form>
       </div>
 
-      <section className="mb-8 grid gap-3 sm:grid-cols-4">
+      <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Registrations</p>
+          <p className="mt-1 text-2xl font-semibold text-stone-900">
+            {totals.participantRegistrations}
+          </p>
+        </div>
         <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Reports</p>
           <p className="mt-1 text-2xl font-semibold text-stone-900">{totals.reports}</p>
@@ -94,6 +100,7 @@ export default async function DashboardPage({
             <thead className="bg-stone-50 text-xs uppercase tracking-wide text-stone-600">
               <tr>
                 <th className="px-4 py-3">Site</th>
+                <th className="px-4 py-3">Participants</th>
                 <th className="px-4 py-3">Reports</th>
                 <th className="px-4 py-3">Present</th>
                 <th className="px-4 py-3">Registered</th>
@@ -107,6 +114,7 @@ export default async function DashboardPage({
                     {r.siteName}{" "}
                     <span className="text-stone-500">({r.siteCode})</span>
                   </td>
+                  <td className="px-4 py-3 text-stone-800">{r.participantRegistrations}</td>
                   <td className="px-4 py-3 text-stone-800">{r.reportCount}</td>
                   <td className="px-4 py-3 text-stone-800">{r.totalYouthPresent}</td>
                   <td className="px-4 py-3 text-stone-800">{r.totalYouthRegistered}</td>
