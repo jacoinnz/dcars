@@ -135,7 +135,7 @@ export function AppTopBar() {
           >
             {unauthorized ? (
               <Text size="sm" c="dimmed" px="md" py="sm">
-                <Anchor component={Link} href="/login" fw={600} c="teal.8">
+                <Anchor component={Link} href="/login" fw={600} c="blue.8">
                   Sign in
                 </Anchor>{" "}
                 to search the directory.

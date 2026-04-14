@@ -2,8 +2,9 @@
 @import "tailwindcss" layer(tailwind);
 
 :root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
+  /* Near Mantine gray.0 / docs background */
+  --background: #f8f9fa;
+  --foreground: #25262b;
 }
 
 @theme inline {

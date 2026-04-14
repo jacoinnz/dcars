@@ -68,7 +68,7 @@ export function NoticeBoard(props: {
                 <Text fw={600}>{n.title}</Text>
                 <Group gap="xs">
                   {n.pinned ? (
-                    <Badge size="sm" color="teal" variant="light">
+                    <Badge size="sm" color="blue" variant="light">
                       Pinned
                     </Badge>
                   ) : null}

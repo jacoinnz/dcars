@@ -166,7 +166,7 @@ export function CalendarTodoPanel(props: {
                   style={{
                     borderRadius: "var(--mantine-radius-md)",
                     backgroundColor:
-                      isToday && inMonth ? "var(--mantine-color-teal-6)" : undefined,
+                      isToday && inMonth ? "var(--mantine-color-blue-6)" : undefined,
                     color: !inMonth
                       ? "var(--mantine-color-gray-4)"
                       : isToday && inMonth
@@ -217,7 +217,7 @@ export function CalendarTodoPanel(props: {
                 maxLength={200}
                 size="sm"
               />
-              <Button type="submit" color="teal" size="sm">
+              <Button type="submit" color="blue" size="sm">
                 Add
               </Button>
             </Group>

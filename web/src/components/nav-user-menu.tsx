@@ -45,7 +45,7 @@ export function NavUserMenu(props: {
         <Text size="xs" c="dimmed" truncate title={props.email}>
           {props.email}
           {props.isSuperAdmin ? (
-            <Badge ml={6} size="xs" variant="light" color="teal" tt="uppercase">
+            <Badge ml={6} size="xs" variant="light" color="blue" tt="uppercase">
               Admin
             </Badge>
           ) : null}
@@ -54,7 +54,7 @@ export function NavUserMenu(props: {
           component={Link}
           href="/settings/sidebar"
           variant="outline"
-          color="teal"
+          color="blue"
           fullWidth
           radius="md"
           size="sm"
@@ -95,13 +95,13 @@ export function NavUserMenu(props: {
       <Text size="xs" c="dimmed" maw={224} truncate title={props.email}>
         {props.email}
         {props.isSuperAdmin ? (
-          <Badge ml={6} size="xs" variant="light" color="teal" tt="uppercase">
+          <Badge ml={6} size="xs" variant="light" color="blue" tt="uppercase">
             Admin
           </Badge>
         ) : null}
       </Text>
       {props.isSuperAdmin ? (
-        <Button component={Link} href="/admin" variant="light" color="teal" size="compact-sm" radius="xl">
+        <Button component={Link} href="/admin" variant="light" color="blue" size="compact-sm" radius="xl">
           Admin
         </Button>
       ) : null}

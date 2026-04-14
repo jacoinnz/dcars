@@ -44,7 +44,7 @@ export function HomePageContent(props: {
       </WelcomeAudienceTabs>
 
       <Stack gap="md" mt="xl" maw={672}>
-        <Text size="xs" fw={600} tt="uppercase" c="teal.8" lts={0.5}>
+        <Text size="xs" fw={600} tt="uppercase" c="blue.8" lts={0.5}>
           Youth development programme
         </Text>
         <Title order={1} size="h2">
@@ -120,7 +120,7 @@ export function HomePageContent(props: {
       </Paper>
 
       <Group mt="xl" gap="md" wrap="wrap">
-        <Button component={Link} href="/entry" color="teal" size="md" radius="md">
+        <Button component={Link} href="/entry" color="blue" size="md" radius="md">
           Register participant
         </Button>
         <Button component={Link} href="/dashboard" variant="default" size="md" radius="md">

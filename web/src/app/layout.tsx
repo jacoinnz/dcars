@@ -31,7 +31,8 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body
-        className={`${geistSans.className} flex min-h-screen flex-col bg-stone-50 text-stone-900 md:flex-row`}
+        className={`${geistSans.className} flex min-h-screen flex-col text-stone-900 md:flex-row`}
+        style={{ backgroundColor: "var(--background)" }}
       >
         <MantineProviders>
           <SiteNav />

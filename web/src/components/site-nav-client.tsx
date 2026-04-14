@@ -62,13 +62,13 @@ function SidebarNavLink(props: { href: string; children: ReactNode }) {
         borderRadius: "var(--mantine-radius-md)",
         textDecoration: "none",
         color: active ? "#fafaf9" : "#d6d3d1",
-        backgroundColor: active ? "rgba(13, 148, 136, 0.45)" : undefined,
+        backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : undefined,
       }}
       styles={{
         root: {
           "&:hover": {
             color: "var(--mantine-color-white)",
-            backgroundColor: active ? "rgba(13, 148, 136, 0.45)" : "rgba(41, 37, 36, 0.8)",
+            backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : "rgba(41, 37, 36, 0.8)",
           },
         },
       }}
@@ -111,7 +111,7 @@ export function SiteNavClient(props: {
           borderBottom: "1px solid var(--mantine-color-dark-7)",
         }}
       >
-        <Text size="xs" fw={600} tt="uppercase" c="teal.4" lts={1}>
+        <Text size="xs" fw={600} tt="uppercase" c="blue.4" lts={1}>
           Youth programme
         </Text>
         <Text fz={11} c="dimmed" mt={4}>

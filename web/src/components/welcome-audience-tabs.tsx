@@ -71,9 +71,9 @@ export function WelcomeAudienceTabs(props: {
               style={{
                 cursor: "pointer",
                 borderWidth: 2,
-                borderColor: isActive ? "var(--mantine-color-teal-6)" : "var(--mantine-color-gray-3)",
-                backgroundColor: isActive ? "var(--mantine-color-teal-0)" : "var(--mantine-color-white)",
-                boxShadow: isActive ? "0 0 0 1px rgba(13, 148, 136, 0.25)" : undefined,
+                borderColor: isActive ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-3)",
+                backgroundColor: isActive ? "var(--mantine-color-blue-0)" : "var(--mantine-color-white)",
+                boxShadow: isActive ? "0 0 0 1px rgba(34, 139, 230, 0.35)" : undefined,
               }}
             >
               <Text size="sm" fw={600} ta="center">
@@ -84,7 +84,7 @@ export function WelcomeAudienceTabs(props: {
                 fw={600}
                 ta="center"
                 mt="xs"
-                c={isActive ? "teal.8" : "dimmed"}
+                c={isActive ? "blue.8" : "dimmed"}
                 style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {n.toLocaleString()}
@@ -100,7 +100,7 @@ export function WelcomeAudienceTabs(props: {
         {active === "students" ? (
           <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Anchor component={Link} href="/students" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/students" fw={600} c="blue.8" underline="always">
                 Student information
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -109,7 +109,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/students/attendance" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/students/attendance" fw={600} c="blue.8" underline="always">
                 Student attendance
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -118,7 +118,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/evaluations" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/evaluations" fw={600} c="blue.8" underline="always">
                 Evaluations
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -127,7 +127,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/examinations" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/examinations" fw={600} c="blue.8" underline="always">
                 Examinations
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -141,7 +141,7 @@ export function WelcomeAudienceTabs(props: {
         {active === "teachers" ? (
           <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Anchor component={Link} href="/teachers" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/teachers" fw={600} c="blue.8" underline="always">
                 Teachers hub
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -150,7 +150,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/teacher-content" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/teacher-content" fw={600} c="blue.8" underline="always">
                 Teacher content
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -159,7 +159,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/evaluations" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/evaluations" fw={600} c="blue.8" underline="always">
                 Evaluations
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -173,7 +173,7 @@ export function WelcomeAudienceTabs(props: {
         {active === "parents" ? (
           <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Anchor component={Link} href="/parents" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/parents" fw={600} c="blue.8" underline="always">
                 Parents portal
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -182,7 +182,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/family" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/family" fw={600} c="blue.8" underline="always">
                 Family attendance
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -191,7 +191,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/communications" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/communications" fw={600} c="blue.8" underline="always">
                 Communications
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -205,7 +205,7 @@ export function WelcomeAudienceTabs(props: {
         {active === "staff" ? (
           <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             <li>
-              <Anchor component={Link} href="/hr" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/hr" fw={600} c="blue.8" underline="always">
                 Human resources
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -214,7 +214,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/hr/directory" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/hr/directory" fw={600} c="blue.8" underline="always">
                 Staff directory
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -223,7 +223,7 @@ export function WelcomeAudienceTabs(props: {
               </Text>
             </li>
             <li>
-              <Anchor component={Link} href="/attendance" fw={600} c="teal.8" underline="always">
+              <Anchor component={Link} href="/attendance" fw={600} c="blue.8" underline="always">
                 Student attendance (register)
               </Anchor>
               <Text span size="sm" c="dimmed">
@@ -233,7 +233,7 @@ export function WelcomeAudienceTabs(props: {
             </li>
             {props.isSuperAdmin ? (
               <li>
-                <Anchor component={Link} href="/admin" fw={600} c="teal.8" underline="always">
+                <Anchor component={Link} href="/admin" fw={600} c="blue.8" underline="always">
                   Administration
                 </Anchor>
                 <Text span size="sm" c="dimmed">

@@ -175,7 +175,7 @@ export function DashboardPageContent(props: {
               p="md"
               shadow="sm"
               style={{ textDecoration: "none", color: "inherit", height: "100%" }}
-              className="transition hover:border-teal-300 hover:bg-teal-0"
+              className="transition hover:border-blue-300 hover:bg-blue-0"
             >
               <Text fw={600} size="sm">
                 {item.title}
@@ -183,7 +183,7 @@ export function DashboardPageContent(props: {
               <Text size="xs" c="dimmed" mt={4}>
                 {item.body}
               </Text>
-              <Text size="xs" fw={600} c="teal.8" mt="sm">
+              <Text size="xs" fw={600} c="blue.8" mt="sm">
                 Open →
               </Text>
             </Paper>
@@ -262,7 +262,7 @@ export function DashboardPageContent(props: {
 
       <Text size="sm" c="dimmed">
         Need a printable file?{" "}
-        <Anchor component={Link} href="/reports" fw={600} c="teal.8" underline="always">
+        <Anchor component={Link} href="/reports" fw={600} c="blue.8" underline="always">
           Open reports
         </Anchor>
         .

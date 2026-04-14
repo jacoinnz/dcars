@@ -71,7 +71,7 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Button type="submit" fullWidth loading={pending} color="teal" size="md" radius="md">
+        <Button type="submit" fullWidth loading={pending} color="blue" size="md" radius="md">
           {pending ? "Signing in…" : "Sign in"}
         </Button>
       </Stack>
