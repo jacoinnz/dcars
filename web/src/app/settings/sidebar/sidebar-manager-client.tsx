@@ -25,10 +25,13 @@ import {
 } from "@mantine/core";
 import {
   clearSidebarConfig,
+  countNavigableLinks,
   getDefaultSidebarConfig,
   loadSidebarConfig,
   normalizeSidebarConfigForUser,
+  removeSidebarLinkById,
   saveSidebarConfig,
+  updateSidebarLinkById,
   type SidebarNavConfig,
   type SidebarNavLink,
   type SidebarNavSection,
@@ -53,7 +56,7 @@ function applyDragEnd(prev: SidebarNavConfig, e: DragEndEvent): SidebarNavConfig
     return { ...prev, sections: arrayMove(prev.sections, oldIndex, newIndex) };
   }
 
-  if (aid.startsWith("lnk-") && oid.startsWith("lnk-")) {
+  {
     const secIdx = prev.sections.findIndex((s) => s.items.some((i) => i.id === aid));
     if (secIdx < 0) return null;
     const sec = prev.sections[secIdx];
@@ -66,8 +69,6 @@ function applyDragEnd(prev: SidebarNavConfig, e: DragEndEvent): SidebarNavConfig
     sections[secIdx] = { ...sec, items: nextItems };
     return { ...prev, sections };
   }
-
-  return null;
 }
 
 function SortableSectionCard(props: {
@@ -140,7 +141,7 @@ function SortableSectionCard(props: {
 
       {props.collapsed ? (
         <Text mt="sm" size="xs" c="dimmed">
-          {props.section.items.length} link(s)
+          {countNavigableLinks(props.section.items)} link(s)
         </Text>
       ) : (
         <>
@@ -152,6 +153,8 @@ function SortableSectionCard(props: {
                   item={item}
                   onChange={(patch) => props.onChangeLink(item.id, patch)}
                   onRemove={() => props.onRemoveLink(item.id)}
+                  onPatchLinkId={props.onChangeLink}
+                  onRemoveLinkId={props.onRemoveLink}
                 />
               ))}
             </Stack>
@@ -178,6 +181,8 @@ function SortableLinkRow(props: {
   item: SidebarNavLink;
   onChange: (patch: Partial<SidebarNavLink>) => void;
   onRemove: () => void;
+  onPatchLinkId: (linkId: string, patch: Partial<SidebarNavLink>) => void;
+  onRemoveLinkId: (linkId: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.item.id,
@@ -232,6 +237,39 @@ function SortableLinkRow(props: {
           </Button>
         )}
       </Group>
+      {props.item.children?.length ? (
+        <Stack gap="xs" mt="sm" pl="md" style={{ borderLeft: "2px solid var(--mantine-color-teal-3)" }}>
+          <Text size="xs" c="teal" fw={600}>
+            Nested links
+          </Text>
+          {props.item.children.map((ch) => (
+            <Group key={ch.id} gap="xs" wrap="wrap" align="flex-end">
+              <TextInput
+                label="Label"
+                size="xs"
+                style={{ flex: "1 1 8rem", minWidth: 0 }}
+                value={ch.label}
+                onChange={(e) => props.onPatchLinkId(ch.id, { label: e.target.value })}
+                readOnly={Boolean(ch.locked)}
+                styles={{
+                  label: { fontSize: 10 },
+                  input: ch.locked ? { backgroundColor: "var(--mantine-color-gray-1)" } : undefined,
+                }}
+              />
+              {ch.locked ? null : (
+                <Button
+                  type="button"
+                  size="compact-xs"
+                  variant="default"
+                  onClick={() => props.onRemoveLinkId(ch.id)}
+                >
+                  Remove
+                </Button>
+              )}
+            </Group>
+          ))}
+        </Stack>
+      ) : null}
     </Paper>
   );
 }
@@ -387,13 +425,13 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
                 onChangeLink={(linkId, patch) => {
                   updateSection(section.id, (s) => ({
                     ...s,
-                    items: s.items.map((it) => (it.id === linkId ? { ...it, ...patch } : it)),
+                    items: updateSidebarLinkById(s.items, linkId, patch),
                   }));
                 }}
                 onRemoveLink={(linkId) => {
                   updateSection(section.id, (s) => ({
                     ...s,
-                    items: s.items.filter((it) => it.id !== linkId),
+                    items: removeSidebarLinkById(s.items, linkId),
                   }));
                 }}
                 onAddLink={() => {

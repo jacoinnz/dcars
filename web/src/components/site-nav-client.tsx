@@ -1,16 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Anchor, Box, ScrollArea, Stack, Text } from "@mantine/core";
+import { Box, NavLink, ScrollArea, Stack, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
   getDefaultSidebarConfig,
   loadSidebarConfig,
   normalizeSidebarConfigForUser,
   type SidebarNavConfig,
+  type SidebarNavLink,
   SIDEBAR_CONFIG_EVENT,
 } from "@/lib/sidebar-config";
 import { NavUserMenu } from "@/components/nav-user-menu";
@@ -45,38 +45,115 @@ function navLinkIsActive(pathname: string, href: string, currentHash: string) {
   return currentHash === `#${frag}` || currentHash === frag;
 }
 
-function SidebarNavLink(props: { href: string; children: ReactNode }) {
+function subtreeHasActiveChild(
+  pathname: string,
+  hash: string,
+  children: SidebarNavLink[],
+): boolean {
+  return children.some(
+    (c) => Boolean(c.href && navLinkIsActive(pathname, c.href, hash)),
+  );
+}
+
+const navShellStyles = {
+  label: { fontWeight: 500, fontSize: "var(--mantine-font-size-sm)" },
+  root: {
+    borderRadius: "var(--mantine-radius-md)",
+  },
+} as const;
+
+function SidebarLeafNavLink(props: { item: SidebarNavLink }) {
   const pathname = usePathname();
   const hash = useHashFragment();
-  const active = navLinkIsActive(pathname, props.href, hash);
+  const { item } = props;
+  if (!item.href) return null;
+
+  const active = navLinkIsActive(pathname, item.href, hash);
 
   return (
-    <Anchor
+    <NavLink
       component={Link}
-      href={props.href}
-      size="sm"
-      fw={active ? 600 : 400}
-      display="block"
-      px="sm"
-      py={8}
-      style={{
-        borderRadius: "var(--mantine-radius-md)",
-        textDecoration: "none",
-        color: active ? "#fafaf9" : "#d6d3d1",
-        backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : undefined,
-      }}
+      href={item.href}
+      label={item.label}
+      active={active}
+      variant={active ? "filled" : "subtle"}
+      color="blue"
       styles={{
+        ...navShellStyles,
         root: {
+          ...navShellStyles.root,
+          color: active ? undefined : "var(--mantine-color-dark-1)",
           "&:hover": {
-            color: "var(--mantine-color-white)",
-            backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : "rgba(41, 37, 36, 0.8)",
+            backgroundColor: "var(--mantine-color-dark-6)",
+            color: "var(--mantine-color-dark-0)",
           },
         },
       }}
-    >
-      {props.children}
-    </Anchor>
+    />
   );
+}
+
+function SidebarBranchNavLink(props: { item: SidebarNavLink }) {
+  const pathname = usePathname();
+  const hash = useHashFragment();
+  const { item } = props;
+  const children = item.children!;
+  const hasActiveChild = subtreeHasActiveChild(pathname, hash, children);
+  const selfActive = item.href ? navLinkIsActive(pathname, item.href, hash) : false;
+  const branchActive = selfActive || hasActiveChild;
+
+  const [opened, setOpened] = useState(hasActiveChild);
+  useEffect(() => {
+    if (hasActiveChild) setOpened(true);
+  }, [hasActiveChild]);
+
+  const nested = useMemo(
+    () =>
+      children.map((c) => (
+        <SidebarLeafNavLink key={c.id} item={c} />
+      )),
+    [children],
+  );
+
+  const branchStyles = {
+    ...navShellStyles,
+    root: {
+      ...navShellStyles.root,
+      color: branchActive ? undefined : "var(--mantine-color-dark-1)",
+      "&:hover": {
+        backgroundColor: "var(--mantine-color-dark-6)",
+        color: "var(--mantine-color-dark-0)",
+      },
+    },
+  };
+
+  const shared = {
+    label: item.label,
+    opened,
+    onChange: setOpened,
+    active: branchActive,
+    variant: branchActive ? ("filled" as const) : ("subtle" as const),
+    color: "blue" as const,
+    childrenOffset: 28,
+    styles: branchStyles,
+  };
+
+  if (item.href) {
+    return (
+      <NavLink component={Link} href={item.href} {...shared}>
+        {nested}
+      </NavLink>
+    );
+  }
+
+  return <NavLink {...shared}>{nested}</NavLink>;
+}
+
+function SidebarNavEntry(props: { item: SidebarNavLink }) {
+  if (props.item.children?.length) {
+    return <SidebarBranchNavLink item={props.item} />;
+  }
+  return <SidebarLeafNavLink item={props.item} />;
 }
 
 export function SiteNavClient(props: {
@@ -106,21 +183,21 @@ export function SiteNavClient(props: {
   return (
     <Box
       component="aside"
-      bg="#0c0a09"
+      bg="dark.8"
       style={{
         display: "flex",
         flexDirection: "column",
         flexShrink: 0,
         width: isLg ? "15rem" : "100%",
         minHeight: isLg ? "100vh" : undefined,
-        borderBottom: isLg ? undefined : "1px solid #292524",
-        borderRight: isLg ? "1px solid #292524" : undefined,
+        borderBottom: isLg ? undefined : "1px solid var(--mantine-color-dark-5)",
+        borderRight: isLg ? "1px solid var(--mantine-color-dark-5)" : undefined,
       }}
     >
       <Box
         p="md"
         style={{
-          borderBottom: "1px solid var(--mantine-color-dark-7)",
+          borderBottom: "1px solid var(--mantine-color-dark-5)",
         }}
       >
         <Text size="xs" fw={600} tt="uppercase" c="blue.4" lts={1}>
@@ -140,9 +217,7 @@ export function SiteNavClient(props: {
               </Text>
               <Stack gap={4}>
                 {section.items.map((item) => (
-                  <SidebarNavLink key={item.id} href={item.href}>
-                    {item.label}
-                  </SidebarNavLink>
+                  <SidebarNavEntry key={item.id} item={item} />
                 ))}
               </Stack>
             </Box>
@@ -153,7 +228,7 @@ export function SiteNavClient(props: {
       <Box
         p="sm"
         style={{
-          borderTop: "1px solid var(--mantine-color-dark-7)",
+          borderTop: "1px solid var(--mantine-color-dark-5)",
         }}
       >
         <NavUserMenu

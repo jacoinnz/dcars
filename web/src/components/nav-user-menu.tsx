@@ -26,9 +26,9 @@ export function NavUserMenu(props: {
           v === "sidebar"
             ? {
                 root: {
-                  borderColor: "#57534e",
-                  backgroundColor: "#292524",
-                  color: "#f5f5f4",
+                  borderColor: "var(--mantine-color-dark-4)",
+                  backgroundColor: "var(--mantine-color-dark-6)",
+                  color: "var(--mantine-color-dark-0)",
                 },
               }
             : undefined
@@ -60,9 +60,9 @@ export function NavUserMenu(props: {
           size="sm"
           styles={{
             root: {
-              borderColor: "#57534e",
-              backgroundColor: "#1c1917",
-              color: "#ccfbf1",
+              borderColor: "var(--mantine-color-blue-4)",
+              backgroundColor: "var(--mantine-color-dark-7)",
+              color: "var(--mantine-color-blue-1)",
             },
           }}
         >
@@ -77,9 +77,9 @@ export function NavUserMenu(props: {
           size="sm"
           styles={{
             root: {
-              borderColor: "#57534e",
-              backgroundColor: "#292524",
-              color: "#e7e5e4",
+              borderColor: "var(--mantine-color-dark-4)",
+              backgroundColor: "var(--mantine-color-dark-6)",
+              color: "var(--mantine-color-dark-0)",
             },
           }}
           onClick={() => signOut({ callbackUrl: "/login" })}

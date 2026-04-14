@@ -1,4 +1,11 @@
-export type SidebarNavLink = { id: string; href: string; label: string; locked?: boolean };
+/** Leaf links require `href`. Branch nodes may omit `href` and use `children` (one level only). */
+export type SidebarNavLink = {
+  id: string;
+  label: string;
+  locked?: boolean;
+  href?: string;
+  children?: SidebarNavLink[];
+};
 export type SidebarNavSection = {
   id: string;
   title: string;
@@ -7,7 +14,7 @@ export type SidebarNavSection = {
 };
 export type SidebarNavConfig = { version: 1; sections: SidebarNavSection[] };
 
-export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v9";
+export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v10";
 export const SIDEBAR_CONFIG_EVENT = "dcaars-sidebar-config";
 
 const LOCKED_SECTION_IDS = new Set([
@@ -52,9 +59,16 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         locked: true,
         items: [
           { id: "lnk-students", href: "/students", label: "Students", locked: true },
-          { id: "lnk-stu-att", href: "/students/attendance", label: "Student attendance", locked: true },
-          { id: "lnk-eval", href: "/evaluations", label: "Evaluations", locked: true },
-          { id: "lnk-exam", href: "/examinations", label: "Examinations", locked: true },
+          {
+            id: "grp-stu-assess",
+            label: "Attendance & assessments",
+            locked: true,
+            children: [
+              { id: "lnk-stu-att", href: "/students/attendance", label: "Student attendance", locked: true },
+              { id: "lnk-eval", href: "/evaluations", label: "Evaluations", locked: true },
+              { id: "lnk-exam", href: "/examinations", label: "Examinations", locked: true },
+            ],
+          },
           { id: "lnk-comm", href: "/communications", label: "Communications", locked: true },
         ],
       },
@@ -63,14 +77,28 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         title: "Academics",
         locked: true,
         items: [
-          { id: "lnk-ac-opt", href: "/academics/module/optional-subjects", label: "Optional subjects", locked: true },
-          { id: "lnk-ac-sec", href: "/academics/module/academic-section", label: "Section", locked: true },
-          { id: "lnk-ac-cl", href: "/academics/module/school-classes", label: "Class", locked: true },
-          { id: "lnk-ac-subj", href: "/academics/module/subjects-catalog", label: "Subjects", locked: true },
-          { id: "lnk-ac-act", href: "/academics/module/assign-class-teacher", label: "Assign class teacher", locked: true },
-          { id: "lnk-ac-as", href: "/academics/module/assign-subject", label: "Assign subject", locked: true },
-          { id: "lnk-ac-cr", href: "/academics/module/classroom-allocation", label: "Class room", locked: true },
-          { id: "lnk-ac-rt", href: "/academics/module/class-routine", label: "Class routine", locked: true },
+          {
+            id: "grp-ac-curriculum",
+            label: "Class & curriculum",
+            locked: true,
+            children: [
+              { id: "lnk-ac-opt", href: "/academics/module/optional-subjects", label: "Optional subjects", locked: true },
+              { id: "lnk-ac-sec", href: "/academics/module/academic-section", label: "Section", locked: true },
+              { id: "lnk-ac-cl", href: "/academics/module/school-classes", label: "Class", locked: true },
+              { id: "lnk-ac-subj", href: "/academics/module/subjects-catalog", label: "Subjects", locked: true },
+            ],
+          },
+          {
+            id: "grp-ac-ops",
+            label: "Teachers, rooms & routine",
+            locked: true,
+            children: [
+              { id: "lnk-ac-act", href: "/academics/module/assign-class-teacher", label: "Assign class teacher", locked: true },
+              { id: "lnk-ac-as", href: "/academics/module/assign-subject", label: "Assign subject", locked: true },
+              { id: "lnk-ac-cr", href: "/academics/module/classroom-allocation", label: "Class room", locked: true },
+              { id: "lnk-ac-rt", href: "/academics/module/class-routine", label: "Class routine", locked: true },
+            ],
+          },
         ],
       },
       {
@@ -79,8 +107,15 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         locked: true,
         items: [
           { id: "lnk-hr", href: "/hr", label: "HR", locked: true },
-          { id: "lnk-teachers", href: "/teachers", label: "Teachers", locked: true },
-          { id: "lnk-parents", href: "/parents", label: "Parents", locked: true },
+          {
+            id: "grp-people-class",
+            label: "Teachers & parents",
+            locked: true,
+            children: [
+              { id: "lnk-teachers", href: "/teachers", label: "Teachers", locked: true },
+              { id: "lnk-parents", href: "/parents", label: "Parents", locked: true },
+            ],
+          },
         ],
       },
       {
@@ -103,9 +138,16 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         title: "Download center",
         locked: true,
         items: [
-          { id: "lnk-dc-ct", href: "/download-center/module/content-type", label: "Content type", locked: true },
-          { id: "lnk-dc-cl", href: "/download-center/module/content-list", label: "Content list", locked: true },
-          { id: "lnk-dc-scl", href: "/download-center/module/shared-content-list", label: "Shared content list", locked: true },
+          {
+            id: "grp-dc-content",
+            label: "Content",
+            locked: true,
+            children: [
+              { id: "lnk-dc-ct", href: "/download-center/module/content-type", label: "Content type", locked: true },
+              { id: "lnk-dc-cl", href: "/download-center/module/content-list", label: "Content list", locked: true },
+              { id: "lnk-dc-scl", href: "/download-center/module/shared-content-list", label: "Shared content list", locked: true },
+            ],
+          },
           { id: "lnk-dc-vl", href: "/download-center/module/video-list", label: "Video list", locked: true },
         ],
       },
@@ -125,11 +167,25 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
         title: "Lesson plan",
         locked: true,
         items: [
-          { id: "lnk-lp-l", href: "/lesson-plan/module/lp-lesson", label: "Lesson", locked: true },
-          { id: "lnk-lp-t", href: "/lesson-plan/module/lp-topic", label: "Topic", locked: true },
-          { id: "lnk-lp-to", href: "/lesson-plan/module/lp-topic-overview", label: "Topic overview", locked: true },
-          { id: "lnk-lp-p", href: "/lesson-plan/module/lp-lesson-plan", label: "Lesson plan", locked: true },
-          { id: "lnk-lp-po", href: "/lesson-plan/module/lp-lesson-plan-overview", label: "Lesson plan overview", locked: true },
+          {
+            id: "grp-lp-structure",
+            label: "Lessons & topics",
+            locked: true,
+            children: [
+              { id: "lnk-lp-l", href: "/lesson-plan/module/lp-lesson", label: "Lesson", locked: true },
+              { id: "lnk-lp-t", href: "/lesson-plan/module/lp-topic", label: "Topic", locked: true },
+              { id: "lnk-lp-to", href: "/lesson-plan/module/lp-topic-overview", label: "Topic overview", locked: true },
+            ],
+          },
+          {
+            id: "grp-lp-plans",
+            label: "Plans",
+            locked: true,
+            children: [
+              { id: "lnk-lp-p", href: "/lesson-plan/module/lp-lesson-plan", label: "Lesson plan", locked: true },
+              { id: "lnk-lp-po", href: "/lesson-plan/module/lp-lesson-plan-overview", label: "Lesson plan overview", locked: true },
+            ],
+          },
         ],
       },
       ...(isSuperAdmin
@@ -139,24 +195,89 @@ export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): Si
               title: "Administration",
               locked: true,
               items: [
-                { id: "lnk-admin", href: "/admin", label: "Admin", locked: true },
-                { id: "lnk-admin-adm-q", href: "/admin/module/admission-query", label: "Admission query", locked: true },
-                { id: "lnk-admin-vis", href: "/admin/module/visitor-book", label: "Visitors book", locked: true },
+                { id: "lnk-admin", href: "/admin", label: "Admin console", locked: true },
                 {
-                  id: "lnk-admin-compl",
-                  href: "/admin/module/complaint-phone-call-log",
-                  label: "Complaint",
+                  id: "grp-admin-front",
+                  label: "Front office",
                   locked: true,
+                  children: [
+                    { id: "lnk-admin-adm-q", href: "/admin/module/admission-query", label: "Admission query", locked: true },
+                    { id: "lnk-admin-vis", href: "/admin/module/visitor-book", label: "Visitors book", locked: true },
+                    {
+                      id: "lnk-admin-compl",
+                      href: "/admin/module/complaint-phone-call-log",
+                      label: "Complaint",
+                      locked: true,
+                    },
+                  ],
                 },
-                { id: "lnk-admin-stu-id", href: "/admin/module/student-id-card", label: "Student ID card", locked: true },
-                { id: "lnk-admin-gen-id", href: "/admin/module/general-id-card", label: "General ID card", locked: true },
-                { id: "lnk-admin-staff-id", href: "/admin/module/staff-id-card", label: "Staff ID card", locked: true },
+                {
+                  id: "grp-admin-ids",
+                  label: "ID cards",
+                  locked: true,
+                  children: [
+                    { id: "lnk-admin-stu-id", href: "/admin/module/student-id-card", label: "Student ID card", locked: true },
+                    { id: "lnk-admin-gen-id", href: "/admin/module/general-id-card", label: "General ID card", locked: true },
+                    { id: "lnk-admin-staff-id", href: "/admin/module/staff-id-card", label: "Staff ID card", locked: true },
+                  ],
+                },
               ],
             },
           ] satisfies SidebarNavSection[])
         : []),
     ],
   };
+}
+
+function applyLocksToLinks(
+  items: SidebarNavLink[],
+  sectionLocked: boolean,
+): SidebarNavLink[] {
+  return items.map((i) => {
+    const locked = sectionLocked ? true : Boolean(i.locked);
+    if (i.children?.length) {
+      return {
+        ...i,
+        locked,
+        children: applyLocksToLinks(i.children, sectionLocked),
+      };
+    }
+    return { ...i, locked };
+  });
+}
+
+/** Update a link or nested leaf by `id` (depth-first). */
+export function updateSidebarLinkById(
+  items: SidebarNavLink[],
+  linkId: string,
+  patch: Partial<SidebarNavLink>,
+): SidebarNavLink[] {
+  return items.map((it) => {
+    if (it.id === linkId) return { ...it, ...patch };
+    if (it.children?.length) {
+      return { ...it, children: updateSidebarLinkById(it.children, linkId, patch) };
+    }
+    return it;
+  });
+}
+
+/** Remove a link or nested leaf by `id`. Branch nodes are removed in full. */
+export function removeSidebarLinkById(items: SidebarNavLink[], linkId: string): SidebarNavLink[] {
+  return items
+    .filter((it) => it.id !== linkId)
+    .map((it) =>
+      it.children?.length ? { ...it, children: removeSidebarLinkById(it.children, linkId) } : it,
+    );
+}
+
+/** Count leaf links (navigable `href` entries), including under groups. */
+export function countNavigableLinks(items: SidebarNavLink[]): number {
+  let n = 0;
+  for (const i of items) {
+    if (i.children?.length) n += countNavigableLinks(i.children);
+    else if (i.href) n += 1;
+  }
+  return n;
 }
 
 export function normalizeSidebarConfigForUser(
@@ -166,14 +287,14 @@ export function normalizeSidebarConfigForUser(
   const isSuperAdmin = Boolean(params?.isSuperAdmin);
   const withLocks: SidebarNavConfig = {
     ...config,
-    sections: config.sections.map((s) => ({
-      ...s,
-      locked: LOCKED_SECTION_IDS.has(s.id) ? true : Boolean(s.locked),
-      items: s.items.map((i) => ({
-        ...i,
-        locked: LOCKED_SECTION_IDS.has(s.id) ? true : Boolean(i.locked),
-      })),
-    })),
+    sections: config.sections.map((s) => {
+      const sectionLocked = LOCKED_SECTION_IDS.has(s.id) ? true : Boolean(s.locked);
+      return {
+        ...s,
+        locked: sectionLocked,
+        items: applyLocksToLinks(s.items, sectionLocked),
+      };
+    }),
   };
   if (isSuperAdmin) return withLocks;
   // Ensure non-admins never see admin links, even if present in saved config.
@@ -181,6 +302,31 @@ export function normalizeSidebarConfigForUser(
     ...withLocks,
     sections: withLocks.sections.filter((s) => s.id !== "sec-admin"),
   };
+}
+
+function isValidNavLink(raw: unknown): boolean {
+  if (!raw || typeof raw !== "object") return false;
+  const link = raw as Record<string, unknown>;
+  if (typeof link.id !== "string" || typeof link.label !== "string") return false;
+  if (link.locked !== undefined && typeof link.locked !== "boolean") return false;
+
+  const children = link.children;
+  if (children !== undefined) {
+    if (!Array.isArray(children) || children.length === 0) return false;
+    if (link.href !== undefined && typeof link.href !== "string") return false;
+    for (const c of children) {
+      if (!c || typeof c !== "object") return false;
+      const leaf = c as Record<string, unknown>;
+      if (typeof leaf.id !== "string" || typeof leaf.label !== "string" || typeof leaf.href !== "string") {
+        return false;
+      }
+      if (leaf.children !== undefined) return false;
+      if (leaf.locked !== undefined && typeof leaf.locked !== "boolean") return false;
+    }
+    return true;
+  }
+
+  return typeof link.href === "string";
 }
 
 function isValidConfig(raw: unknown): raw is SidebarNavConfig {
@@ -196,12 +342,7 @@ function isValidConfig(raw: unknown): raw is SidebarNavConfig {
     }
     if (sec.locked !== undefined && typeof sec.locked !== "boolean") return false;
     for (const it of sec.items) {
-      if (!it || typeof it !== "object") return false;
-      const link = it as Record<string, unknown>;
-      if (typeof link.id !== "string" || typeof link.href !== "string" || typeof link.label !== "string") {
-        return false;
-      }
-      if (link.locked !== undefined && typeof link.locked !== "boolean") return false;
+      if (!isValidNavLink(it)) return false;
     }
   }
   return true;
