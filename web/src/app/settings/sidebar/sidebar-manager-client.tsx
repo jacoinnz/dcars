@@ -22,6 +22,12 @@ import {
   type SidebarNavSection,
 } from "@/lib/sidebar-config";
 
+function nextCollapsedMap(sections: SidebarNavSection[], defaultCollapsed: boolean) {
+  const out: Record<string, boolean> = {};
+  for (const s of sections) out[s.id] = defaultCollapsed;
+  return out;
+}
+
 function applyDragEnd(prev: SidebarNavConfig, e: DragEndEvent): SidebarNavConfig | null {
   const { active, over } = e;
   if (!over || active.id === over.id) return null;
@@ -54,6 +60,8 @@ function applyDragEnd(prev: SidebarNavConfig, e: DragEndEvent): SidebarNavConfig
 
 function SortableSectionCard(props: {
   section: SidebarNavSection;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
   onChangeTitle: (title: string) => void;
   onRemoveSection: () => void;
   onChangeLink: (linkId: string, patch: Partial<SidebarNavLink>) => void;
@@ -75,7 +83,7 @@ function SortableSectionCard(props: {
       style={style}
       className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
     >
-      <div className="flex flex-wrap items-center gap-2 border-b border-stone-100 pb-3">
+      <div className={`flex flex-wrap items-center gap-2 ${props.collapsed ? "" : "border-b border-stone-100 pb-3"}`}>
         <button
           type="button"
           className="cursor-grab touch-none rounded border border-stone-200 bg-stone-50 px-2 py-1.5 text-stone-500 hover:bg-stone-100 active:cursor-grabbing"
@@ -85,43 +93,67 @@ function SortableSectionCard(props: {
         >
           ⠿
         </button>
+        <button
+          type="button"
+          className="rounded border border-stone-200 bg-white px-2 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-50"
+          onClick={props.onToggleCollapsed}
+          aria-label={props.collapsed ? "Expand section" : "Collapse section"}
+        >
+          {props.collapsed ? "Show" : "Hide"}
+        </button>
         <label className="min-w-0 flex-1 text-xs font-medium text-stone-600">
           Section title
           <input
             value={props.section.title}
             onChange={(e) => props.onChangeTitle(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm text-stone-900"
+            readOnly={Boolean(props.section.locked)}
+            className={`mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm text-stone-900 ${
+              props.section.locked ? "bg-stone-100 text-stone-600" : "bg-white"
+            }`}
           />
         </label>
-        <button
-          type="button"
-          className="rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-800 hover:bg-red-100"
-          onClick={props.onRemoveSection}
-        >
-          Remove section
-        </button>
+        {props.section.locked ? null : (
+          <button
+            type="button"
+            className="rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-800 hover:bg-red-100"
+            onClick={props.onRemoveSection}
+          >
+            Remove section
+          </button>
+        )}
       </div>
 
-      <SortableContext items={props.section.items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-        <ul className="mt-3 space-y-2">
-          {props.section.items.map((item) => (
-            <SortableLinkRow
-              key={item.id}
-              item={item}
-              onChange={(patch) => props.onChangeLink(item.id, patch)}
-              onRemove={() => props.onRemoveLink(item.id)}
-            />
-          ))}
-        </ul>
-      </SortableContext>
+      {props.collapsed ? (
+        <p className="mt-2 text-xs text-stone-500">
+          {props.section.items.length} link(s)
+        </p>
+      ) : (
+        <>
+          <SortableContext items={props.section.items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <ul className="mt-3 space-y-2">
+              {props.section.items.map((item) => (
+                <SortableLinkRow
+                  key={item.id}
+                  item={item}
+                  onChange={(patch) => props.onChangeLink(item.id, patch)}
+                  onRemove={() => props.onRemoveLink(item.id)}
+                />
+              ))}
+            </ul>
+          </SortableContext>
 
-      <button
-        type="button"
-        className="mt-3 text-sm font-semibold text-teal-800 hover:underline"
-        onClick={props.onAddLink}
-      >
-        + Add link
-      </button>
+          <button
+            type="button"
+            className={`mt-3 text-sm font-semibold ${
+              props.section.locked ? "cursor-not-allowed text-stone-400" : "text-teal-800 hover:underline"
+            }`}
+            onClick={props.onAddLink}
+            disabled={Boolean(props.section.locked)}
+          >
+            + Add link
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -156,7 +188,10 @@ function SortableLinkRow(props: {
         <input
           value={props.item.label}
           onChange={(e) => props.onChange({ label: e.target.value })}
-          className="mt-0.5 w-full rounded border border-stone-300 px-2 py-1 text-sm"
+          readOnly={Boolean(props.item.locked)}
+          className={`mt-0.5 w-full rounded border border-stone-300 px-2 py-1 text-sm ${
+            props.item.locked ? "bg-stone-100 text-stone-600" : "bg-white"
+          }`}
         />
       </label>
       <label className="min-w-[8rem] flex-1 text-[10px] font-medium text-stone-500">
@@ -164,17 +199,22 @@ function SortableLinkRow(props: {
         <input
           value={props.item.href}
           onChange={(e) => props.onChange({ href: e.target.value })}
-          className="mt-0.5 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm"
+          readOnly={Boolean(props.item.locked)}
+          className={`mt-0.5 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm ${
+            props.item.locked ? "bg-stone-100 text-stone-600" : "bg-white"
+          }`}
           placeholder="/path"
         />
       </label>
-      <button
-        type="button"
-        className="self-center rounded border border-stone-300 bg-white px-2 py-1 text-xs text-stone-600 hover:bg-stone-100"
-        onClick={props.onRemove}
-      >
-        Remove
-      </button>
+      {props.item.locked ? null : (
+        <button
+          type="button"
+          className="self-center rounded border border-stone-300 bg-white px-2 py-1 text-xs text-stone-600 hover:bg-stone-100"
+          onClick={props.onRemove}
+        >
+          Remove
+        </button>
+      )}
     </li>
   );
 }
@@ -183,11 +223,26 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
   const [config, setConfig] = useState<SidebarNavConfig>(() =>
     getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }),
   );
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
+    nextCollapsedMap(config.sections, true),
+  );
 
   useEffect(() => {
     const raw =
       loadSidebarConfig() ?? getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin });
-    setConfig(normalizeSidebarConfigForUser(raw, { isSuperAdmin: props.isSuperAdmin }));
+    const next = normalizeSidebarConfigForUser(raw, { isSuperAdmin: props.isSuperAdmin });
+    setConfig(next);
+    setCollapsed((prev) => {
+      const out = { ...prev };
+      for (const s of next.sections) {
+        if (out[s.id] === undefined) out[s.id] = true;
+      }
+      // prune removed sections
+      for (const k of Object.keys(out)) {
+        if (!next.sections.some((s) => s.id === k)) delete out[k];
+      }
+      return out;
+    });
   }, [props.isSuperAdmin]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
@@ -226,6 +281,20 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
       <div className="mt-6 flex flex-wrap gap-2">
         <button
           type="button"
+          className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
+          onClick={() => setCollapsed(nextCollapsedMap(config.sections, false))}
+        >
+          Expand all
+        </button>
+        <button
+          type="button"
+          className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
+          onClick={() => setCollapsed(nextCollapsedMap(config.sections, true))}
+        >
+          Collapse all
+        </button>
+        <button
+          type="button"
           className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
           onClick={() => {
             const id = `sec-${crypto.randomUUID()}`;
@@ -249,6 +318,7 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
           className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
           onClick={() => {
             persist(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
+            setCollapsed(nextCollapsedMap(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections, true));
           }}
         >
           Reset to default
@@ -259,6 +329,7 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
           onClick={() => {
             clearSidebarConfig();
             setConfig(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
+            setCollapsed(nextCollapsedMap(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections, true));
           }}
         >
           Clear saved layout
@@ -272,6 +343,10 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
               <SortableSectionCard
                 key={section.id}
                 section={section}
+                collapsed={collapsed[section.id] ?? true}
+                onToggleCollapsed={() =>
+                  setCollapsed((prev) => ({ ...prev, [section.id]: !(prev[section.id] ?? true) }))
+                }
                 onChangeTitle={(title) => updateSection(section.id, (s) => ({ ...s, title }))}
                 onRemoveSection={() => {
                   if (!confirm(`Remove section “${section.title}” and all its links?`)) return;
