@@ -104,7 +104,9 @@ function SidebarBranchNavLink(props: { item: SidebarNavLink }) {
 
   const [opened, setOpened] = useState(hasActiveChild);
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- expand branch when nested route becomes active */
     if (hasActiveChild) setOpened(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [hasActiveChild]);
 
   const nested = useMemo(

@@ -1,6 +1,15 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import type { SiteSummary } from "@/lib/aggregates";
 
+/** Standard 14 fonts use WinAnsi; replace common punctuation and unknown chars so drawText never throws. */
+function safePdfText(text: string): string {
+  return text
+    .replace(/\u2192/g, "->")
+    .replace(/\u2014/g, "-")
+    .replace(/\u2013/g, "-")
+    .replace(/[^\x00-\xff]/g, "?");
+}
+
 export async function buildSummaryPdf(params: {
   title: string;
   periodLabel: string;
@@ -24,11 +33,12 @@ export async function buildSummaryPdf(params: {
   const line = 14;
 
   const draw = (text: string, size = 11, bold = false) => {
+    const lineText = safePdfText(text);
     if (y < 72) {
       page = pdf.addPage([595.28, 841.89]);
       y = 800;
     }
-    page.drawText(text, {
+    page.drawText(lineText, {
       x: left,
       y,
       size,

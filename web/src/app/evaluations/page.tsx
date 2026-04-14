@@ -5,11 +5,12 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { classes, institutions, sites, students } from "@/db/schema";
 import { addPerformanceRecord } from "@/app/evaluations/actions";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { fetchPerformanceForReport } from "@/lib/evaluation-report";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
 import { AppPage } from "@/components/app-page";
-import { Anchor, Stack, Text, Title } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
@@ -98,9 +99,9 @@ export default async function EvaluationsPage({
   return (
     <AppPage>
       <Stack gap="lg">
-      <Anchor component={Link} href="/students" size="sm" fw={500}>
+      <NextMantineAnchor href="/students" size="sm" fw={500}>
         ← Student information
-      </Anchor>
+      </NextMantineAnchor>
       <Title order={1}>Evaluation reports</Title>
       <Text c="dimmed" size="sm" maw={520}>
         Filter by school and optionally by one or more classes. Scores are averaged as a percentage

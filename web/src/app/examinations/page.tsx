@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Alert, Anchor, Badge, Divider, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Divider, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
@@ -131,9 +131,9 @@ export default async function ExaminationsHubPage() {
           {schoolRows.length === 0 ? (
             <Alert color="yellow" title="No schools visible">
               No schools are visible to your account yet. Super admins can add schools under{" "}
-              <Anchor component={Link} href="/admin/institutions" fw={600}>
+              <NextMantineAnchor href="/admin/institutions" fw={600}>
                 Admin → Schools
-              </Anchor>
+              </NextMantineAnchor>
               .
             </Alert>
           ) : (
@@ -163,15 +163,15 @@ export default async function ExaminationsHubPage() {
             Broader session and PDF exports (not exam-specific) live under Reports and Evaluations.
           </Text>
           <Group gap="lg" mt="md">
-            <Anchor component={Link} href="/reports" size="sm" fw={600}>
+            <NextMantineAnchor href="/reports" size="sm" fw={600}>
               PDF programme reports
-            </Anchor>
-            <Anchor component={Link} href="/evaluations" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/evaluations" size="sm" fw={600}>
               Evaluation scores
-            </Anchor>
-            <Anchor component={Link} href="/attendance" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/attendance" size="sm" fw={600}>
               Student attendance (roll)
-            </Anchor>
+            </NextMantineAnchor>
           </Group>
         </Paper>
       </Stack>

@@ -1,13 +1,13 @@
-import Link from "next/link";
 import { format } from "date-fns";
 import { and, asc, eq, inArray } from "drizzle-orm";
-import { Alert, Anchor, Box, Button, Paper, Stack, Table, Text, Title } from "@mantine/core";
+import { Alert, Box, Button, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { attendanceRecords, institutions, sites, students } from "@/db/schema";
 import { ATTENDANCE_STATUSES } from "@/app/attendance/constants";
 import { saveAttendanceForDate } from "@/app/attendance/actions";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getManageableInstitutionIds } from "@/lib/school-access";
 
@@ -245,21 +245,21 @@ export default async function AttendancePage({
         {activeInstitutionId && studRows.length === 0 ? (
           <Text size="sm" c="dimmed" mt="xl">
             No students in this school yet. Add them under{" "}
-            <Anchor component={Link} href={`/evaluations/students/${activeInstitutionId}`} fw={600}>
+            <NextMantineAnchor href={`/evaluations/students/${activeInstitutionId}`} fw={600}>
               Evaluations → students
-            </Anchor>
+            </NextMantineAnchor>
             .
           </Text>
         ) : null}
 
         <Text size="sm" c="dimmed" mt="xl">
-          <Anchor component={Link} href="/students/attendance" fw={600}>
+          <NextMantineAnchor href="/students/attendance" fw={600}>
             Student attendance hub
-          </Anchor>
+          </NextMantineAnchor>
           {" · "}
-          <Anchor component={Link} href="/students" fw={600}>
+          <NextMantineAnchor href="/students" fw={600}>
             Student information
-          </Anchor>
+          </NextMantineAnchor>
         </Text>
       </Stack>
     </AppPage>

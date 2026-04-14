@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Alert, Anchor, Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { STUDENT_PANEL_GROUPS } from "@/lib/student-panel";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
@@ -41,9 +41,9 @@ export default async function StudentPanelPage() {
               Admin → Schools → your school → Student portal login
             </Text>
             . Parents can use the{" "}
-            <Anchor component={Link} href="/parents" fw={600} inherit>
+            <NextMantineAnchor href="/parents" fw={600} inherit>
               Parents panel
-            </Anchor>{" "}
+            </NextMantineAnchor>{" "}
             if they are linked as guardians instead.
           </Alert>
         ) : null}

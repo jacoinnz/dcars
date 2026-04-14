@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Alert, Anchor, Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Group, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor, NextMantineButtonLink } from "@/components/next-mantine-links";
 import { getStudentFeatureByKey, isStudentFeatureKey } from "@/lib/student-panel";
 
 type Props = { params: Promise<{ key: string }> };
@@ -26,9 +26,9 @@ export default async function StudentFeaturePage({ params }: Props) {
   return (
     <AppPage maxWidth="narrow">
       <Stack gap="lg">
-        <Anchor component={Link} href="/student" size="sm" fw={500}>
+        <NextMantineAnchor href="/student" size="sm" fw={500}>
           ← Student panel
-        </Anchor>
+        </NextMantineAnchor>
         <Group gap="sm" align="center" wrap="wrap">
           <Title order={1}>{item.title}</Title>
           <Badge color={item.status === "live" ? "teal" : "yellow"} variant="light" tt="uppercase">
@@ -45,9 +45,9 @@ export default async function StudentFeaturePage({ params }: Props) {
         ) : null}
 
         {isLive ? (
-          <Button component={Link} href={item.href!} color="teal" mt="md">
+          <NextMantineButtonLink href={item.href!} color="teal" mt="md">
             Open
-          </Button>
+          </NextMantineButtonLink>
         ) : (
           <Alert color="yellow" title="Not available yet" mt="md">
             Your school may share timetables, bills, or contact details through other channels for now.
@@ -56,9 +56,9 @@ export default async function StudentFeaturePage({ params }: Props) {
           </Alert>
         )}
 
-        <Anchor component={Link} href="/student" size="sm" fw={600} mt="md">
+        <NextMantineAnchor href="/student" size="sm" fw={600} mt="md">
           Back to student panel
-        </Anchor>
+        </NextMantineAnchor>
       </Stack>
     </AppPage>
   );

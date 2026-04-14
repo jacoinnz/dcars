@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Anchor, Stack, Text, Title } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { adminCreateUser } from "@/app/admin/actions";
 
 export const metadata = {
@@ -11,9 +11,9 @@ export default function AdminNewUserPage() {
   return (
     <AppPage>
       <Stack gap="lg">
-      <Anchor component={Link} href="/admin/users" size="sm" fw={500}>
+      <NextMantineAnchor href="/admin/users" size="sm" fw={500}>
         ← Users
-      </Anchor>
+      </NextMantineAnchor>
       <Title order={1} mt="md">
         New user
       </Title>

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Alert, Anchor, Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Group, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor, NextMantineButtonLink } from "@/components/next-mantine-links";
 import {
   EXAMINATION_FEATURE_EMBEDDED_HELP,
   getExaminationFeatureByKey,
@@ -24,9 +24,9 @@ export default async function ExaminationFeaturePage({ params }: Props) {
   return (
     <AppPage maxWidth="narrow">
       <Stack gap="lg">
-        <Anchor component={Link} href="/examinations" size="sm" fw={500}>
+        <NextMantineAnchor href="/examinations" size="sm" fw={500}>
           ← Examinations
-        </Anchor>
+        </NextMantineAnchor>
         <Group gap="sm" align="center" wrap="wrap">
           <Title order={1}>{item.title}</Title>
           <Badge color={item.status === "live" ? "teal" : "yellow"} variant="light" tt="uppercase">
@@ -43,15 +43,15 @@ export default async function ExaminationFeaturePage({ params }: Props) {
         ) : null}
 
         {isLiveWithHref ? (
-          <Button component={Link} href={item.href!} color="teal" mt="md">
+          <NextMantineButtonLink href={item.href!} color="teal" mt="md">
             Open examinations
-          </Button>
+          </NextMantineButtonLink>
         ) : null}
 
         {isLiveEmbedded ? (
-          <Button component={Link} href="/examinations" variant="default" mt="md">
+          <NextMantineButtonLink href="/examinations" variant="default" mt="md">
             Go to examination centre
-          </Button>
+          </NextMantineButtonLink>
         ) : null}
 
         {item.status === "planned" ? (
@@ -61,9 +61,9 @@ export default async function ExaminationFeaturePage({ params }: Props) {
           </Alert>
         ) : null}
 
-        <Anchor component={Link} href="/examinations" size="sm" fw={600} mt="md">
+        <NextMantineAnchor href="/examinations" size="sm" fw={600} mt="md">
           Back to examinations hub
-        </Anchor>
+        </NextMantineAnchor>
       </Stack>
     </AppPage>
   );

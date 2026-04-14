@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Anchor, Stack, Text, Title } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { asc, eq, inArray } from "drizzle-orm";
 import { AppPage } from "@/components/app-page";
 import { redirect } from "next/navigation";
@@ -51,9 +52,9 @@ export default async function StaffDirectoryPage() {
   return (
     <AppPage>
       <Stack gap="lg">
-      <Anchor component={Link} href="/hr" size="sm" fw={500}>
+      <NextMantineAnchor href="/hr" size="sm" fw={500}>
         ← Human resources
-      </Anchor>
+      </NextMantineAnchor>
       <Title order={1} mt="md">
         Staff directory
       </Title>

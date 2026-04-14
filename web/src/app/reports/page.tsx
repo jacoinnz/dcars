@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { endOfMonth, format, isValid, startOfMonth } from "date-fns";
-import { Anchor, Box, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -106,9 +106,9 @@ export default async function ReportsPage({
         </Paper>
 
         <Text size="sm" c="dimmed" mt="md">
-          <Anchor component={Link} href="/dashboard" fw={600}>
+          <NextMantineAnchor href="/dashboard" fw={600}>
             Back to dashboard
-          </Anchor>
+          </NextMantineAnchor>
         </Text>
       </Stack>
     </AppPage>

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useState } from "react";
-import { Anchor, Box, Card, Flex, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Card, Flex, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { AudienceTabCounts } from "@/lib/audience-tab-counts";
 
 type TabId = "students" | "teachers" | "parents" | "staff";

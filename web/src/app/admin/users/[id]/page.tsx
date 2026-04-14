@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Anchor, Stack, Text, Title } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
 import { notFound } from "next/navigation";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { appUsers, siteUserPermissions, sites } from "@/db/schema";
@@ -29,9 +30,9 @@ export default async function AdminUserDetailPage({ params }: Props) {
   return (
     <AppPage>
       <Stack gap="lg">
-      <Anchor component={Link} href="/admin/users" size="sm" fw={500}>
+      <NextMantineAnchor href="/admin/users" size="sm" fw={500}>
         ← Users
-      </Anchor>
+      </NextMantineAnchor>
 
       <Title order={1} mt="md">
         Edit user

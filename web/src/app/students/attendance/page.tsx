@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Anchor, Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { STUDENT_ATTENDANCE_PANEL_GROUPS } from "@/lib/student-attendance-panel";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 
@@ -97,20 +97,20 @@ export default async function StudentAttendanceHubPage() {
             Related
           </Title>
           <Group gap="lg">
-            <Anchor component={Link} href="/students" size="sm" fw={600}>
+            <NextMantineAnchor href="/students" size="sm" fw={600}>
               Student information
-            </Anchor>
-            <Anchor component={Link} href="/dashboard" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/dashboard" size="sm" fw={600}>
               Dashboard
-            </Anchor>
-            <Anchor component={Link} href="/evaluations" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/evaluations" size="sm" fw={600}>
               Evaluations
-            </Anchor>
+            </NextMantineAnchor>
           </Group>
         </Stack>
 
         <Text size="sm" c="dimmed" mt="md">
-          Assign staff under <Anchor component={Link} href="/admin/institutions">Admin → Schools</Anchor> so
+          Assign staff under <NextMantineAnchor href="/admin/institutions">Admin → Schools</NextMantineAnchor> so
           they can record attendance; link guardians there for family visibility.
         </Text>
       </Stack>

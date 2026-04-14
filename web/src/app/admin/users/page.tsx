@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Button, Group, Stack, Text, Title } from "@mantine/core";
+import { Group, Stack, Text, Title } from "@mantine/core";
 import { asc } from "drizzle-orm";
 import { AppPage } from "@/components/app-page";
+import { NextMantineButtonLink } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { appUsers } from "@/db/schema";
 import { adminDeleteUser } from "@/app/admin/actions";
@@ -29,9 +30,9 @@ export default async function AdminUsersPage() {
               accounts receive per-site permissions.
             </Text>
           </Stack>
-          <Button component={Link} href="/admin/users/new" color="teal">
+          <NextMantineButtonLink href="/admin/users/new" color="teal">
             New user
-          </Button>
+          </NextMantineButtonLink>
         </Group>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">

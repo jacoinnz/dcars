@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Alert, Anchor, Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Group, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+import { NextMantineAnchor, NextMantineButtonLink } from "@/components/next-mantine-links";
 import { getTeacherFeatureByKey, isTeacherFeatureKey } from "@/lib/teacher-panel";
 
 type Props = { params: Promise<{ key: string }> };
@@ -18,9 +18,9 @@ export default async function TeacherFeaturePage({ params }: Props) {
   return (
     <AppPage maxWidth="narrow">
       <Stack gap="lg">
-        <Anchor component={Link} href="/teachers" size="sm" fw={500}>
+        <NextMantineAnchor href="/teachers" size="sm" fw={500}>
           ← Teacher panel
-        </Anchor>
+        </NextMantineAnchor>
         <Group gap="sm" align="center" wrap="wrap">
           <Title order={1}>{item.title}</Title>
           <Badge color={item.status === "live" ? "teal" : "yellow"} variant="light" tt="uppercase">
@@ -32,9 +32,9 @@ export default async function TeacherFeaturePage({ params }: Props) {
         </Text>
 
         {isLive ? (
-          <Button component={Link} href={item.href!} color="teal" mt="md">
+          <NextMantineButtonLink href={item.href!} color="teal" mt="md">
             Open
-          </Button>
+          </NextMantineButtonLink>
         ) : (
           <Alert color="yellow" title="Not available in the app yet" mt="md">
             Homework authoring with due dates and student hand-in will be added in a future update. For
@@ -42,9 +42,9 @@ export default async function TeacherFeaturePage({ params }: Props) {
           </Alert>
         )}
 
-        <Anchor component={Link} href="/teachers" size="sm" fw={600} mt="md">
+        <NextMantineAnchor href="/teachers" size="sm" fw={600} mt="md">
           Back to teacher panel
-        </Anchor>
+        </NextMantineAnchor>
       </Stack>
     </AppPage>
   );

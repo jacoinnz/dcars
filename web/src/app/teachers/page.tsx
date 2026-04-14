@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Alert, Anchor, Badge, Divider, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Divider, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
@@ -127,9 +127,9 @@ export default async function TeachersHubPage() {
           </Title>
           <Text c="dimmed" size="sm" maw={520}>
             Published syllabus content is read-only; super admins edit entries under{" "}
-            <Anchor component={Link} href="/admin/institutions" fw={600}>
+            <NextMantineAnchor href="/admin/institutions" fw={600}>
               Admin → Schools
-            </Anchor>
+            </NextMantineAnchor>
             .
           </Text>
           {schoolRows.length === 0 ? (
@@ -147,9 +147,9 @@ export default async function TeachersHubPage() {
                       — {s.siteName}
                     </Text>
                   </Text>
-                  <Anchor component={Link} href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={600} mt="md" display="block">
+                  <NextMantineAnchor href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={600} mt="md" display="block">
                     Open syllabus &amp; download
-                  </Anchor>
+                  </NextMantineAnchor>
                 </Paper>
               ))}
             </SimpleGrid>
@@ -158,13 +158,13 @@ export default async function TeachersHubPage() {
 
         <Text size="sm" c="dimmed" mt="md" pt="lg" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
           Also see:{" "}
-          <Anchor component={Link} href="/communications" fw={600}>
+          <NextMantineAnchor href="/communications" fw={600}>
             Communications
-          </Anchor>{" "}
+          </NextMantineAnchor>{" "}
           (school notices and events),{" "}
-          <Anchor component={Link} href="/students" fw={600}>
+          <NextMantineAnchor href="/students" fw={600}>
             Student information
-          </Anchor>
+          </NextMantineAnchor>
           .
         </Text>
       </Stack>

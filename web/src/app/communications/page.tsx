@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Alert, Anchor, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
@@ -52,9 +52,9 @@ export default async function CommunicationsHubPage() {
         {schoolRows.length === 0 ? (
           <Alert color="yellow" title="No schools visible">
             No schools are visible to your account yet. Super admins can add schools under{" "}
-            <Anchor component={Link} href="/admin/institutions" fw={600}>
+            <NextMantineAnchor href="/admin/institutions" fw={600}>
               Admin → Schools
-            </Anchor>
+            </NextMantineAnchor>
             .
           </Alert>
         ) : (

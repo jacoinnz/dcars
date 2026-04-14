@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Alert, Anchor, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
@@ -119,9 +119,9 @@ export default async function StudentsHubPage() {
           {schoolRows.length === 0 ? (
             <Alert color="yellow" title="No schools visible">
               No schools are visible to your account yet. Super admins can add schools under{" "}
-              <Anchor component={Link} href="/admin/institutions" fw={600}>
+              <NextMantineAnchor href="/admin/institutions" fw={600}>
                 Admin → Schools
-              </Anchor>
+              </NextMantineAnchor>
               .
             </Alert>
           ) : (
@@ -135,12 +135,12 @@ export default async function StudentsHubPage() {
                     </Text>
                   </Text>
                   <Stack gap={6} mt="sm">
-                    <Anchor component={Link} href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
+                    <NextMantineAnchor href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
                       Manage students — list, admission &amp; classes
-                    </Anchor>
-                    <Anchor component={Link} href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
+                    </NextMantineAnchor>
+                    <NextMantineAnchor href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
                       Syllabuses
-                    </Anchor>
+                    </NextMantineAnchor>
                   </Stack>
                 </Paper>
               ))}
@@ -183,9 +183,9 @@ export default async function StudentsHubPage() {
         </Stack>
 
         <Text size="sm" c="dimmed" mt="md">
-          <Anchor component={Link} href="/admin/institutions" fw={600}>
+          <NextMantineAnchor href="/admin/institutions" fw={600}>
             Admin → Schools
-          </Anchor>{" "}
+          </NextMantineAnchor>{" "}
           for staff assignment, guardian links, and attendance messages to families.
         </Text>
       </Stack>

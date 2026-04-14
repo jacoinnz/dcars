@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Anchor, Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { HR_PANEL_GROUPS } from "@/lib/hr-panel";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 
@@ -107,23 +107,23 @@ export default async function HumanResourcesHubPage() {
             delivery metrics and pupil attendance.
           </Text>
           <Group gap="lg">
-            <Anchor component={Link} href="/attendance" size="sm" fw={600}>
+            <NextMantineAnchor href="/attendance" size="sm" fw={600}>
               Student attendance (roll)
-            </Anchor>
-            <Anchor component={Link} href="/dashboard" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/dashboard" size="sm" fw={600}>
               Dashboard
-            </Anchor>
-            <Anchor component={Link} href="/reports" size="sm" fw={600}>
+            </NextMantineAnchor>
+            <NextMantineAnchor href="/reports" size="sm" fw={600}>
               PDF programme reports
-            </Anchor>
+            </NextMantineAnchor>
           </Group>
         </Stack>
 
         <Text size="sm" c="dimmed" mt="md">
           Assign staff under{" "}
-          <Anchor component={Link} href="/admin/institutions" fw={600}>
+          <NextMantineAnchor href="/admin/institutions" fw={600}>
             Admin → Schools
-          </Anchor>{" "}
+          </NextMantineAnchor>{" "}
           → <Text span fw={600}>Staff &amp; teachers</Text>.
         </Text>
       </Stack>

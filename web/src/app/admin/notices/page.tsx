@@ -12,7 +12,9 @@ export default async function AdminNoticesPage({
 }) {
   const sp = await searchParams;
   const items = await getAllNoticeBoardItems();
-  const now = Date.now();
+  // Request-time instant for comparing expiry (server component).
+  // eslint-disable-next-line react-hooks/purity -- not deterministic render; intentional per-request clock
+  const nowMs = Date.now();
 
   const rows = items.map((n) => ({
     id: n.id,
@@ -21,7 +23,7 @@ export default async function AdminNoticesPage({
     pinned: n.pinned,
     expiresAt: n.expiresAt?.toISOString() ?? null,
     createdAt: n.createdAt.toISOString(),
-    isExpired: Boolean(n.expiresAt && n.expiresAt.getTime() <= now),
+    isExpired: Boolean(n.expiresAt && n.expiresAt.getTime() <= nowMs),
   }));
 
   return (

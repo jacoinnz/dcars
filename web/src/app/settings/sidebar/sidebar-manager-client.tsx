@@ -1,13 +1,7 @@
 "use client";
 
 import { closestCenter, DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -286,6 +280,7 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
     const raw =
       loadSidebarConfig() ?? getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin });
     const next = normalizeSidebarConfigForUser(raw, { isSuperAdmin: props.isSuperAdmin });
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate from localStorage after mount (client-only) */
     setConfig(next);
     setCollapsed((prev) => {
       const out = { ...prev };
@@ -297,6 +292,7 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
       }
       return out;
     });
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [props.isSuperAdmin]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));

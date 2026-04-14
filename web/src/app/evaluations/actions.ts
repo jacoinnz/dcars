@@ -213,7 +213,7 @@ export async function addPerformanceRecord(formData: FormData): Promise<void> {
   const [st] = await db.select().from(students).where(eq(students.id, studentId)).limit(1);
   if (!st || st.institutionId !== institutionId) throw new Error("Invalid student.");
 
-  let classId: string | null = classIdRaw || null;
+  const classId: string | null = classIdRaw || null;
   if (classId) {
     const [cl] = await db.select().from(classes).where(eq(classes.id, classId)).limit(1);
     if (!cl || cl.institutionId !== institutionId) throw new Error("Invalid class.");
