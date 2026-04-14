@@ -67,13 +67,13 @@ export default async function InstitutionNoticesPage({ params, searchParams }: P
   const filtered = typeFilter ? rows.filter((r) => r.noticeType === typeFilter) : rows;
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <Link href="/communications" className="text-sm font-medium text-teal-800 underline">
             ← Communications
           </Link>
-          <h1 className="mt-3 text-2xl font-semibold text-stone-900">Notice manager</h1>
+          <h1 className="pe-app-h1 pe-app-h1-mt3">Notice manager</h1>
           <p className="text-sm text-stone-600">
             {school.name} · {school.siteName}
           </p>

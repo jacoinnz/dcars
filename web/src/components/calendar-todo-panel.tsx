@@ -18,6 +18,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Flex,
   Group,
   Paper,
   SimpleGrid,
@@ -108,8 +109,14 @@ export function CalendarTodoPanel(props: {
   const { calendarSectionId, todoSectionId } = props;
 
   return (
-    <div className="mt-6 grid w-full grid-cols-1 gap-4 lg:grid-cols-[7fr_3fr] lg:items-stretch lg:gap-6">
-      <Box style={{ minWidth: 0 }}>
+    <Flex
+      mt="lg"
+      gap={{ base: "md", lg: "lg" }}
+      align="stretch"
+      direction={{ base: "column", lg: "row" }}
+      w="100%"
+    >
+      <Box style={{ flex: "7 1 0%", minWidth: 0 }}>
         <Paper
           component="section"
           id={calendarSectionId}
@@ -117,8 +124,7 @@ export function CalendarTodoPanel(props: {
           radius="md"
           p="md"
           shadow="sm"
-          className="scroll-mt-24"
-          style={{ minHeight: "min(22rem, 50vh)" }}
+          style={{ minHeight: "min(22rem, 50vh)", scrollMarginTop: "6rem" }}
           bg="gray.0"
           aria-labelledby="home-calendar-heading"
         >
@@ -183,7 +189,7 @@ export function CalendarTodoPanel(props: {
         </Paper>
       </Box>
 
-      <Box style={{ minWidth: 0 }}>
+      <Box style={{ flex: "3 1 0%", minWidth: 0 }}>
         <Paper
           component="section"
           id={todoSectionId}
@@ -191,8 +197,7 @@ export function CalendarTodoPanel(props: {
           radius="md"
           p="md"
           shadow="sm"
-          className="scroll-mt-24"
-          style={{ minHeight: "min(22rem, 50vh)" }}
+          style={{ minHeight: "min(22rem, 50vh)", scrollMarginTop: "6rem" }}
           aria-labelledby="home-todo-heading"
         >
           <Title order={2} id="home-todo-heading" size="h4">
@@ -269,6 +274,6 @@ export function CalendarTodoPanel(props: {
           </Box>
         </Paper>
       </Box>
-    </div>
+    </Flex>
   );
 }

@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { Anchor, Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import { AppPage } from "@/components/app-page";
+import { HubLinkCard } from "@/components/hub-link-card";
 import { HR_PANEL_GROUPS } from "@/lib/hr-panel";
 import { authOptions } from "@/lib/auth-options";
 
@@ -15,111 +18,116 @@ export default async function HumanResourcesHubPage() {
   if (!session?.user?.id) redirect("/login");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Human resources</h1>
-      <p className="mt-2 max-w-3xl text-sm text-stone-600">
-        Staff directory, future staff attendance and payroll modules, and links to programme reporting.
-        <span className="font-medium text-stone-800"> Available</span> opens live tools;{" "}
-        <span className="font-medium text-stone-800">Coming soon</span> marks features that need HR
-        and finance build-out.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Human resources</Title>
+          <Text c="dimmed" maw={600} size="sm">
+            Staff directory, future staff attendance and payroll modules, and links to programme
+            reporting.
+            <Text span fw={600} c="dark.7">
+              {" "}
+              Available
+            </Text>{" "}
+            opens live tools;{" "}
+            <Text span fw={600} c="dark.7">
+              Coming soon
+            </Text>{" "}
+            marks features that need HR and finance build-out.
+          </Text>
+        </Stack>
 
-      <div className="mt-10 flex flex-col gap-10">
-        {HR_PANEL_GROUPS.map((group) => (
-          <section key={group.id} aria-labelledby={`hr-${group.id}`}>
-            <h2 id={`hr-${group.id}`} className="text-lg font-semibold text-stone-900">
-              {group.title}
-            </h2>
-            {group.description ? (
-              <p className="mt-1 max-w-3xl text-sm text-stone-600">{group.description}</p>
-            ) : null}
-            <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-              {group.items.map((item) => {
-                const badge =
-                  item.status === "live" ? (
-                    <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-900">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase text-stone-700">
-                      Coming soon
-                    </span>
+        <Stack gap="xl" mt="md">
+          {HR_PANEL_GROUPS.map((group) => (
+            <Stack key={group.id} component="section" gap="md" aria-labelledby={`hr-${group.id}`}>
+              <Title order={2} id={`hr-${group.id}`} size="h3">
+                {group.title}
+              </Title>
+              {group.description ? (
+                <Text c="dimmed" size="sm" maw={600}>
+                  {group.description}
+                </Text>
+              ) : null}
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                {group.items.map((item) => {
+                  const badge =
+                    item.status === "live" ? (
+                      <Badge size="xs" variant="light" color="teal" tt="uppercase">
+                        Available
+                      </Badge>
+                    ) : (
+                      <Badge size="xs" variant="light" color="gray" tt="uppercase">
+                        Coming soon
+                      </Badge>
+                    );
+
+                  const inner = (
+                    <>
+                      <Group justify="space-between" align="flex-start" gap="xs" wrap="nowrap">
+                        <Text fw={600} size="sm">
+                          {item.title}
+                        </Text>
+                        {badge}
+                      </Group>
+                      <Text size="sm" c="dimmed" mt="xs">
+                        {item.description}
+                      </Text>
+                      <Text size="sm" fw={600} c="teal.8" mt="sm">
+                        {item.status === "live" && item.href ? "Open →" : "Details →"}
+                      </Text>
+                    </>
                   );
 
-                const inner = (
-                  <>
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-stone-900">{item.title}</p>
-                      {badge}
-                    </div>
-                    <p className="mt-2 text-sm text-stone-600">{item.description}</p>
-                    <p className="mt-3 text-sm font-medium text-teal-800">
-                      {item.status === "live" && item.href ? "Open →" : "Details →"}
-                    </p>
-                  </>
-                );
-
-                if (item.status === "live" && item.href) {
-                  return (
-                    <li key={item.key}>
-                      <Link
-                        href={item.href}
-                        className="block h-full rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-                      >
+                  if (item.status === "live" && item.href) {
+                    return (
+                      <HubLinkCard key={item.key} href={item.href} variant="live">
                         {inner}
-                      </Link>
-                    </li>
-                  );
-                }
+                      </HubLinkCard>
+                    );
+                  }
 
-                return (
-                  <li key={item.key}>
-                    <Link
-                      href={`/hr/feature/${item.key}`}
-                      className="block h-full rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-stone-300 hover:bg-stone-50"
-                    >
+                  return (
+                    <HubLinkCard key={item.key} href={`/hr/feature/${item.key}`} variant="planned">
                       {inner}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </div>
+                    </HubLinkCard>
+                  );
+                })}
+              </SimpleGrid>
+            </Stack>
+          ))}
+        </Stack>
 
-      <section className="mt-12 border-t border-stone-200 pt-10">
-        <h2 className="text-lg font-semibold text-stone-900">Related (operational)</h2>
-        <p className="mt-1 text-sm text-stone-600">
-          Student-facing roll marks are not staff HR attendance — use the links below for programme
-          delivery metrics and pupil attendance.
-        </p>
-        <ul className="mt-4 flex flex-wrap gap-4 text-sm">
-          <li>
-            <Link href="/attendance" className="font-semibold text-teal-800 underline">
+        <Divider my="lg" />
+
+        <Stack component="section" gap="md">
+          <Title order={2} size="h3">
+            Related (operational)
+          </Title>
+          <Text c="dimmed" size="sm">
+            Student-facing roll marks are not staff HR attendance — use the links below for programme
+            delivery metrics and pupil attendance.
+          </Text>
+          <Group gap="lg">
+            <Anchor component={Link} href="/attendance" size="sm" fw={600}>
               Student attendance (roll)
-            </Link>
-          </li>
-          <li>
-            <Link href="/dashboard" className="font-semibold text-teal-800 underline">
+            </Anchor>
+            <Anchor component={Link} href="/dashboard" size="sm" fw={600}>
               Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link href="/reports" className="font-semibold text-teal-800 underline">
+            </Anchor>
+            <Anchor component={Link} href="/reports" size="sm" fw={600}>
               PDF programme reports
-            </Link>
-          </li>
-        </ul>
-      </section>
+            </Anchor>
+          </Group>
+        </Stack>
 
-      <p className="mt-10 text-sm text-stone-600">
-        Assign staff under{" "}
-        <Link href="/admin/institutions" className="font-semibold text-teal-800 underline">
-          Admin → Schools
-        </Link>{" "}
-        → <span className="font-medium text-stone-800">Staff &amp; teachers</span>.
-      </p>
-    </div>
+        <Text size="sm" c="dimmed" mt="md">
+          Assign staff under{" "}
+          <Anchor component={Link} href="/admin/institutions" fw={600}>
+            Admin → Schools
+          </Anchor>{" "}
+          → <Text span fw={600}>Staff &amp; teachers</Text>.
+        </Text>
+      </Stack>
+    </AppPage>
   );
 }

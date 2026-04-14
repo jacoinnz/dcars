@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { and, asc, eq, inArray } from "drizzle-orm";
+import { Alert, Anchor, Box, Button, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { attendanceRecords, institutions, sites, students } from "@/db/schema";
 import { ATTENDANCE_STATUSES } from "@/app/attendance/constants";
 import { saveAttendanceForDate } from "@/app/attendance/actions";
+import { AppPage } from "@/components/app-page";
 import { authOptions } from "@/lib/auth-options";
 import { getManageableInstitutionIds } from "@/lib/school-access";
 
@@ -87,140 +89,180 @@ export default async function AttendancePage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Student attendance</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
-        Staff register: one mark per student per school day (present, absent, late, excused). Clear a
-        row to remove a mark for that day.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Student attendance</Title>
+          <Text c="dimmed" size="sm" maw={520}>
+            Staff register: one mark per student per school day (present, absent, late, excused). Clear a
+            row to remove a mark for that day.
+          </Text>
+        </Stack>
 
-      {manageable.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          You are not assigned as staff for any school. Ask an administrator to add you under Admin
-          → Schools → Staff.
-        </p>
-      ) : (
-        <form className="mt-8 flex flex-wrap items-end gap-3" method="get">
-          <label className="text-xs font-medium text-stone-700">
-            School
-            <select
-              name="institutionId"
-              defaultValue={activeInstitutionId}
-              className="ml-1 mt-1 block min-w-[14rem] rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-            >
-              {institutionOptions.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.name} — {o.siteName}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-stone-700">
-            Date
-            <input
-              type="date"
-              name="date"
-              defaultValue={dateStr}
-              className="ml-1 mt-1 block rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-            />
-          </label>
-          <button
-            type="submit"
-            className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white"
+        {manageable.length === 0 ? (
+          <Alert color="yellow" mt="md">
+            You are not assigned as staff for any school. Ask an administrator to add you under Admin →
+            Schools → Staff.
+          </Alert>
+        ) : (
+          <Box
+            component="form"
+            method="get"
+            mt="md"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "flex-end",
+              gap: "var(--mantine-spacing-md)",
+            }}
           >
-            Load
-          </button>
-        </form>
-      )}
+            <Box>
+              <Text component="label" size="xs" fw={500} htmlFor="att-institution" display="block">
+                School
+              </Text>
+              <select
+                id="att-institution"
+                name="institutionId"
+                defaultValue={activeInstitutionId}
+                style={{
+                  marginTop: 4,
+                  minWidth: "14rem",
+                  borderRadius: "var(--mantine-radius-md)",
+                  border: "1px solid var(--mantine-color-gray-4)",
+                  padding: "6px 8px",
+                  fontSize: "var(--mantine-font-size-sm)",
+                }}
+              >
+                {institutionOptions.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.name} — {o.siteName}
+                  </option>
+                ))}
+              </select>
+            </Box>
+            <Box>
+              <Text component="label" size="xs" fw={500} htmlFor="att-date" display="block">
+                Date
+              </Text>
+              <input
+                id="att-date"
+                type="date"
+                name="date"
+                defaultValue={dateStr}
+                style={{
+                  marginTop: 4,
+                  borderRadius: "var(--mantine-radius-md)",
+                  border: "1px solid var(--mantine-color-gray-4)",
+                  padding: "6px 8px",
+                  fontSize: "var(--mantine-font-size-sm)",
+                }}
+              />
+            </Box>
+            <Button type="submit" color="dark">
+              Load
+            </Button>
+          </Box>
+        )}
 
-      {activeInstitutionId && studRows.length > 0 ? (
-        <form
-          action={saveAttendanceForDate.bind(null, activeInstitutionId, dateStr)}
-          className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
-        >
-          <div className="border-b border-stone-200 px-4 py-3">
-            <h2 className="text-sm font-semibold text-stone-900">
-              {format(new Date(`${dateStr}T12:00:00`), "EEEE d MMM yyyy")}
-            </h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="bg-stone-50 text-xs uppercase text-stone-600">
-                <tr>
-                  <th className="px-4 py-3">Student</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {studRows.map((s) => {
-                  const ex = existing.get(s.id);
-                  return (
-                    <tr key={s.id} className="border-t border-stone-100">
-                      <td className="px-4 py-3 font-medium text-stone-900">
-                        {s.lastName}, {s.firstName}
-                      </td>
-                      <td className="px-4 py-3">
-                        <select
-                          name={`s_${s.id}`}
-                          defaultValue={ex?.status ?? ""}
-                          className="rounded border border-stone-300 bg-white px-2 py-1 text-sm"
-                        >
-                          <option value="">— no mark / clear —</option>
-                          {ATTENDANCE_STATUSES.map((st) => (
-                            <option key={st} value={st}>
-                              {st}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="max-w-xs px-4 py-3">
-                        <input
-                          name={`n_${s.id}`}
-                          defaultValue={ex?.notes ?? ""}
-                          placeholder="Optional"
-                          className="w-full rounded border border-stone-300 px-2 py-1 text-sm"
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div className="border-t border-stone-200 px-4 py-4">
-            <button
-              type="submit"
-              className="rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"
-            >
-              Save attendance
-            </button>
-          </div>
-        </form>
-      ) : null}
-
-      {activeInstitutionId && studRows.length === 0 ? (
-        <p className="mt-8 text-sm text-stone-600">
-          No students in this school yet. Add them under{" "}
-          <Link
-            href={`/evaluations/students/${activeInstitutionId}`}
-            className="font-semibold text-teal-800 underline"
+        {activeInstitutionId && studRows.length > 0 ? (
+          <Paper
+            component="form"
+            action={saveAttendanceForDate.bind(null, activeInstitutionId, dateStr)}
+            withBorder
+            shadow="sm"
+            radius="lg"
+            mt="xl"
+            style={{ overflow: "hidden" }}
           >
-            Evaluations → students
-          </Link>
-          .
-        </p>
-      ) : null}
+            <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+              <Title order={2} size="h5">
+                {format(new Date(`${dateStr}T12:00:00`), "EEEE d MMM yyyy")}
+              </Title>
+            </Box>
+            <Table.ScrollContainer minWidth={500}>
+              <Table striped highlightOnHover>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Student</Table.Th>
+                    <Table.Th>Status</Table.Th>
+                    <Table.Th style={{ maxWidth: 320 }}>Note</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {studRows.map((s) => {
+                    const ex = existing.get(s.id);
+                    return (
+                      <Table.Tr key={s.id}>
+                        <Table.Td fw={600}>
+                          {s.lastName}, {s.firstName}
+                        </Table.Td>
+                        <Table.Td>
+                          <select
+                            name={`s_${s.id}`}
+                            defaultValue={ex?.status ?? ""}
+                            style={{
+                              borderRadius: "var(--mantine-radius-sm)",
+                              border: "1px solid var(--mantine-color-gray-4)",
+                              padding: "4px 8px",
+                              fontSize: "var(--mantine-font-size-sm)",
+                            }}
+                          >
+                            <option value="">— no mark / clear —</option>
+                            {ATTENDANCE_STATUSES.map((st) => (
+                              <option key={st} value={st}>
+                                {st}
+                              </option>
+                            ))}
+                          </select>
+                        </Table.Td>
+                        <Table.Td style={{ maxWidth: 320 }}>
+                          <input
+                            name={`n_${s.id}`}
+                            defaultValue={ex?.notes ?? ""}
+                            placeholder="Optional"
+                            style={{
+                              width: "100%",
+                              borderRadius: "var(--mantine-radius-sm)",
+                              border: "1px solid var(--mantine-color-gray-4)",
+                              padding: "4px 8px",
+                              fontSize: "var(--mantine-font-size-sm)",
+                            }}
+                          />
+                        </Table.Td>
+                      </Table.Tr>
+                    );
+                  })}
+                </Table.Tbody>
+              </Table>
+            </Table.ScrollContainer>
+            <Box p="md" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
+              <Button type="submit" color="teal">
+                Save attendance
+              </Button>
+            </Box>
+          </Paper>
+        ) : null}
 
-      <p className="mt-10 text-sm text-stone-600">
-        <Link href="/students/attendance" className="font-semibold text-teal-800 underline">
-          Student attendance hub
-        </Link>
-        {" · "}
-        <Link href="/students" className="font-semibold text-teal-800 underline">
-          Student information
-        </Link>
-      </p>
-    </div>
+        {activeInstitutionId && studRows.length === 0 ? (
+          <Text size="sm" c="dimmed" mt="xl">
+            No students in this school yet. Add them under{" "}
+            <Anchor component={Link} href={`/evaluations/students/${activeInstitutionId}`} fw={600}>
+              Evaluations → students
+            </Anchor>
+            .
+          </Text>
+        ) : null}
+
+        <Text size="sm" c="dimmed" mt="xl">
+          <Anchor component={Link} href="/students/attendance" fw={600}>
+            Student attendance hub
+          </Anchor>
+          {" · "}
+          <Anchor component={Link} href="/students" fw={600}>
+            Student information
+          </Anchor>
+        </Text>
+      </Stack>
+    </AppPage>
   );
 }

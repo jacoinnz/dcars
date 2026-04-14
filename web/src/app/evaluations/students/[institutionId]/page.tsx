@@ -101,11 +101,11 @@ export default async function EvaluationStudentsPage({ params }: Props) {
   }));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/students" className="text-sm font-medium text-teal-800 underline">
         ← Student information
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Manage students — {school.name}</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Manage students — {school.name}</h1>
       <p className="mt-2 text-sm text-stone-600">
         View the student roster, admit new learners, and set class membership. Students can belong to
         multiple classes.

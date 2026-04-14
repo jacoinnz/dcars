@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Anchor, Stack, Text, Title } from "@mantine/core";
+import { AppPage } from "@/components/app-page";
 import { adminCreateUser } from "@/app/admin/actions";
 
 export const metadata = {
@@ -7,14 +9,17 @@ export const metadata = {
 
 export default function AdminNewUserPage() {
   return (
-    <div>
-      <Link href="/admin/users" className="text-sm font-medium text-teal-800 underline">
+    <AppPage>
+      <Stack gap="lg">
+      <Anchor component={Link} href="/admin/users" size="sm" fw={500}>
         ← Users
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">New user</h1>
-      <p className="mt-2 text-sm text-stone-600">
+      </Anchor>
+      <Title order={1} mt="md">
+        New user
+      </Title>
+      <Text size="sm" c="dimmed">
         After creation you can assign per-site permissions (unless they are a super admin).
-      </p>
+      </Text>
 
       <form action={adminCreateUser} className="mt-8 max-w-md space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
         <label className="block text-sm font-medium text-stone-800">
@@ -57,6 +62,7 @@ export default function AdminNewUserPage() {
           Create user
         </button>
       </form>
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

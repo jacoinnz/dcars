@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { Anchor, Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import { AppPage } from "@/components/app-page";
+import { HubLinkCard } from "@/components/hub-link-card";
 import { STUDENT_ATTENDANCE_PANEL_GROUPS } from "@/lib/student-attendance-panel";
 import { authOptions } from "@/lib/auth-options";
 
@@ -15,96 +18,103 @@ export default async function StudentAttendanceHubPage() {
   if (!session?.user?.id) redirect("/login");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Student attendance</h1>
-      <p className="mt-2 max-w-3xl text-sm text-stone-600">
-        Daily roll for staff, plus read-only views for learners and families — the same information
-        architecture as typical{" "}
-        <span className="font-medium text-stone-800">student attendance</span> screens in school
-        systems. Cards marked <span className="font-medium text-stone-800">Available</span> are live
-        in this app.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Student attendance</Title>
+          <Text c="dimmed" size="sm" maw={600}>
+            Daily roll for staff, plus read-only views for learners and families — the same information
+            architecture as typical{" "}
+            <Text span fw={600} c="dark.7">
+              student attendance
+            </Text>{" "}
+            screens in school systems. Cards marked{" "}
+            <Text span fw={600} c="dark.7">
+              Available
+            </Text>{" "}
+            are live in this app.
+          </Text>
+        </Stack>
 
-      <div className="mt-10 flex flex-col gap-10">
-        {STUDENT_ATTENDANCE_PANEL_GROUPS.map((group) => (
-          <section key={group.id} aria-labelledby={`sa-${group.id}`}>
-            <h2 id={`sa-${group.id}`} className="text-lg font-semibold text-stone-900">
-              {group.title}
-            </h2>
-            {group.description ? (
-              <p className="mt-1 max-w-3xl text-sm text-stone-600">{group.description}</p>
-            ) : null}
-            <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-              {group.items.map((item) => {
-                const badge = (
-                  <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-900">
-                    Available
-                  </span>
-                );
-
-                const inner = (
-                  <>
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-stone-900">{item.title}</p>
-                      {badge}
-                    </div>
-                    <p className="mt-2 text-sm text-stone-600">{item.description}</p>
-                    <p className="mt-3 text-sm font-medium text-teal-800">Open →</p>
-                  </>
-                );
-
-                if (item.href) {
-                  return (
-                    <li key={item.key}>
-                      <Link
-                        href={item.href}
-                        className="block h-full rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-                      >
-                        {inner}
-                      </Link>
-                    </li>
+        <Stack gap="xl" mt="md">
+          {STUDENT_ATTENDANCE_PANEL_GROUPS.map((group) => (
+            <Stack key={group.id} component="section" gap="md" aria-labelledby={`sa-${group.id}`}>
+              <Title order={2} id={`sa-${group.id}`} size="h3">
+                {group.title}
+              </Title>
+              {group.description ? (
+                <Text c="dimmed" size="sm" maw={600}>
+                  {group.description}
+                </Text>
+              ) : null}
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                {group.items.map((item) => {
+                  const badge = (
+                    <Badge size="xs" variant="light" color="teal" tt="uppercase">
+                      Available
+                    </Badge>
                   );
-                }
 
-                return (
-                  <li key={item.key} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-                    {inner}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </div>
+                  const inner = (
+                    <>
+                      <Group justify="space-between" align="flex-start" gap="xs" wrap="nowrap">
+                        <Text fw={600} size="sm">
+                          {item.title}
+                        </Text>
+                        {badge}
+                      </Group>
+                      <Text size="sm" c="dimmed" mt="xs">
+                        {item.description}
+                      </Text>
+                      <Text size="sm" fw={600} c="teal.8" mt="sm">
+                        Open →
+                      </Text>
+                    </>
+                  );
 
-      <section className="mt-12 border-t border-stone-200 pt-10">
-        <h2 className="text-lg font-semibold text-stone-900">Related</h2>
-        <ul className="mt-4 flex flex-wrap gap-4 text-sm">
-          <li>
-            <Link href="/students" className="font-semibold text-teal-800 underline">
+                  if (item.href) {
+                    return (
+                      <HubLinkCard key={item.key} href={item.href} variant="live">
+                        {inner}
+                      </HubLinkCard>
+                    );
+                  }
+
+                  return (
+                    <Text key={item.key} size="sm" c="dimmed">
+                      {item.title} (no link)
+                    </Text>
+                  );
+                })}
+              </SimpleGrid>
+            </Stack>
+          ))}
+        </Stack>
+
+        <Divider my="lg" />
+
+        <Stack component="section" gap="md">
+          <Title order={2} size="h3">
+            Related
+          </Title>
+          <Group gap="lg">
+            <Anchor component={Link} href="/students" size="sm" fw={600}>
               Student information
-            </Link>
-          </li>
-          <li>
-            <Link href="/dashboard" className="font-semibold text-teal-800 underline">
+            </Anchor>
+            <Anchor component={Link} href="/dashboard" size="sm" fw={600}>
               Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link href="/evaluations" className="font-semibold text-teal-800 underline">
+            </Anchor>
+            <Anchor component={Link} href="/evaluations" size="sm" fw={600}>
               Evaluations
-            </Link>
-          </li>
-        </ul>
-      </section>
+            </Anchor>
+          </Group>
+        </Stack>
 
-      <p className="mt-10 text-sm text-stone-600">
-        Assign staff under{" "}
-        <Link href="/admin/institutions" className="font-semibold text-teal-800 underline">
-          Admin → Schools
-        </Link>{" "}
-        so they can record attendance; link guardians there for family visibility.
-      </p>
-    </div>
+        <Text size="sm" c="dimmed" mt="md">
+          Assign staff under <Anchor component={Link} href="/admin/institutions">Admin → Schools</Anchor> so
+          they can record attendance; link guardians there for family visibility.
+        </Text>
+      </Stack>
+    </AppPage>
   );
 }

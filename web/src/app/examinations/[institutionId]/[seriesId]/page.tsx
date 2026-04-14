@@ -100,13 +100,13 @@ export default async function ExaminationSeriesPage({ params }: Props) {
   const papersJoined = papers.join("\t");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link href={`/examinations/${institutionId}`} className="text-sm font-medium text-teal-800 underline">
             ← {school.name}
           </Link>
-          <h1 className="mt-3 text-2xl font-semibold text-stone-900">{series.title}</h1>
+          <h1 className="pe-app-h1 pe-app-h1-mt3">{series.title}</h1>
           <p className="text-sm text-stone-600">
             {school.name} · {school.siteName}
           </p>

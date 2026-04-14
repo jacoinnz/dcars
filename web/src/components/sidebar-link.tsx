@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Anchor } from "@mantine/core";
 
 export function SidebarLink(props: { href: string; children: ReactNode }) {
   const pathname = usePathname();
@@ -14,15 +15,31 @@ export function SidebarLink(props: { href: string; children: ReactNode }) {
       : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <Link
+    <Anchor
+      component={Link}
       href={href}
-      className={`block rounded-lg px-3 py-2 text-sm transition ${
-        active
-          ? "bg-teal-900/60 font-medium text-white"
-          : "text-stone-300 hover:bg-stone-800/80 hover:text-white"
-      }`}
+      size="sm"
+      display="block"
+      px="sm"
+      py={8}
+      style={{
+        borderRadius: "var(--mantine-radius-md)",
+        textDecoration: "none",
+        transition: "background-color 120ms ease, color 120ms ease",
+        color: active ? "#fafaf9" : "#d6d3d1",
+        backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : undefined,
+        fontWeight: active ? 600 : 400,
+      }}
+      styles={{
+        root: {
+          "&:hover": {
+            color: "var(--mantine-color-white)",
+            backgroundColor: active ? "rgba(34, 139, 230, 0.45)" : "rgba(41, 37, 36, 0.8)",
+          },
+        },
+      }}
     >
       {props.children}
-    </Link>
+    </Anchor>
   );
 }

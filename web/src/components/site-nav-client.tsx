@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Anchor, Box, ScrollArea, Stack, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   getDefaultSidebarConfig,
   loadSidebarConfig,
@@ -100,10 +101,21 @@ export function SiteNavClient(props: {
     };
   }, [props.isSuperAdmin]);
 
+  const isLg = useMediaQuery("(min-width: 62em)");
+
   return (
     <Box
       component="aside"
-      className="flex w-full shrink-0 flex-col border-b border-stone-800 bg-stone-950 md:h-screen md:w-60 md:border-b-0 md:border-r"
+      bg="#0c0a09"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flexShrink: 0,
+        width: isLg ? "15rem" : "100%",
+        minHeight: isLg ? "100vh" : undefined,
+        borderBottom: isLg ? undefined : "1px solid #292524",
+        borderRight: isLg ? "1px solid #292524" : undefined,
+      }}
     >
       <Box
         p="md"

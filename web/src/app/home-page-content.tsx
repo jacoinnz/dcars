@@ -35,7 +35,7 @@ export function HomePageContent(props: {
   const { welcomeName, isSuperAdmin, tabCounts, notices, todoStorageKey, totals, alerts } = props;
 
   return (
-    <Box mx="auto" maw={1280} px="md" py="xl" className="w-full flex-1">
+    <Box mx="auto" maw={1280} px="md" py="xl" w="100%" style={{ flex: 1 }}>
       <WelcomeAudienceTabs userName={welcomeName} isSuperAdmin={isSuperAdmin} tabCounts={tabCounts}>
         <>
           <NoticeBoard items={notices} showManageLink={isSuperAdmin} embedded />

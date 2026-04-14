@@ -53,11 +53,11 @@ export default async function StudentMaterialsPage() {
     .orderBy(desc(teacherContentUploads.createdAt));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/student" className="text-sm font-medium text-teal-800 underline">
         ← Student panel
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Study materials &amp; files</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Study materials &amp; files</h1>
       <p className="mt-2 text-sm text-stone-600">
         {ctx.firstName} {ctx.lastName} · Files uploaded for{" "}
         <span className="font-medium text-stone-800">{ctx.institutionName}</span> (same library staff

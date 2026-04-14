@@ -82,11 +82,11 @@ export default async function StudentAttendancePage({
     .orderBy(desc(attendanceRecords.sessionDate));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/student" className="text-sm font-medium text-teal-800 underline">
         ← Student panel
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Your attendance</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Your attendance</h1>
       {ctx ? (
         <p className="mt-2 text-sm text-stone-600">
           {ctx.student.firstName} {ctx.student.lastName} · {ctx.institutionName}

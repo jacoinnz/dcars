@@ -31,11 +31,11 @@ export default async function StudentMarksPage() {
 
   if (!studentId) {
     return (
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+      <div className="pe-app-page">
         <Link href="/student" className="text-sm font-medium text-teal-800 underline">
           ← Student panel
         </Link>
-        <h1 className="mt-4 text-2xl font-semibold text-stone-900">Your marks</h1>
+        <h1 className="pe-app-h1 pe-app-h1-mt4">Your marks</h1>
         <p className="mt-8 text-sm text-stone-600">
           Your account is not linked to a student profile. See{" "}
           <Link href="/student" className="font-semibold text-teal-800 underline">
@@ -80,11 +80,11 @@ export default async function StudentMarksPage() {
     .orderBy(desc(examMarks.updatedAt));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/student" className="text-sm font-medium text-teal-800 underline">
         ← Student panel
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Your marks</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Your marks</h1>
       {ctx ? (
         <p className="mt-2 text-sm text-stone-600">
           {ctx.student.firstName} {ctx.student.lastName} · {ctx.institutionName} ({ctx.siteName})

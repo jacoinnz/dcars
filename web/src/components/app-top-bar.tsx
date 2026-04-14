@@ -4,7 +4,7 @@ import { IconSearch } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Anchor, Box, Group, Loader, Paper, Text, TextInput } from "@mantine/core";
+import { Anchor, Box, Flex, Group, Loader, Paper, Text, TextInput } from "@mantine/core";
 
 type StudentHit = {
   id: string;
@@ -84,12 +84,25 @@ export function AppTopBar() {
   }
 
   return (
-    <Box
+    <Flex
       component="header"
+      align="center"
+      gap="md"
+      h="3.5rem"
       pos="sticky"
       top={0}
-      style={{ zIndex: 30 }}
-      className="flex h-14 shrink-0 items-center gap-3 border-b border-stone-200 bg-white/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-white/80 md:px-6"
+      justify="flex-start"
+      wrap="nowrap"
+      pl={{ base: "md", lg: "lg" }}
+      pr={{ base: "md", lg: "lg" }}
+      py="sm"
+      style={{
+        zIndex: 30,
+        flexShrink: 0,
+        borderBottom: "1px solid var(--mantine-color-gray-3)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        backdropFilter: "blur(8px)",
+      }}
     >
       <Box ref={wrapRef} pos="relative" style={{ minWidth: 0 }} flex={1}>
         <TextInput
@@ -226,6 +239,6 @@ export function AppTopBar() {
           </Paper>
         ) : null}
       </Box>
-    </Box>
+    </Flex>
   );
 }

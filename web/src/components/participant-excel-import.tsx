@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Alert, Box, Button, Paper, Stack, Text, Title } from "@mantine/core";
 import type { ImportParticipantsResult } from "@/app/import-actions";
 import { importParticipantsFromExcel } from "@/app/import-actions";
 
@@ -11,78 +12,89 @@ export function ParticipantExcelImport() {
   );
 
   return (
-    <section className="w-full rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-lg font-semibold text-stone-900">Import from Excel</h2>
-      <p className="mt-2 text-sm text-stone-600">
-        Download the template, fill the <strong className="font-medium">Registrations</strong> sheet
-        (keep the header row), then upload here. Each row creates one participant with a new unique
-        ID. Site is selected using <strong className="font-medium">site_code</strong> from the
-        Sites sheet — same codes as in the app.
-      </p>
+    <Paper component="section" withBorder radius="xl" p={{ base: "lg", sm: "xl" }} shadow="sm" w="100%">
+      <Title order={2} size="h4">
+        Import from Excel
+      </Title>
+      <Text size="sm" c="dimmed" mt="sm">
+        Download the template, fill the <Text span fw={600}>Registrations</Text> sheet (keep the
+        header row), then upload here. Each row creates one participant with a new unique ID. Site is
+        selected using <Text span fw={600}>site_code</Text> from the Sites sheet — same codes as in
+        the app.
+      </Text>
 
-      <p className="mt-4">
-        <a
+      <Box mt="md">
+        <Button
+          component="a"
           href="/api/participants/template"
-          className="inline-flex items-center justify-center rounded-xl border border-teal-600 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-900 hover:bg-teal-100"
+          download
+          variant="outline"
+          color="teal"
         >
           Download Excel template
-        </a>
-      </p>
+        </Button>
+      </Box>
 
-      <form action={formAction} className="mt-6 space-y-4">
-        <label className="block text-sm font-medium text-stone-800">
-          Spreadsheet (.xlsx or .xls)
-          <input
-            name="file"
-            type="file"
-            accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-            required
-            className="mt-2 block w-full text-sm text-stone-700 file:mr-3 file:rounded-lg file:border file:border-stone-300 file:bg-stone-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-stone-800"
-          />
-        </label>
+      <form action={formAction}>
+        <Stack gap="md" mt="lg">
+          <Box>
+            <Text component="label" size="sm" fw={500} display="block" htmlFor="participant-excel-file">
+              Spreadsheet (.xlsx or .xls)
+            </Text>
+            <input
+              id="participant-excel-file"
+              name="file"
+              type="file"
+              accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+              required
+              style={{ marginTop: 8, width: "100%", fontSize: "var(--mantine-font-size-sm)" }}
+            />
+          </Box>
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-stone-800 disabled:opacity-60"
-        >
-          {pending ? "Importing…" : "Upload and import"}
-        </button>
+          <Button type="submit" color="dark" loading={pending} disabled={pending}>
+            {pending ? "Importing…" : "Upload and import"}
+          </Button>
+        </Stack>
       </form>
 
       {state?.ok === false ? (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+        <Alert mt="md" color="red" title="Import failed">
           {state.message}
-        </div>
+        </Alert>
       ) : null}
 
       {state?.ok === true ? (
-        <div className="mt-4 space-y-2 text-sm">
-          <div
-            className={
-              state.failed.length
-                ? "rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-amber-950"
-                : "rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-950"
-            }
-          >
-            <p className="font-medium">
+        <Stack gap="sm" mt="md">
+          <Alert color={state.failed.length ? "yellow" : "green"} title="Import finished">
+            <Text size="sm">
               Imported {state.imported} row{state.imported === 1 ? "" : "s"}.
               {state.failed.length > 0
                 ? ` ${state.failed.length} row${state.failed.length === 1 ? "" : "s"} could not be imported.`
                 : ""}
-            </p>
-          </div>
+            </Text>
+          </Alert>
           {state.failed.length > 0 ? (
-            <ul className="max-h-48 list-inside list-disc overflow-y-auto rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-xs text-stone-800">
-              {state.failed.map((f, i) => (
-                <li key={`${f.rowNumber}-${i}`}>
-                  Row {f.rowNumber}: {f.message}
-                </li>
-              ))}
-            </ul>
+            <Paper
+              withBorder
+              p="sm"
+              radius="md"
+              style={{
+                maxHeight: "12rem",
+                overflow: "auto",
+                background: "var(--mantine-color-gray-0)",
+              }}
+            >
+              <Text component="ul" size="xs" m={0} pl="md" style={{ listStyle: "disc" }}>
+                {state.failed.map((f, i) => (
+                  <li key={`${f.rowNumber}-${i}`}>
+                    Row {f.rowNumber}: {f.message}
+                  </li>
+                ))}
+              </Text>
+            </Paper>
           ) : null}
-        </div>
+        </Stack>
       ) : null}
-    </section>
+    </Paper>
   );
 }

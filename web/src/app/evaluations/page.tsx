@@ -9,6 +9,8 @@ import { addPerformanceRecord } from "@/app/evaluations/actions";
 import { authOptions } from "@/lib/auth-options";
 import { fetchPerformanceForReport } from "@/lib/evaluation-report";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
+import { AppPage } from "@/components/app-page";
+import { Anchor, Stack, Text, Title } from "@mantine/core";
 
 export const dynamic = "force-dynamic";
 
@@ -95,16 +97,17 @@ export default async function EvaluationsPage({
   const toInput = format(toDate, "yyyy-MM-dd");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <Link href="/students" className="text-sm font-medium text-teal-800 underline">
+    <AppPage>
+      <Stack gap="lg">
+      <Anchor component={Link} href="/students" size="sm" fw={500}>
         ← Student information
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Evaluation reports</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
+      </Anchor>
+      <Title order={1}>Evaluation reports</Title>
+      <Text c="dimmed" size="sm" maw={520}>
         Filter by school and optionally by one or more classes. Scores are averaged as a percentage
         of the maximum. Staff assigned to a school can enter results; programme site access allows
         read-only visibility where configured.
-      </p>
+      </Text>
 
       {viewableIds.length === 0 ? (
         <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
@@ -196,11 +199,11 @@ export default async function EvaluationsPage({
           <section className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
               <p className="text-xs font-semibold uppercase text-stone-500">School average</p>
-              <p className="mt-1 text-2xl font-semibold text-stone-900">
+              <Text size="xl" fw={600} mt={4}>
                 {report.schoolAvgPct === null
                   ? "—"
                   : `${Math.round(report.schoolAvgPct * 10) / 10}%`}
-              </p>
+              </Text>
             </div>
             <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:col-span-2">
               <p className="text-xs font-semibold uppercase text-stone-500">By class</p>
@@ -379,6 +382,7 @@ export default async function EvaluationsPage({
           </Link>
         </p>
       ) : null}
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

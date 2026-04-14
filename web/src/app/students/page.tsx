@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Alert, Anchor, List, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import { AppPage } from "@/components/app-page";
+import { HubLinkCard } from "@/components/hub-link-card";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
 import { authOptions } from "@/lib/auth-options";
@@ -37,141 +40,124 @@ export default async function StudentsHubPage() {
           .orderBy(asc(institutions.name));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Student information</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
-        Registration, rosters, attendance, and academic reporting — start here for anything tied to
-        young people in schools on the programme.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Student information</Title>
+          <Text c="dimmed" size="sm" maw={520}>
+            Registration, rosters, attendance, and academic reporting — start here for anything tied to
+            young people in schools on the programme.
+          </Text>
+        </Stack>
 
-      <section className="mt-10">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-          Data entry &amp; daily records
-        </h2>
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-          <li>
-            <Link
-              href="/entry"
-              className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-            >
-              <p className="text-sm font-semibold text-stone-900">Participant registration</p>
-              <p className="mt-2 text-sm text-stone-600">
+        <Stack component="section" gap="md">
+          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
+            Data entry &amp; daily records
+          </Text>
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+            <HubLinkCard href="/entry" variant="live">
+              <Text fw={600} size="sm">
+                Participant registration
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
                 Submit a new youth registration; records can later be linked to a school student
                 profile.
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/students/attendance"
-              className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-            >
-              <p className="text-sm font-semibold text-stone-900">Student attendance</p>
-              <p className="mt-2 text-sm text-stone-600">
+              </Text>
+            </HubLinkCard>
+            <HubLinkCard href="/students/attendance" variant="live">
+              <Text fw={600} size="sm">
+                Student attendance
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
                 Staff daily roll, student portal, and family views — open the hub to choose where to
                 go.
-              </p>
-            </Link>
-          </li>
-        </ul>
-      </section>
+              </Text>
+            </HubLinkCard>
+          </SimpleGrid>
+        </Stack>
 
-      <section className="mt-10">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-          Student admission, rosters &amp; classes
-        </h2>
-        {schoolRows.length === 0 ? (
-          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-            No schools are visible to your account yet. Super admins can add schools under{" "}
-            <Link href="/admin/institutions" className="font-semibold underline">
-              Admin → Schools
-            </Link>
-            .
-          </p>
-        ) : (
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {schoolRows.map((s) => (
-              <li
-                key={s.id}
-                className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"
-              >
-                <p className="text-sm font-semibold text-stone-900">
-                  {s.name}
-                  <span className="font-normal text-stone-500"> — {s.siteName}</span>
-                </p>
-                <ul className="mt-3 flex flex-col gap-2 text-sm">
-                  <li>
-                    <Link
-                      href={`/evaluations/students/${s.id}`}
-                      className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-950"
-                    >
-                      Manage students — list, admission &amp; classes
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/evaluations/syllabuses/${s.id}`}
-                      className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-950"
-                    >
-                      Syllabuses
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <Stack component="section" gap="md">
+          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
+            Student admission, rosters &amp; classes
+          </Text>
+          {schoolRows.length === 0 ? (
+            <Alert color="yellow" title="No schools visible">
+              No schools are visible to your account yet. Super admins can add schools under{" "}
+              <Anchor component={Link} href="/admin/institutions" fw={600}>
+                Admin → Schools
+              </Anchor>
+              .
+            </Alert>
+          ) : (
+            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+              {schoolRows.map((s) => (
+                <Paper key={s.id} withBorder shadow="sm" p="lg" radius="lg">
+                  <Text fw={600} size="sm">
+                    {s.name}
+                    <Text span fw={400} c="dimmed">
+                      {" "}
+                      — {s.siteName}
+                    </Text>
+                  </Text>
+                  <List size="sm" mt="sm" spacing="xs">
+                    <List.Item>
+                      <Anchor component={Link} href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
+                        Manage students — list, admission &amp; classes
+                      </Anchor>
+                    </List.Item>
+                    <List.Item>
+                      <Anchor component={Link} href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
+                        Syllabuses
+                      </Anchor>
+                    </List.Item>
+                  </List>
+                </Paper>
+              ))}
+            </SimpleGrid>
+          )}
+        </Stack>
 
-      <section className="mt-10">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-          Reports &amp; families
-        </h2>
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-          <li>
-            <Link
-              href="/evaluations"
-              className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-            >
-              <p className="text-sm font-semibold text-stone-900">Evaluation reports</p>
-              <p className="mt-2 text-sm text-stone-600">
-                Filter scores by school, class, and date range; enter performance where you have
-                staff access.
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/reports"
-              className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-            >
-              <p className="text-sm font-semibold text-stone-900">Programme reports (PDF)</p>
-              <p className="mt-2 text-sm text-stone-600">
+        <Stack component="section" gap="md">
+          <Text size="xs" fw={600} tt="uppercase" c="dimmed" lts={3}>
+            Reports &amp; families
+          </Text>
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+            <HubLinkCard href="/evaluations" variant="live">
+              <Text fw={600} size="sm">
+                Evaluation reports
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
+                Filter scores by school, class, and date range; enter performance where you have staff
+                access.
+              </Text>
+            </HubLinkCard>
+            <HubLinkCard href="/reports" variant="live">
+              <Text fw={600} size="sm">
+                Programme reports (PDF)
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
                 Export a dated PDF summary for funders or internal review.
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/family"
-              className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-            >
-              <p className="text-sm font-semibold text-stone-900">Family attendance</p>
-              <p className="mt-2 text-sm text-stone-600">
-                Guardian view: see linked children&apos;s attendance when your school has connected
-                your account.
-              </p>
-            </Link>
-          </li>
-        </ul>
-      </section>
+              </Text>
+            </HubLinkCard>
+            <HubLinkCard href="/family" variant="live">
+              <Text fw={600} size="sm">
+                Family attendance
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
+                Guardian view: see linked children&apos;s attendance when your school has connected your
+                account.
+              </Text>
+            </HubLinkCard>
+          </SimpleGrid>
+        </Stack>
 
-      <p className="mt-12 text-sm text-stone-600">
-        <Link href="/admin/institutions" className="font-semibold text-teal-800 underline">
-          Admin → Schools
-        </Link>{" "}
-        for staff assignment, guardian links, and attendance messages to families.
-      </p>
-    </div>
+        <Text size="sm" c="dimmed" mt="md">
+          <Anchor component={Link} href="/admin/institutions" fw={600}>
+            Admin → Schools
+          </Anchor>{" "}
+          for staff assignment, guardian links, and attendance messages to families.
+        </Text>
+      </Stack>
+    </AppPage>
   );
 }

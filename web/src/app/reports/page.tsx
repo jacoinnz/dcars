@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { endOfMonth, format, startOfMonth } from "date-fns";
+import { Anchor, Box, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { AppPage } from "@/components/app-page";
 
 export default async function ReportsPage({
   searchParams,
@@ -18,63 +20,86 @@ export default async function ReportsPage({
   const pdfHref = `/api/report/pdf?from=${encodeURIComponent(fromStr)}&to=${encodeURIComponent(toStr)}`;
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Reports</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
-        Download a PDF summary for funders or internal reviews. The dashboard stays live; PDFs are
-        point-in-time exports for the selected date range.
-      </p>
+    <AppPage>
+      <Stack gap="lg">
+        <Title order={1}>Reports</Title>
+        <Text c="dimmed" size="sm" maw={520}>
+          Download a PDF summary for funders or internal reviews. The dashboard stays live; PDFs are
+          point-in-time exports for the selected date range.
+        </Text>
 
-      <form className="mt-8 flex flex-wrap items-end gap-2 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm" method="get">
-        <label className="text-xs font-medium text-stone-700">
-          From
-          <input
-            name="from"
-            type="date"
-            defaultValue={fromStr}
-            className="ml-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-          />
-        </label>
-        <label className="text-xs font-medium text-stone-700">
-          To
-          <input
-            name="to"
-            type="date"
-            defaultValue={toStr}
-            className="ml-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm"
-          />
-        </label>
-        <button
-          type="submit"
-          className="rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white hover:bg-stone-800"
-        >
-          Update range
-        </button>
-      </form>
+        <Paper component="form" method="get" withBorder shadow="sm" p="md" radius="lg">
+          <Group align="flex-end" gap="md" wrap="wrap">
+            <Box>
+              <Text component="label" size="xs" fw={500} htmlFor="rep-from" display="block">
+                From
+              </Text>
+              <input
+                id="rep-from"
+                name="from"
+                type="date"
+                defaultValue={fromStr}
+                style={{
+                  marginTop: 4,
+                  borderRadius: "var(--mantine-radius-md)",
+                  border: "1px solid var(--mantine-color-gray-4)",
+                  padding: "6px 8px",
+                  fontSize: "var(--mantine-font-size-sm)",
+                }}
+              />
+            </Box>
+            <Box>
+              <Text component="label" size="xs" fw={500} htmlFor="rep-to" display="block">
+                To
+              </Text>
+              <input
+                id="rep-to"
+                name="to"
+                type="date"
+                defaultValue={toStr}
+                style={{
+                  marginTop: 4,
+                  borderRadius: "var(--mantine-radius-md)",
+                  border: "1px solid var(--mantine-color-gray-4)",
+                  padding: "6px 8px",
+                  fontSize: "var(--mantine-font-size-sm)",
+                }}
+              />
+            </Box>
+            <Button type="submit" color="dark">
+              Update range
+            </Button>
+          </Group>
+        </Paper>
 
-      <div className="mt-6 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-stone-900">PDF export</p>
-        <p className="mt-1 text-sm text-stone-600">
-          Range: <span className="font-medium text-stone-800">{fromStr}</span> →{" "}
-          <span className="font-medium text-stone-800">{toStr}</span>
-        </p>
-        <a
-          href={pdfHref}
-          className="mt-4 inline-flex items-center justify-center rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"
-        >
-          Download PDF
-        </a>
-        <p className="mt-3 text-xs text-stone-500">
-          Tip: bookmark the dashboard for day-to-day monitoring; use PDFs for formal reporting
-          cycles.
-        </p>
-      </div>
+        <Paper withBorder shadow="sm" p="lg" radius="lg">
+          <Text fw={600} size="sm">
+            PDF export
+          </Text>
+          <Text size="sm" c="dimmed" mt="xs">
+            Range:{" "}
+            <Text span fw={600} c="dark.8">
+              {fromStr}
+            </Text>{" "}
+            →{" "}
+            <Text span fw={600} c="dark.8">
+              {toStr}
+            </Text>
+          </Text>
+          <Button component="a" href={pdfHref} color="teal" mt="md">
+            Download PDF
+          </Button>
+          <Text size="xs" c="dimmed" mt="md">
+            Tip: bookmark the dashboard for day-to-day monitoring; use PDFs for formal reporting cycles.
+          </Text>
+        </Paper>
 
-      <p className="mt-8 text-sm text-stone-600">
-        <Link className="font-semibold text-teal-800 underline" href="/dashboard">
-          Back to dashboard
-        </Link>
-      </p>
-    </div>
+        <Text size="sm" c="dimmed" mt="md">
+          <Anchor component={Link} href="/dashboard" fw={600}>
+            Back to dashboard
+          </Anchor>
+        </Text>
+      </Stack>
+    </AppPage>
   );
 }

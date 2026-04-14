@@ -44,11 +44,11 @@ export default async function ExaminationsInstitutionPage({ params }: Props) {
     .orderBy(desc(institutionExamSeries.updatedAt), asc(institutionExamSeries.title));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/examinations" className="text-sm font-medium text-teal-800 underline">
         ← Examinations
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">{school.name}</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">{school.name}</h1>
       <p className="text-sm text-stone-600">{school.siteName}</p>
 
       {!canManage ? (

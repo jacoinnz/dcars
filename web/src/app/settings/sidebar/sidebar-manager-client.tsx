@@ -12,6 +12,18 @@ import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
+  Anchor,
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
+import {
   clearSidebarConfig,
   getDefaultSidebarConfig,
   loadSidebarConfig,
@@ -78,59 +90,62 @@ function SortableSectionCard(props: {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
-    >
-      <div className={`flex flex-wrap items-center gap-2 ${props.collapsed ? "" : "border-b border-stone-100 pb-3"}`}>
-        <button
+    <Paper ref={setNodeRef} style={style} withBorder shadow="sm" p="md" radius="md">
+      <Group
+        gap="xs"
+        wrap="wrap"
+        align="flex-end"
+        pb={props.collapsed ? 0 : "sm"}
+        style={
+          props.collapsed
+            ? undefined
+            : { borderBottom: "1px solid var(--mantine-color-gray-2)" }
+        }
+      >
+        <UnstyledButton
           type="button"
-          className="cursor-grab touch-none rounded border border-stone-200 bg-stone-50 px-2 py-1.5 text-stone-500 hover:bg-stone-100 active:cursor-grabbing"
+          style={{ cursor: "grab", touchAction: "none" }}
           aria-label="Drag section"
           {...attributes}
           {...listeners}
         >
-          ⠿
-        </button>
-        <button
-          type="button"
-          className="rounded border border-stone-200 bg-white px-2 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-50"
-          onClick={props.onToggleCollapsed}
-          aria-label={props.collapsed ? "Expand section" : "Collapse section"}
-        >
+          <Paper withBorder px="xs" py={6} bg="gray.0">
+            <Text size="sm" c="dimmed">
+              ⠿
+            </Text>
+          </Paper>
+        </UnstyledButton>
+        <Button type="button" size="compact-xs" variant="default" onClick={props.onToggleCollapsed}>
           {props.collapsed ? "Show" : "Hide"}
-        </button>
-        <label className="min-w-0 flex-1 text-xs font-medium text-stone-600">
-          Section title
-          <input
-            value={props.section.title}
-            onChange={(e) => props.onChangeTitle(e.target.value)}
-            readOnly={Boolean(props.section.locked)}
-            className={`mt-1 w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm text-stone-900 ${
-              props.section.locked ? "bg-stone-100 text-stone-600" : "bg-white"
-            }`}
-          />
-        </label>
+        </Button>
+        <TextInput
+          label="Section title"
+          size="xs"
+          style={{ flex: "1 1 12rem", minWidth: 0 }}
+          value={props.section.title}
+          onChange={(e) => props.onChangeTitle(e.target.value)}
+          readOnly={Boolean(props.section.locked)}
+          styles={{
+            input: props.section.locked
+              ? { backgroundColor: "var(--mantine-color-gray-1)" }
+              : undefined,
+          }}
+        />
         {props.section.locked ? null : (
-          <button
-            type="button"
-            className="rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-800 hover:bg-red-100"
-            onClick={props.onRemoveSection}
-          >
+          <Button type="button" size="compact-xs" color="red" variant="light" onClick={props.onRemoveSection}>
             Remove section
-          </button>
+          </Button>
         )}
-      </div>
+      </Group>
 
       {props.collapsed ? (
-        <p className="mt-2 text-xs text-stone-500">
+        <Text mt="sm" size="xs" c="dimmed">
           {props.section.items.length} link(s)
-        </p>
+        </Text>
       ) : (
         <>
           <SortableContext items={props.section.items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-            <ul className="mt-3 space-y-2">
+            <Stack component="ul" gap="xs" mt="md" p={0} style={{ listStyle: "none" }}>
               {props.section.items.map((item) => (
                 <SortableLinkRow
                   key={item.id}
@@ -139,22 +154,23 @@ function SortableSectionCard(props: {
                   onRemove={() => props.onRemoveLink(item.id)}
                 />
               ))}
-            </ul>
+            </Stack>
           </SortableContext>
 
-          <button
+          <Button
             type="button"
-            className={`mt-3 text-sm font-semibold ${
-              props.section.locked ? "cursor-not-allowed text-stone-400" : "text-teal-800 hover:underline"
-            }`}
-            onClick={props.onAddLink}
+            variant="subtle"
+            color="teal"
+            size="compact-sm"
+            mt="md"
             disabled={Boolean(props.section.locked)}
+            onClick={props.onAddLink}
           >
             + Add link
-          </button>
+          </Button>
         </>
       )}
-    </div>
+    </Paper>
   );
 }
 
@@ -173,37 +189,50 @@ function SortableLinkRow(props: {
   };
 
   return (
-    <li ref={setNodeRef} style={style} className="flex flex-wrap items-end gap-2 rounded-lg bg-stone-50/80 p-2">
-      <button
-        type="button"
-        className="cursor-grab touch-none self-center rounded border border-stone-200 bg-white px-1.5 py-1 text-stone-500"
-        aria-label="Drag link"
-        {...attributes}
-        {...listeners}
-      >
-        ⠿
-      </button>
-      <label className="min-w-[8rem] flex-1 text-[10px] font-medium text-stone-500">
-        Label
-        <input
+    <Paper
+      component="li"
+      ref={setNodeRef}
+      style={style}
+      p="xs"
+      radius="sm"
+      withBorder
+      bg="gray.0"
+    >
+      <Group gap="xs" wrap="wrap" align="flex-end">
+        <UnstyledButton
+          type="button"
+          style={{ cursor: "grab", touchAction: "none", alignSelf: "center" }}
+          aria-label="Drag link"
+          {...attributes}
+          {...listeners}
+        >
+          <Paper withBorder px={6} py={4} bg="white">
+            <Text size="xs" c="dimmed">
+              ⠿
+            </Text>
+          </Paper>
+        </UnstyledButton>
+        <TextInput
+          label="Label"
+          size="xs"
+          style={{ flex: "1 1 8rem", minWidth: 0 }}
           value={props.item.label}
           onChange={(e) => props.onChange({ label: e.target.value })}
           readOnly={Boolean(props.item.locked)}
-          className={`mt-0.5 w-full rounded border border-stone-300 px-2 py-1 text-sm ${
-            props.item.locked ? "bg-stone-100 text-stone-600" : "bg-white"
-          }`}
+          styles={{
+            label: { fontSize: 10 },
+            input: props.item.locked
+              ? { backgroundColor: "var(--mantine-color-gray-1)" }
+              : undefined,
+          }}
         />
-      </label>
-      {props.item.locked ? null : (
-        <button
-          type="button"
-          className="self-center rounded border border-stone-300 bg-white px-2 py-1 text-xs text-stone-600 hover:bg-stone-100"
-          onClick={props.onRemove}
-        >
-          Remove
-        </button>
-      )}
-    </li>
+        {props.item.locked ? null : (
+          <Button type="button" size="compact-xs" variant="default" onClick={props.onRemove}>
+            Remove
+          </Button>
+        )}
+      </Group>
+    </Paper>
   );
 }
 
@@ -225,7 +254,6 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
       for (const s of next.sections) {
         if (out[s.id] === undefined) out[s.id] = true;
       }
-      // prune removed sections
       for (const k of Object.keys(out)) {
         if (!next.sections.some((s) => s.id === k)) delete out[k];
       }
@@ -255,35 +283,37 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-      <Link href="/dashboard" className="text-sm font-medium text-teal-800 underline">
+    <Box component="div" mx="auto" maw={720} w="100%" px="md" py="xl" style={{ flex: 1 }}>
+      <Anchor component={Link} href="/dashboard" size="sm" fw={500}>
         ← Back to dashboard
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Sidebar manager</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
+      </Anchor>
+      <Title order={1} mt="md" size="h2">
+        Sidebar manager
+      </Title>
+      <Text mt="sm" size="sm" c="dimmed" maw={640}>
         Drag sections and links to reorder. Add sections or links for the left menu. Your layout is stored in
         this browser (localStorage). The Administration block is always shown for super admins and is not
         edited here.
-      </p>
+      </Text>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        <button
+      <Group gap="xs" wrap="wrap" mt="lg">
+        <Button
           type="button"
-          className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
+          variant="default"
           onClick={() => setCollapsed(nextCollapsedMap(config.sections, false))}
         >
           Expand all
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
+          variant="default"
           onClick={() => setCollapsed(nextCollapsedMap(config.sections, true))}
         >
           Collapse all
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
+          color="teal"
           onClick={() => {
             const id = `sec-${crypto.randomUUID()}`;
             persist({
@@ -300,33 +330,44 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
           }}
         >
           Add section
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
+          variant="default"
           onClick={() => {
             persist(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
-            setCollapsed(nextCollapsedMap(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections, true));
+            setCollapsed(
+              nextCollapsedMap(
+                getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections,
+                true,
+              ),
+            );
           }}
         >
           Reset to default
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-900 hover:bg-red-100"
+          color="red"
+          variant="light"
           onClick={() => {
             clearSidebarConfig();
             setConfig(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
-            setCollapsed(nextCollapsedMap(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections, true));
+            setCollapsed(
+              nextCollapsedMap(
+                getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }).sections,
+                true,
+              ),
+            );
           }}
         >
           Clear saved layout
-        </button>
-      </div>
+        </Button>
+      </Group>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={config.sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
-          <div className="mt-8 flex flex-col gap-4">
+          <Stack gap="md" mt="xl">
             {config.sections.map((section) => (
               <SortableSectionCard
                 key={section.id}
@@ -363,9 +404,9 @@ export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
                 }}
               />
             ))}
-          </div>
+          </Stack>
         </SortableContext>
       </DndContext>
-    </div>
+    </Box>
   );
 }

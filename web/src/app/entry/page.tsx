@@ -2,6 +2,7 @@ import { ParticipantEntryForm } from "@/components/participant-entry-form";
 import { ParticipantExcelImport } from "@/components/participant-excel-import";
 import { getSitesForParticipantEntry } from "@/lib/sites-for-user";
 import { getSessionSiteScope } from "@/lib/site-scope";
+import { Box, Container, Flex, Paper, Text } from "@mantine/core";
 import { format } from "date-fns";
 import { redirect } from "next/navigation";
 
@@ -14,21 +15,35 @@ export default async function EntryPage() {
   const defaultDateOfEntry = format(new Date(), "yyyy-MM-dd");
 
   return (
-    <div className="w-full flex-1 px-3 py-8 sm:px-4 lg:px-6">
+    <Container size="xl" py="xl" px="md" style={{ flex: 1, width: "100%", maxWidth: "100%" }}>
       {sites.length === 0 ? (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950">
-          <p className="font-semibold">No programme sites available</p>
-          <p className="mt-2 text-amber-950/90">
+        <Paper
+          withBorder
+          p="lg"
+          radius="xl"
+          style={{
+            borderColor: "var(--mantine-color-yellow-3)",
+            background: "var(--mantine-color-yellow-0)",
+          }}
+        >
+          <Text fw={600} size="sm">
+            No programme sites available
+          </Text>
+          <Text mt="sm" size="sm" c="yellow.9">
             Your account does not have access to register participants for any site. Ask a
             super-administrator to grant you create permission for the sites you support.
-          </p>
-        </div>
+          </Text>
+        </Paper>
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[2fr_1fr] lg:items-start">
-          <ParticipantEntryForm sites={sites} defaultDateOfEntry={defaultDateOfEntry} />
-          <ParticipantExcelImport />
-        </div>
+        <Flex direction={{ base: "column", lg: "row" }} gap="xl" align="flex-start" wrap="nowrap">
+          <Box style={{ flex: "2 1 0", minWidth: 0 }}>
+            <ParticipantEntryForm sites={sites} defaultDateOfEntry={defaultDateOfEntry} />
+          </Box>
+          <Box style={{ flex: "1 1 0", minWidth: 0 }}>
+            <ParticipantExcelImport />
+          </Box>
+        </Flex>
       )}
-    </div>
+    </Container>
   );
 }

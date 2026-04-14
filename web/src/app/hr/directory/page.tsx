@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Anchor, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
+import { AppPage } from "@/components/app-page";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
@@ -48,15 +50,18 @@ export default async function StaffDirectoryPage() {
           .orderBy(asc(institutions.name), asc(appUsers.email));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <Link href="/hr" className="text-sm font-medium text-teal-800 underline">
+    <AppPage>
+      <Stack gap="lg">
+      <Anchor component={Link} href="/hr" size="sm" fw={500}>
         ← Human resources
-      </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Staff directory</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
-        School staff and teachers linked in the system. Assignments are managed by administrators
-        per school.
-      </p>
+      </Anchor>
+      <Title order={1} mt="md">
+        Staff directory
+      </Title>
+      <Text c="dimmed" size="sm" maw={520}>
+        School staff and teachers linked in the system. Assignments are managed by administrators per
+        school.
+      </Text>
 
       {viewableIds.length === 0 ? (
         <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
@@ -128,6 +133,7 @@ export default async function StaffDirectoryPage() {
           Reports
         </Link>
       </p>
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

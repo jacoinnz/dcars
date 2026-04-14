@@ -48,12 +48,12 @@ export default async function TeacherContentPage() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/teachers" className="text-sm font-medium text-teal-800 underline">
         ← Teachers
       </Link>
       <div className="mb-8 mt-4 max-w-2xl">
-        <h1 className="text-2xl font-semibold text-stone-900">Teacher resources</h1>
+        <h1 className="pe-app-h1">Teacher resources</h1>
         <p className="mt-2 text-sm text-stone-600">
           Upload documents or resources for a specific school or institution within a programme site.
           Colleagues who can view that site will see them here; only people with create access can add

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Anchor, Stack, Text, Title } from "@mantine/core";
 import { notFound } from "next/navigation";
+import { AppPage } from "@/components/app-page";
 import { asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { appUsers, siteUserPermissions, sites } from "@/db/schema";
@@ -25,13 +27,18 @@ export default async function AdminUserDetailPage({ params }: Props) {
   const permBySite = new Map(permRows.map((p) => [p.siteId, p]));
 
   return (
-    <div>
-      <Link href="/admin/users" className="text-sm font-medium text-teal-800 underline">
+    <AppPage>
+      <Stack gap="lg">
+      <Anchor component={Link} href="/admin/users" size="sm" fw={500}>
         ← Users
-      </Link>
+      </Anchor>
 
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Edit user</h1>
-      <p className="mt-2 text-sm text-stone-600">{user.email}</p>
+      <Title order={1} mt="md">
+        Edit user
+      </Title>
+      <Text size="sm" c="dimmed">
+        {user.email}
+      </Text>
 
       <form action={adminUpdateUser.bind(null, id)} className="mt-8 max-w-lg space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
         <h2 className="text-sm font-semibold text-stone-900">Account</h2>
@@ -174,6 +181,7 @@ export default async function AdminUserDetailPage({ params }: Props) {
           )}
         </form>
       )}
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

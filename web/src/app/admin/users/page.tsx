@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Button, Group, Stack, Text, Title } from "@mantine/core";
 import { asc } from "drizzle-orm";
+import { AppPage } from "@/components/app-page";
 import { getDb } from "@/db";
 import { appUsers } from "@/db/schema";
 import { adminDeleteUser } from "@/app/admin/actions";
@@ -18,22 +20,20 @@ export default async function AdminUsersPage() {
   const rows = await db.select().from(appUsers).orderBy(asc(appUsers.email));
 
   return (
-    <div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-stone-900">Users</h1>
-          <p className="mt-2 max-w-2xl text-sm text-stone-600">
-            Staff accounts for the same database. Super admins can manage sites and users; other
-            accounts receive per-site permissions.
-          </p>
-        </div>
-        <Link
-          href="/admin/users/new"
-          className="inline-flex rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-800"
-        >
-          New user
-        </Link>
-      </div>
+    <AppPage>
+      <Stack gap="lg">
+        <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
+          <Stack gap="xs">
+            <Title order={1}>Users</Title>
+            <Text c="dimmed" size="sm" maw={520}>
+              Staff accounts for the same database. Super admins can manage sites and users; other
+              accounts receive per-site permissions.
+            </Text>
+          </Stack>
+          <Button component={Link} href="/admin/users/new" color="teal">
+            New user
+          </Button>
+        </Group>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
         <table className="min-w-full text-left text-sm">
@@ -85,6 +85,7 @@ export default async function AdminUsersPage() {
           <p className="px-4 py-6 text-sm text-stone-600">No users yet.</p>
         ) : null}
       </div>
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

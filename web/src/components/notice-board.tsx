@@ -25,8 +25,8 @@ export function NoticeBoard(props: {
       shadow="sm"
       mb={embedded ? 0 : "xl"}
       mt={embedded ? "lg" : 0}
-      className="scroll-mt-24"
       style={{
+        scrollMarginTop: "6rem",
         borderColor: "rgba(251, 191, 36, 0.45)",
         background: "linear-gradient(to bottom, rgba(255, 251, 235, 0.95), var(--mantine-color-white))",
       }}

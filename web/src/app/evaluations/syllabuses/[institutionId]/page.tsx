@@ -43,7 +43,7 @@ export default async function InstitutionSyllabusesPage({ params }: Props) {
     .orderBy(asc(institutionSyllabuses.sortOrder), asc(institutionSyllabuses.title));
 
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+    <div className="pe-app-page pe-app-page--3xl">
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         <Link href="/teachers" className="font-medium text-teal-800 underline">
           ← Teachers
@@ -54,7 +54,7 @@ export default async function InstitutionSyllabusesPage({ params }: Props) {
       </div>
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-stone-900">Syllabuses</h1>
+          <h1 className="pe-app-h1">Syllabuses</h1>
           <p className="mt-1 text-sm text-stone-600">
             <span className="font-medium text-stone-800">{row.name}</span>
             <span className="text-stone-500"> · {row.siteName}</span>

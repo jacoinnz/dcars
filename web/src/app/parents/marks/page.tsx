@@ -32,11 +32,11 @@ export default async function ParentMarksPage() {
 
   if (guardianIds.length === 0) {
     return (
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+      <div className="pe-app-page">
         <Link href="/parents" className="text-sm font-medium text-teal-800 underline">
           ← Parents panel
         </Link>
-        <h1 className="mt-4 text-2xl font-semibold text-stone-900">Children’s marks</h1>
+        <h1 className="pe-app-h1 pe-app-h1-mt4">Children’s marks</h1>
         <div className="mt-8 rounded-lg border border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-700">
           <p className="font-medium text-stone-900">No linked students</p>
           <p className="mt-2">
@@ -90,12 +90,12 @@ export default async function ParentMarksPage() {
           .orderBy(desc(examMarks.updatedAt));
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/parents" className="text-sm font-medium text-teal-800 underline">
         ← Parents panel
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Children’s marks</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Children’s marks</h1>
+      <p className="pe-app-lead">
         Read-only summary of scores staff have entered. If something is missing, contact the school —
         not all assessments may be recorded in this system yet.
       </p>

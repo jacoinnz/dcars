@@ -108,7 +108,7 @@ export function DashboardPageContent(props: {
   } = props;
 
   return (
-    <Box px={{ base: "sm", sm: "md", lg: "lg" }} py="xl" className="w-full flex-1">
+    <Box px={{ base: "sm", sm: "md", lg: "lg" }} py="xl" w="100%" style={{ flex: 1 }}>
       <DashboardScrollToHash />
       <WelcomeAudienceTabs
         userName={welcomeName}
@@ -175,7 +175,15 @@ export function DashboardPageContent(props: {
               p="md"
               shadow="sm"
               style={{ textDecoration: "none", color: "inherit", height: "100%" }}
-              className="transition hover:border-blue-300 hover:bg-blue-0"
+              styles={{
+                root: {
+                  transition: "border-color 120ms ease, background-color 120ms ease",
+                  "&:hover": {
+                    borderColor: "var(--mantine-color-blue-4)",
+                    backgroundColor: "var(--mantine-color-blue-0)",
+                  },
+                },
+              }}
             >
               <Text fw={600} size="sm">
                 {item.title}

@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { Alert, Anchor, Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
+import { AppPage } from "@/components/app-page";
+import { HubLinkCard } from "@/components/hub-link-card";
 import { STUDENT_PANEL_GROUPS } from "@/lib/student-panel";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
 import { authOptions } from "@/lib/auth-options";
@@ -18,104 +21,106 @@ export default async function StudentPanelPage() {
   const portalStudentId = await getPortalStudentIdForUser(session.user.id);
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <h1 className="text-2xl font-semibold text-stone-900">Student panel</h1>
-      <p className="mt-2 max-w-3xl text-sm text-stone-600">
-        Signed-in view for learners. Your school must link your account to your student profile
-        (Admin → Schools → Student portal login). Then you can open marks, attendance, and study
-        files for <strong className="font-medium text-stone-800">your</strong> record only.
-      </p>
+    <AppPage>
+      <Stack gap="xl">
+        <Stack gap="xs">
+          <Title order={1}>Student panel</Title>
+          <Text c="dimmed" size="sm" maw={600}>
+            Signed-in view for learners. Your school must link your account to your student profile (Admin
+            → Schools → Student portal login). Then you can open marks, attendance, and study files for{" "}
+            <Text span fw={600} c="dark.7">
+              your
+            </Text>{" "}
+            record only.
+          </Text>
+        </Stack>
 
-      {!portalStudentId ? (
-        <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-950">
-          <p className="font-semibold">Your login is not linked to a student profile yet</p>
-          <p className="mt-2 text-amber-950/90">
+        {!portalStudentId ? (
+          <Alert color="yellow" title="Your login is not linked to a student profile yet">
             Ask your school administrator to connect this account under{" "}
-            <span className="font-medium">Admin → Schools → your school → Student portal login</span>.
-            Parents can use the{" "}
-            <Link href="/parents" className="font-semibold text-teal-900 underline">
+            <Text span fw={600}>
+              Admin → Schools → your school → Student portal login
+            </Text>
+            . Parents can use the{" "}
+            <Anchor component={Link} href="/parents" fw={600} inherit>
               Parents panel
-            </Link>{" "}
+            </Anchor>{" "}
             if they are linked as guardians instead.
-          </p>
-        </div>
-      ) : null}
+          </Alert>
+        ) : null}
 
-      <div className="mt-10 flex flex-col gap-10">
-        {STUDENT_PANEL_GROUPS.map((group) => (
-          <section key={group.id} aria-labelledby={`sp-${group.id}`}>
-            <h2 id={`sp-${group.id}`} className="text-lg font-semibold text-stone-900">
-              {group.title}
-            </h2>
-            {group.description ? (
-              <p className="mt-1 max-w-3xl text-sm text-stone-600">{group.description}</p>
-            ) : null}
-            <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-              {group.items.map((item) => {
-                const disabled = !portalStudentId && item.status === "live";
-                const badge =
-                  item.status === "live" ? (
-                    <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-900">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase text-stone-700">
-                      Coming soon
-                    </span>
+        <Stack gap="xl" mt="md">
+          {STUDENT_PANEL_GROUPS.map((group) => (
+            <Stack key={group.id} component="section" gap="md" aria-labelledby={`sp-${group.id}`}>
+              <Title order={2} id={`sp-${group.id}`} size="h3">
+                {group.title}
+              </Title>
+              {group.description ? (
+                <Text c="dimmed" size="sm" maw={600}>
+                  {group.description}
+                </Text>
+              ) : null}
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                {group.items.map((item) => {
+                  const disabled = !portalStudentId && item.status === "live";
+                  const badge =
+                    item.status === "live" ? (
+                      <Badge size="xs" variant="light" color="teal" tt="uppercase">
+                        Available
+                      </Badge>
+                    ) : (
+                      <Badge size="xs" variant="light" color="gray" tt="uppercase">
+                        Coming soon
+                      </Badge>
+                    );
+
+                  const inner = (
+                    <>
+                      <Group justify="space-between" align="flex-start" gap="xs" wrap="nowrap">
+                        <Text fw={600} size="sm">
+                          {item.title}
+                        </Text>
+                        {badge}
+                      </Group>
+                      <Text size="sm" c="dimmed" mt="xs">
+                        {item.description}
+                      </Text>
+                      <Text size="sm" fw={600} c="teal.8" mt="sm">
+                        {item.status === "live" && item.href ? "Open →" : "Details →"}
+                      </Text>
+                    </>
                   );
 
-                const inner = (
-                  <>
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-stone-900">{item.title}</p>
-                      {badge}
-                    </div>
-                    <p className="mt-2 text-sm text-stone-600">{item.description}</p>
-                    <p className="mt-3 text-sm font-medium text-teal-800">
-                      {item.status === "live" && item.href ? "Open →" : "Details →"}
-                    </p>
-                  </>
-                );
-
-                if (item.status === "live" && item.href && !disabled) {
-                  return (
-                    <li key={item.key}>
-                      <Link
-                        href={item.href}
-                        className="block h-full rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-teal-300 hover:bg-teal-50/40"
-                      >
+                  if (item.status === "live" && item.href && !disabled) {
+                    return (
+                      <HubLinkCard key={item.key} href={item.href} variant="live">
                         {inner}
-                      </Link>
-                    </li>
-                  );
-                }
+                      </HubLinkCard>
+                    );
+                  }
 
-                if (item.status === "live" && item.href && disabled) {
-                  return (
-                    <li key={item.key}>
-                      <div className="block h-full rounded-2xl border border-dashed border-stone-200 bg-stone-50 p-5 opacity-80">
+                  if (item.status === "live" && item.href && disabled) {
+                    return (
+                      <Paper key={item.key} withBorder p="lg" radius="lg" bg="gray.0" style={{ opacity: 0.85 }}>
                         {inner}
-                        <p className="mt-2 text-xs text-stone-500">Link your student account first.</p>
-                      </div>
-                    </li>
-                  );
-                }
+                        <Text size="xs" c="dimmed" mt="xs">
+                          Link your student account first.
+                        </Text>
+                      </Paper>
+                    );
+                  }
 
-                return (
-                  <li key={item.key}>
-                    <Link
-                      href={`/student/feature/${item.key}`}
-                      className="block h-full rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:border-stone-300 hover:bg-stone-50"
-                    >
+                  return (
+                    <HubLinkCard key={item.key} href={`/student/feature/${item.key}`} variant="planned">
                       {inner}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </div>
-    </div>
+                    </HubLinkCard>
+                  );
+                })}
+              </SimpleGrid>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+    </AppPage>
   );
 }

@@ -128,12 +128,12 @@ export default async function FamilyAttendancePage({
   const shownInstNotes = new Set<string>();
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="pe-app-page">
       <Link href="/parents" className="text-sm font-medium text-teal-800 underline">
         ← Parents panel
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">Family attendance</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
+      <h1 className="pe-app-h1 pe-app-h1-mt4">Family attendance</h1>
+      <p className="pe-app-lead">
         See attendance recorded for your linked children. Your school shares notes here when they
         set them up under Admin → Schools → Attendance setup.
       </p>

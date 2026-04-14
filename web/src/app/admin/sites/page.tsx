@@ -1,4 +1,6 @@
+import { Stack, Text, Title } from "@mantine/core";
 import { asc } from "drizzle-orm";
+import { AppPage } from "@/components/app-page";
 import { getDb } from "@/db";
 import { sites } from "@/db/schema";
 import { adminCreateSite, adminDeleteSite, adminUpdateSite } from "@/app/admin/actions";
@@ -14,12 +16,13 @@ export default async function AdminSitesPage() {
   const rows = await db.select().from(sites).orderBy(asc(sites.name));
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-stone-900">Sites</h1>
-      <p className="mt-2 max-w-2xl text-sm text-stone-600">
+    <AppPage>
+      <Stack gap="lg">
+      <Title order={1}>Sites</Title>
+      <Text c="dimmed" size="sm" maw={520}>
         Each site appears in dashboards and registration. Codes must be unique (e.g. short
         abbreviations).
-      </p>
+      </Text>
 
       <section className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
         <h2 className="text-sm font-semibold text-stone-900">Add site</h2>
@@ -100,6 +103,7 @@ export default async function AdminSitesPage() {
           <p className="px-4 py-6 text-sm text-stone-600">No sites yet — add one above.</p>
         ) : null}
       </section>
-    </div>
+      </Stack>
+    </AppPage>
   );
 }

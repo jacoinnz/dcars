@@ -1,0 +1,38 @@
+/**
+ * Narrow layout hooks for routes not yet wrapped in <AppPage> / Mantine Stack.
+ * Prefer migrating each page to @mantine/core and removing the matching rules here.
+ */
+.pe-app-page {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 64rem;
+  flex: 1;
+  padding: 2.5rem 1rem;
+}
+
+.pe-app-page--3xl {
+  max-width: 48rem;
+}
+
+.pe-app-h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--mantine-color-dark-8);
+}
+
+.pe-app-h1-mt3 {
+  margin-top: 0.75rem;
+}
+
+.pe-app-h1-mt4 {
+  margin-top: 1rem;
+}
+
+.pe-app-lead {
+  margin-top: 0.5rem;
+  max-width: 42rem;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dark-3);
+}

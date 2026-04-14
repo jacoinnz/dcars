@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useState } from "react";
-import { Anchor, Card, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Box, Card, Flex, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { AudienceTabCounts } from "@/lib/audience-tab-counts";
 
 type TabId = "students" | "teachers" | "parents" | "staff";
@@ -21,6 +21,24 @@ const emptyCounts: AudienceTabCounts = {
   parents: 0,
   staff: 0,
 };
+
+function AudienceLinkList(props: { children: React.ReactNode }) {
+  return (
+    <Flex
+      component="ul"
+      direction={{ base: "column", sm: "row" }}
+      wrap="wrap"
+      align="stretch"
+      gap={{ base: "xs", sm: "lg" }}
+      rowGap="xs"
+      p={0}
+      m={0}
+      style={{ listStyle: "none" }}
+    >
+      {props.children}
+    </Flex>
+  );
+}
 
 export function WelcomeAudienceTabs(props: {
   userName: string | null;
@@ -43,7 +61,7 @@ export function WelcomeAudienceTabs(props: {
       p="lg"
       shadow="sm"
       mb="xl"
-      className="scroll-mt-24"
+      style={{ scrollMarginTop: "6rem" }}
     >
       <Title order={1} size="h2">
         Welcome{greeting}
@@ -98,7 +116,7 @@ export function WelcomeAudienceTabs(props: {
 
       <Stack gap="xs" mt="lg" role="tabpanel">
         {active === "students" ? (
-          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <AudienceLinkList>
             <li>
               <Anchor component={Link} href="/students" fw={600} c="blue.8" underline="always">
                 Student information
@@ -135,11 +153,11 @@ export function WelcomeAudienceTabs(props: {
                 — exams & marks
               </Text>
             </li>
-          </ul>
+          </AudienceLinkList>
         ) : null}
 
         {active === "teachers" ? (
-          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <AudienceLinkList>
             <li>
               <Anchor component={Link} href="/teachers" fw={600} c="blue.8" underline="always">
                 Teachers hub
@@ -167,11 +185,11 @@ export function WelcomeAudienceTabs(props: {
                 — class assessment
               </Text>
             </li>
-          </ul>
+          </AudienceLinkList>
         ) : null}
 
         {active === "parents" ? (
-          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <AudienceLinkList>
             <li>
               <Anchor component={Link} href="/parents" fw={600} c="blue.8" underline="always">
                 Parents portal
@@ -199,11 +217,11 @@ export function WelcomeAudienceTabs(props: {
                 — school messages
               </Text>
             </li>
-          </ul>
+          </AudienceLinkList>
         ) : null}
 
         {active === "staff" ? (
-          <ul className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+          <AudienceLinkList>
             <li>
               <Anchor component={Link} href="/hr" fw={600} c="blue.8" underline="always">
                 Human resources
@@ -242,7 +260,7 @@ export function WelcomeAudienceTabs(props: {
                 </Text>
               </li>
             ) : null}
-          </ul>
+          </AudienceLinkList>
         ) : null}
       </Stack>
     </Card>

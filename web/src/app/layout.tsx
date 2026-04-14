@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AppMain, AppMainColumn, AppShell } from "@/components/app-shell";
 import { AppTopBar } from "@/components/app-top-bar";
 import { MantineProviders } from "@/components/mantine-provider";
 import { SiteNav } from "@/components/site-nav";
@@ -26,20 +27,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} style={{ height: "100%" }}>
       <body
-        className={`${geistSans.className} flex min-h-screen flex-col text-stone-900 md:flex-row`}
-        style={{ backgroundColor: "var(--background)" }}
+        className={geistSans.className}
+        style={{
+          margin: 0,
+          minHeight: "100vh",
+          backgroundColor: "var(--background)",
+          color: "var(--foreground)",
+        }}
       >
         <MantineProviders>
-          <SiteNav />
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            <AppTopBar />
-            <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
-          </div>
+          <AppShell>
+            <SiteNav />
+            <AppMainColumn>
+              <AppTopBar />
+              <AppMain>{children}</AppMain>
+            </AppMainColumn>
+          </AppShell>
         </MantineProviders>
       </body>
     </html>

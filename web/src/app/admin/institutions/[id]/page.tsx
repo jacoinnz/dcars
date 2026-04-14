@@ -113,7 +113,7 @@ export default async function AdminInstitutionDetailPage({ params }: Props) {
       <Link href="/admin/institutions" className="text-sm font-medium text-teal-800 underline">
         ← Schools
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-stone-900">{inst.name}</h1>
+      <h1 className="pe-app-h1 pe-app-h1-mt4">{inst.name}</h1>
       <p className="text-sm text-stone-600">
         Programme site: {inst.siteName} ({inst.siteCode})
       </p>
