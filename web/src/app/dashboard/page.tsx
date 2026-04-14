@@ -3,6 +3,10 @@ import { endOfMonth, format, startOfMonth } from "date-fns";
 import { getServerSession } from "next-auth/next";
 import { getSiteSummaries, getProgramTotals } from "@/lib/aggregates";
 import { authOptions } from "@/lib/auth-options";
+import { CalendarTodoPanel } from "@/components/calendar-todo-panel";
+import { NoticeBoard } from "@/components/notice-board";
+import { WelcomeAudienceTabs } from "@/components/welcome-audience-tabs";
+import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +23,8 @@ export default async function DashboardPage({
   const sp = await searchParams;
   const session = await getServerSession(authOptions);
   const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
+  const welcomeName = session?.user?.name?.trim() || session?.user?.email?.trim() || null;
+  const todoStorageKey = session?.user?.id ?? "guest";
   const scopeCtx = await getSessionSiteScope();
   const siteScope = scopeCtx?.siteScope ?? "all";
 
@@ -28,9 +34,10 @@ export default async function DashboardPage({
     : startOfMonth(now);
   const to = sp.to ? new Date(`${sp.to}T23:59:59.999Z`) : endOfMonth(now);
 
-  const [rows, totals] = await Promise.all([
+  const [rows, totals, notices] = await Promise.all([
     getSiteSummaries({ from, to, siteScope }),
     getProgramTotals({ from, to, siteScope }),
+    getActiveNoticeBoardItems(),
   ]);
 
   const fromStr = format(from, "yyyy-MM-dd");
@@ -38,9 +45,16 @@ export default async function DashboardPage({
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+      <WelcomeAudienceTabs userName={welcomeName} isSuperAdmin={isSuperAdmin}>
+        <>
+          <NoticeBoard items={notices} showManageLink={isSuperAdmin} embedded />
+          <CalendarTodoPanel storageKey={todoStorageKey} />
+        </>
+      </WelcomeAudienceTabs>
+
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-stone-900">Dashboard</h1>
+          <h2 className="text-2xl font-semibold text-stone-900">Dashboard</h2>
           <p className="max-w-2xl text-sm text-stone-600">
             Programme overview: session metrics and participant registrations by site for{" "}
             <span className="font-medium text-stone-800">

@@ -1,26 +1,45 @@
 import Link from "next/link";
 import { endOfMonth, startOfMonth } from "date-fns";
+import { getServerSession } from "next-auth/next";
 import { getProgramTotals } from "@/lib/aggregates";
 import { getDefaultMissingReportAlerts } from "@/lib/alerts";
+import { authOptions } from "@/lib/auth-options";
+import { CalendarTodoPanel } from "@/components/calendar-todo-panel";
+import { NoticeBoard } from "@/components/notice-board";
+import { WelcomeAudienceTabs } from "@/components/welcome-audience-tabs";
+import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const session = await getServerSession(authOptions);
+  const welcomeName = session?.user?.name?.trim() || session?.user?.email?.trim() || null;
+  const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
+  const todoStorageKey = session?.user?.id ?? "guest";
+
   const scopeCtx = await getSessionSiteScope();
   const siteScope = scopeCtx?.siteScope ?? "all";
 
   const now = new Date();
   const from = startOfMonth(now);
   const to = endOfMonth(now);
-  const [totals, alerts] = await Promise.all([
+  const [totals, alerts, notices] = await Promise.all([
     getProgramTotals({ from, to, siteScope }),
     getDefaultMissingReportAlerts(siteScope),
+    getActiveNoticeBoardItems(),
   ]);
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
-      <div className="max-w-2xl">
+      <WelcomeAudienceTabs userName={welcomeName} isSuperAdmin={isSuperAdmin}>
+        <>
+          <NoticeBoard items={notices} showManageLink={isSuperAdmin} embedded />
+          <CalendarTodoPanel storageKey={todoStorageKey} />
+        </>
+      </WelcomeAudienceTabs>
+
+      <div className="mt-10 max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal-800">
           Youth development programme
         </p>

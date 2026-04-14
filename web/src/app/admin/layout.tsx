@@ -37,6 +37,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           Schools
         </Link>
         <Link
+          href="/admin/notices"
+          className="rounded-full px-3 py-1.5 font-medium text-stone-700 hover:bg-stone-100"
+        >
+          Notices
+        </Link>
+        <Link
           href="/"
           className="ml-auto rounded-full px-3 py-1.5 text-stone-600 hover:bg-stone-100"
         >

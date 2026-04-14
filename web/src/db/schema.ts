@@ -338,6 +338,18 @@ export const examMarks = pgTable(
   (t) => [uniqueIndex("exam_marks_series_student_paper_uq").on(t.examSeriesId, t.studentId, t.paperName)],
 );
 
+/** Programme-wide announcements shown on the home / dashboard notice board. */
+export const noticeBoardItems = pgTable("notice_board_items", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  pinned: boolean("pinned").notNull().default(false),
+  /** When set, the notice is hidden after this time. */
+  expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull(),
+  createdByUserId: text("created_by_user_id").references(() => appUsers.id, { onDelete: "set null" }),
+});
+
 /** School notices: holidays, events, out-of-class activities. */
 export const institutionNotices = pgTable("institution_notices", {
   id: text("id").primaryKey(),
@@ -387,9 +399,17 @@ export const appUsersRelations = relations(appUsers, ({ many, one }) => ({
   teacherContentUploads: many(teacherContentUploads),
   institutionStaffRows: many(institutionStaff),
   studentGuardianLinks: many(studentGuardians),
+  noticeBoardItemsAuthored: many(noticeBoardItems),
   studentPortalProfile: one(students, {
     fields: [appUsers.id],
     references: [students.portalUserId],
+  }),
+}));
+
+export const noticeBoardItemsRelations = relations(noticeBoardItems, ({ one }) => ({
+  createdBy: one(appUsers, {
+    fields: [noticeBoardItems.createdByUserId],
+    references: [appUsers.id],
   }),
 }));
 
