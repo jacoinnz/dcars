@@ -1,12 +1,11 @@
 {
   "name": "dcars",
   "private": true,
-  "description": "Monorepo root: the Next.js app is the npm workspace package `web`. Root install must run so `next` exists when Vercel builds from the repository root.",
-  "workspaces": ["web"],
+  "description": "Helper scripts only. The Next.js app and its dependencies live entirely in ./web (run npm install there).",
   "scripts": {
-    "build": "npm run build -w web",
-    "dev": "npm run dev -w web",
-    "start": "npm run start -w web",
-    "lint": "npm run lint -w web"
+    "build": "npm run build --prefix web",
+    "dev": "npm run dev --prefix web",
+    "start": "npm run start --prefix web",
+    "lint": "npm run lint --prefix web"
   }
 }

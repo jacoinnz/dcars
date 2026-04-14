@@ -1,23 +1,16 @@
 # dcars
 
-Youth programme reporting app: Next.js app lives in **`web/`**.
+Youth programme reporting app: the Next.js app lives entirely in **`web/`** (its own `package.json` and `node_modules`).
 
-## Vercel (required setup)
+## Vercel (required)
 
-The Git repository root is **not** the Next.js app. **Do not** point Vercel at the repo root with custom build overrides — that breaks Next’s preset and can cause **`404`** or **“No Output Directory named public”**.
+**Project → Settings → General → Root Directory** must be **`web`** (not the repository root).
 
-### 1. Root Directory
+If Root Directory is the repo root, Vercel reads the root `package.json`, which does **not** list `next`, and the build fails with **“No Next.js version detected”**.
 
-In [Vercel](https://vercel.com) → your project → **Settings** → **General**:
+Also:
 
-1. **Root Directory** → **`web`** → **Save**
-2. **Output Directory** → leave **empty** / default (do **not** set `public` or `.next` manually)
-3. Redeploy (Deployments → … → Redeploy)
-
-Framework should show **Next.js** after this. `DATABASE_URL` (Neon) must be set under **Environment Variables** for Production (and Preview if you use it).
-
-### 2. Monorepo root (`package.json`)
-
-The repo root [`package.json`](./package.json) declares an npm **workspace** for `web/` so a single `npm install` at the repo root installs `next` and the rest of the app. That fixes **`next: command not found`** when Vercel’s **Root Directory** is the repository root (not `web`). If your Vercel **Root Directory** is already **`web`**, Vercel installs inside `web/` only; the workspace still helps local runs from the repo root.
+- Leave **Output Directory** empty.
+- Set **`DATABASE_URL`** under Environment Variables (Neon).
 
 See **`web/README.md`** for local development.

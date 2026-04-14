@@ -8,6 +8,8 @@ Web app for multi-site session reporting: form entry, **Neon (Postgres)** storag
 
 ## Setup
 
+Dependencies are installed **inside `web/`** only. From the repository root you can run `npm install --prefix web` (or `cd web && npm install`).
+
 From this `web/` directory:
 
 1. Copy environment file and add your Neon URL:
