@@ -5,7 +5,8 @@ export type SidebarNavConfig = { version: 1; sections: SidebarNavSection[] };
 export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v9";
 export const SIDEBAR_CONFIG_EVENT = "dcaars-sidebar-config";
 
-export function getDefaultSidebarConfig(): SidebarNavConfig {
+export function getDefaultSidebarConfig(params?: { isSuperAdmin?: boolean }): SidebarNavConfig {
+  const isSuperAdmin = Boolean(params?.isSuperAdmin);
   return {
     version: 1,
     sections: [
@@ -102,7 +103,41 @@ export function getDefaultSidebarConfig(): SidebarNavConfig {
           { id: "lnk-lp-po", href: "/lesson-plan/module/lp-lesson-plan-overview", label: "Lesson plan overview" },
         ],
       },
+      ...(isSuperAdmin
+        ? ([
+            {
+              id: "sec-admin",
+              title: "Administration",
+              items: [
+                { id: "lnk-admin", href: "/admin", label: "Admin" },
+                { id: "lnk-admin-adm-q", href: "/admin/module/admission-query", label: "Admission query" },
+                { id: "lnk-admin-vis", href: "/admin/module/visitor-book", label: "Visitors book" },
+                {
+                  id: "lnk-admin-compl",
+                  href: "/admin/module/complaint-phone-call-log",
+                  label: "Complaint phone call log",
+                },
+                { id: "lnk-admin-stu-id", href: "/admin/module/student-id-card", label: "Student ID card" },
+                { id: "lnk-admin-gen-id", href: "/admin/module/general-id-card", label: "General ID card" },
+                { id: "lnk-admin-staff-id", href: "/admin/module/staff-id-card", label: "Staff ID card" },
+              ],
+            },
+          ] satisfies SidebarNavSection[])
+        : []),
     ],
+  };
+}
+
+export function normalizeSidebarConfigForUser(
+  config: SidebarNavConfig,
+  params?: { isSuperAdmin?: boolean },
+): SidebarNavConfig {
+  const isSuperAdmin = Boolean(params?.isSuperAdmin);
+  if (isSuperAdmin) return config;
+  // Ensure non-admins never see admin links, even if present in saved config.
+  return {
+    ...config,
+    sections: config.sections.filter((s) => s.id !== "sec-admin"),
   };
 }
 

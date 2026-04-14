@@ -15,6 +15,7 @@ import {
   clearSidebarConfig,
   getDefaultSidebarConfig,
   loadSidebarConfig,
+  normalizeSidebarConfigForUser,
   saveSidebarConfig,
   type SidebarNavConfig,
   type SidebarNavLink,
@@ -178,12 +179,16 @@ function SortableLinkRow(props: {
   );
 }
 
-export function SidebarManagerClient() {
-  const [config, setConfig] = useState<SidebarNavConfig>(() => getDefaultSidebarConfig());
+export function SidebarManagerClient(props: { isSuperAdmin: boolean }) {
+  const [config, setConfig] = useState<SidebarNavConfig>(() =>
+    getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }),
+  );
 
   useEffect(() => {
-    setConfig(loadSidebarConfig() ?? getDefaultSidebarConfig());
-  }, []);
+    const raw =
+      loadSidebarConfig() ?? getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin });
+    setConfig(normalizeSidebarConfigForUser(raw, { isSuperAdmin: props.isSuperAdmin }));
+  }, [props.isSuperAdmin]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -243,7 +248,7 @@ export function SidebarManagerClient() {
           type="button"
           className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 hover:bg-stone-50"
           onClick={() => {
-            persist(getDefaultSidebarConfig());
+            persist(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
           }}
         >
           Reset to default
@@ -253,7 +258,7 @@ export function SidebarManagerClient() {
           className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-900 hover:bg-red-100"
           onClick={() => {
             clearSidebarConfig();
-            setConfig(getDefaultSidebarConfig());
+            setConfig(getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }));
           }}
         >
           Clear saved layout

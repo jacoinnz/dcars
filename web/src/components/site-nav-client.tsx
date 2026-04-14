@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   getDefaultSidebarConfig,
   loadSidebarConfig,
+  normalizeSidebarConfigForUser,
   type SidebarNavConfig,
   SIDEBAR_CONFIG_EVENT,
 } from "@/lib/sidebar-config";
@@ -65,11 +66,14 @@ export function SiteNavClient(props: {
   email: string | null;
   isSuperAdmin: boolean;
 }) {
-  const [config, setConfig] = useState<SidebarNavConfig>(() => getDefaultSidebarConfig());
+  const [config, setConfig] = useState<SidebarNavConfig>(() =>
+    getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin }),
+  );
 
   useEffect(() => {
     const apply = () => {
-      setConfig(loadSidebarConfig() ?? getDefaultSidebarConfig());
+      const raw = loadSidebarConfig() ?? getDefaultSidebarConfig({ isSuperAdmin: props.isSuperAdmin });
+      setConfig(normalizeSidebarConfigForUser(raw, { isSuperAdmin: props.isSuperAdmin }));
     };
     apply();
     window.addEventListener("storage", apply);
@@ -78,7 +82,7 @@ export function SiteNavClient(props: {
       window.removeEventListener("storage", apply);
       window.removeEventListener(SIDEBAR_CONFIG_EVENT, apply);
     };
-  }, []);
+  }, [props.isSuperAdmin]);
 
   return (
     <aside className="flex w-full shrink-0 flex-col border-b border-stone-800 bg-stone-950 md:h-screen md:w-60 md:border-b-0 md:border-r md:border-stone-800">
@@ -102,37 +106,6 @@ export function SiteNavClient(props: {
             </ul>
           </div>
         ))}
-
-        {props.isSuperAdmin ? (
-          <div>
-            <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-stone-500">
-              Administration
-            </p>
-            <ul className="space-y-0.5">
-              <li>
-                <NavLink href="/admin">Admin</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/admission-query">Admission query</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/visitor-book">Visitors book</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/complaint-phone-call-log">Complaint phone call log</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/student-id-card">Student ID card</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/general-id-card">General ID card</NavLink>
-              </li>
-              <li>
-                <NavLink href="/admin/module/staff-id-card">Staff ID card</NavLink>
-              </li>
-            </ul>
-          </div>
-        ) : null}
       </nav>
 
       <div className="border-t border-stone-800 p-3">
