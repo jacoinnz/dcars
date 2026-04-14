@@ -46,7 +46,7 @@ export function WelcomeAudienceTabs(props: {
       </p>
 
       <div
-        className="mt-6 grid grid-cols-2 gap-2 border-b border-stone-200 sm:grid-cols-4"
+        className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
         role="tablist"
         aria-label="Audience"
       >
@@ -60,16 +60,16 @@ export function WelcomeAudienceTabs(props: {
               role="tab"
               aria-selected={isActive}
               aria-label={`${t.label}, ${n.toLocaleString()} in your programme scope`}
-              className={`relative -mb-px border-b-2 px-2 py-3 text-center text-sm font-semibold transition sm:px-3 ${
+              className={`rounded-xl border-2 px-3 py-4 text-center text-sm font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 sm:px-4 ${
                 isActive
-                  ? "border-teal-600 text-teal-900"
-                  : "border-transparent text-stone-600 hover:border-stone-300 hover:text-stone-900"
+                  ? "border-teal-600 bg-teal-50/80 text-teal-950 ring-1 ring-teal-200"
+                  : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900"
               }`}
               onClick={() => setActive(t.id)}
             >
               <span className="block leading-tight">{t.label}</span>
               <span
-                className={`mt-1 block tabular-nums text-base sm:text-lg ${
+                className={`mt-2 block tabular-nums text-lg sm:text-xl ${
                   isActive ? "text-teal-800" : "text-stone-500"
                 }`}
               >
