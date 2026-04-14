@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Alert, Anchor, List, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
@@ -44,7 +44,8 @@ export default async function StudentsHubPage() {
             .where(inArray(institutions.id, viewableIds))
             .orderBy(asc(institutions.name));
   } catch (err) {
-    console.error("[students]", err);
+    const digest = typeof err === "object" && err !== null && "digest" in err ? String((err as { digest?: unknown }).digest) : "";
+    console.error("[students]", digest ? `${digest} ` : "", err);
     loadError =
       err instanceof Error
         ? err.message
@@ -62,11 +63,12 @@ export default async function StudentsHubPage() {
           <Alert color="red" title="This page couldn’t load">
             <Text size="sm">
               {devDetail ??
-                "The app could not load school data from the database. This is often a missing or wrong DATABASE_URL on the server."}
+                "Could not load the school list. Participant registration and other flows use different queries—your database URL can still be correct while this request fails (e.g. Neon timeout or a schema mismatch)."}
             </Text>
             <Text size="sm" mt="sm" c="dimmed">
-              On Vercel: Project → Settings → Environment Variables → add <code>DATABASE_URL</code> with your Neon
-              connection string (same as <code>web/.env.local</code>) for <strong>Production</strong>, then redeploy.
+              Check the deployment <strong>Functions</strong> / runtime logs on Vercel for lines starting with{" "}
+              <code>[students]</code>. If you recently changed schema, run <code>npm run db:push</code> against the same
+              database.
             </Text>
           </Alert>
         </Stack>
@@ -128,24 +130,19 @@ export default async function StudentsHubPage() {
               {schoolRows.map((s) => (
                 <Paper key={s.id} withBorder shadow="sm" p="lg" radius="lg">
                   <Text fw={600} size="sm">
-                    {s.name}
-                    <Text span fw={400} c="dimmed">
-                      {" "}
+                    {s.name}{" "}
+                    <Text component="span" fw={400} c="dimmed">
                       — {s.siteName}
                     </Text>
                   </Text>
-                  <List size="sm" mt="sm" spacing="xs">
-                    <List.Item>
-                      <Anchor component={Link} href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
-                        Manage students — list, admission &amp; classes
-                      </Anchor>
-                    </List.Item>
-                    <List.Item>
-                      <Anchor component={Link} href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
-                        Syllabuses
-                      </Anchor>
-                    </List.Item>
-                  </List>
+                  <Stack gap={6} mt="sm">
+                    <Anchor component={Link} href={`/evaluations/students/${s.id}`} size="sm" fw={500}>
+                      Manage students — list, admission &amp; classes
+                    </Anchor>
+                    <Anchor component={Link} href={`/evaluations/syllabuses/${s.id}`} size="sm" fw={500}>
+                      Syllabuses
+                    </Anchor>
+                  </Stack>
                 </Paper>
               ))}
             </SimpleGrid>
