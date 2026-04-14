@@ -10,6 +10,7 @@ export const config = {
     "/entry",
     "/entry/:path*",
     "/dashboard/:path*",
+    "/reports",
     "/reports/:path*",
     "/admin/:path*",
     "/teacher-content/:path*",

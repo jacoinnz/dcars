@@ -1,7 +1,18 @@
 import Link from "next/link";
-import { endOfMonth, format, startOfMonth } from "date-fns";
+import { endOfMonth, format, isValid, startOfMonth } from "date-fns";
 import { Anchor, Box, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+function parseReportDay(value: string | undefined, boundary: "start" | "end", fallback: Date): Date {
+  if (!value || !ISO_DAY.test(value)) return fallback;
+  const iso = boundary === "start" ? `${value}T00:00:00.000Z` : `${value}T23:59:59.999Z`;
+  const d = new Date(iso);
+  return isValid(d) ? d : fallback;
+}
+
+export const dynamic = "force-dynamic";
 
 export default async function ReportsPage({
   searchParams,
@@ -10,10 +21,10 @@ export default async function ReportsPage({
 }) {
   const sp = await searchParams;
   const now = new Date();
-  const from = sp.from
-    ? new Date(`${sp.from}T00:00:00.000Z`)
-    : startOfMonth(now);
-  const to = sp.to ? new Date(`${sp.to}T23:59:59.999Z`) : endOfMonth(now);
+  const defaultFrom = startOfMonth(now);
+  const defaultTo = endOfMonth(now);
+  const from = parseReportDay(sp.from, "start", defaultFrom);
+  const to = parseReportDay(sp.to, "end", defaultTo);
 
   const fromStr = format(from, "yyyy-MM-dd");
   const toStr = format(to, "yyyy-MM-dd");
