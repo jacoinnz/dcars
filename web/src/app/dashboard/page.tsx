@@ -49,7 +49,7 @@ export default async function DashboardPage({
   const toDisplay = format(to, "dd/MM/yyyy");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="w-full flex-1 px-3 py-8 sm:px-4 lg:px-6">
       <DashboardScrollToHash />
       <WelcomeAudienceTabs
         userName={welcomeName}

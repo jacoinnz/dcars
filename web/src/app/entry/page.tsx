@@ -14,7 +14,7 @@ export default async function EntryPage() {
   const defaultDateOfEntry = format(new Date(), "yyyy-MM-dd");
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+    <div className="w-full flex-1 px-3 py-8 sm:px-4 lg:px-6">
       {sites.length === 0 ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950">
           <p className="font-semibold">No programme sites available</p>

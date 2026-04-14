@@ -2,7 +2,7 @@ export type SidebarNavLink = { id: string; href: string; label: string };
 export type SidebarNavSection = { id: string; title: string; items: SidebarNavLink[] };
 export type SidebarNavConfig = { version: 1; sections: SidebarNavSection[] };
 
-export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v6";
+export const SIDEBAR_STORAGE_KEY = "dcaars-sidebar-config-v9";
 export const SIDEBAR_CONFIG_EVENT = "dcaars-sidebar-config";
 
 export function getDefaultSidebarConfig(): SidebarNavConfig {
@@ -14,9 +14,6 @@ export function getDefaultSidebarConfig(): SidebarNavConfig {
         title: "Dashboard",
         items: [
           { id: "lnk-dash-home", href: "/dashboard", label: "Dashboard" },
-          { id: "lnk-dash-notice", href: "/dashboard#notice-board", label: "Notice board" },
-          { id: "lnk-dash-cal", href: "/dashboard#dashboard-calendar", label: "Calendar" },
-          { id: "lnk-dash-todo", href: "/dashboard#dashboard-todo", label: "To do list" },
         ],
       },
       {
