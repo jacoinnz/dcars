@@ -82,10 +82,10 @@ function SidebarLeafNavLink(props: { item: SidebarNavLink }) {
         ...navShellStyles,
         root: {
           ...navShellStyles.root,
-          color: active ? undefined : "var(--mantine-color-dark-1)",
+          color: active ? undefined : "var(--mantine-color-gray-7)",
           "&:hover": {
-            backgroundColor: "var(--mantine-color-dark-6)",
-            color: "var(--mantine-color-dark-0)",
+            backgroundColor: "var(--mantine-color-gray-1)",
+            color: "var(--mantine-color-dark-9)",
           },
         },
       }}
@@ -119,10 +119,10 @@ function SidebarBranchNavLink(props: { item: SidebarNavLink }) {
     ...navShellStyles,
     root: {
       ...navShellStyles.root,
-      color: branchActive ? undefined : "var(--mantine-color-dark-1)",
+      color: branchActive ? undefined : "var(--mantine-color-gray-7)",
       "&:hover": {
-        backgroundColor: "var(--mantine-color-dark-6)",
-        color: "var(--mantine-color-dark-0)",
+        backgroundColor: "var(--mantine-color-gray-1)",
+        color: "var(--mantine-color-dark-9)",
       },
     },
   };
@@ -183,24 +183,24 @@ export function SiteNavClient(props: {
   return (
     <Box
       component="aside"
-      bg="dark.8"
+      bg="gray.0"
       style={{
         display: "flex",
         flexDirection: "column",
         flexShrink: 0,
         width: isLg ? "15rem" : "100%",
         minHeight: isLg ? "100vh" : undefined,
-        borderBottom: isLg ? undefined : "1px solid var(--mantine-color-dark-5)",
-        borderRight: isLg ? "1px solid var(--mantine-color-dark-5)" : undefined,
+        borderBottom: isLg ? undefined : "1px solid var(--mantine-color-gray-3)",
+        borderRight: isLg ? "1px solid var(--mantine-color-gray-3)" : undefined,
       }}
     >
       <Box
         p="md"
         style={{
-          borderBottom: "1px solid var(--mantine-color-dark-5)",
+          borderBottom: "1px solid var(--mantine-color-gray-3)",
         }}
       >
-        <Text size="xs" fw={600} tt="uppercase" c="blue.4" lts={1}>
+        <Text size="xs" fw={600} tt="uppercase" c="blue.7" lts={1}>
           Youth programme
         </Text>
         <Text fz={11} c="dimmed" mt={4}>
@@ -228,7 +228,7 @@ export function SiteNavClient(props: {
       <Box
         p="sm"
         style={{
-          borderTop: "1px solid var(--mantine-color-dark-5)",
+          borderTop: "1px solid var(--mantine-color-gray-3)",
         }}
       >
         <NavUserMenu

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import {
@@ -12,7 +11,7 @@ import {
   studentGuardians,
   students,
 } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +28,7 @@ export default async function FamilyAttendancePage({
 }: {
   searchParams: Promise<{ from?: string; to?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

@@ -1,8 +1,19 @@
+import { NextResponse } from "next/server";
+import type { NextFetchEvent } from "next/server";
+import type { NextRequest } from "next/server";
+import type { NextRequestWithAuth } from "next-auth/middleware";
 import { withAuth } from "next-auth/middleware";
 
-export default withAuth({
+const withAuthMiddleware = withAuth({
   pages: { signIn: "/login" },
 });
+
+export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  if (process.env.SKIP_AUTH === "true") {
+    return NextResponse.next();
+  }
+  return withAuthMiddleware(request as NextRequestWithAuth, event);
+}
 
 export const config = {
   matcher: [

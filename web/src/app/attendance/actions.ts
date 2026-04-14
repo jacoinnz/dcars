@@ -2,10 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { attendanceRecords, students } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
 import { ATTENDANCE_STATUSES } from "@/app/attendance/constants";
 
@@ -18,7 +17,7 @@ export async function saveAttendanceForDate(
   sessionDate: string,
   formData: FormData,
 ): Promise<void> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) throw new Error("You must be signed in.");
   const userId = session.user.id;
   const isSuperAdmin = Boolean(session.user.isSuperAdmin);

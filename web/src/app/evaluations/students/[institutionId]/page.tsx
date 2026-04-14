@@ -2,10 +2,9 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { notFound, redirect } from "next/navigation";
 import { asc, eq, inArray } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { classes, institutions, studentClasses, students } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
 import { StudentAdmissionForm } from "@/components/student-admission-form";
 import { StudentClassMatrix } from "@/components/student-class-matrix";
@@ -17,7 +16,7 @@ type Props = { params: Promise<{ institutionId: string }> };
 
 export default async function EvaluationStudentsPage({ params }: Props) {
   const { institutionId } = await params;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

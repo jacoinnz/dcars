@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { Alert, Anchor, Badge, Divider, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
 import { getDb } from "@/db";
 import { institutions, sites } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { TEACHER_PANEL_GROUPS } from "@/lib/teacher-panel";
 import { getViewableInstitutionIds } from "@/lib/school-access";
 
@@ -18,7 +17,7 @@ export const metadata = {
 };
 
 export default async function TeachersHubPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

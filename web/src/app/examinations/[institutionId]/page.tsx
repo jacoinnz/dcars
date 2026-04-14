@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { asc, desc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { institutionExamSeries, institutions, sites } from "@/db/schema";
 import { createExamSeries, deleteExamSeries } from "@/app/examinations/actions";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +13,7 @@ type Props = { params: Promise<{ institutionId: string }> };
 
 export default async function ExaminationsInstitutionPage({ params }: Props) {
   const { institutionId } = await params;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

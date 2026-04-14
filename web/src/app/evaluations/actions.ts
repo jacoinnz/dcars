@@ -2,10 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { classes, performanceRecords, studentClasses, students } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
 import { studentAdmissionFormSchema } from "@/lib/validation";
 
@@ -25,7 +24,7 @@ function fieldErrorsFromZod(err: {
 }
 
 async function sessionUser() {
-  const s = await getServerSession(authOptions);
+  const s = await getServerSessionWithBypass();
   if (!s?.user?.id) throw new Error("You must be signed in.");
   return { userId: s.user.id, isSuperAdmin: Boolean(s.user.isSuperAdmin) };
 }
@@ -34,7 +33,7 @@ export async function submitStudentAdmission(
   _prev: StudentAdmissionState | undefined,
   formData: FormData,
 ): Promise<StudentAdmissionState> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return { ok: false, message: "You must be signed in to admit a student." };
   }

@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getAccessibleSiteIds } from "@/lib/permissions";
 
 /** Resolved scope for aggregate queries: all sites, or explicit id list (may be empty). */
@@ -10,7 +9,7 @@ export async function getSessionSiteScope(): Promise<{
   isSuperAdmin: boolean;
   siteScope: SiteScope;
 } | null> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) return null;
   const userId = session.user.id;
   const isSuperAdmin = Boolean(session.user.isSuperAdmin);

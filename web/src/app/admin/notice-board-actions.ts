@@ -2,14 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { noticeBoardItems } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 
 async function requireSuperAdmin() {
-  const s = await getServerSession(authOptions);
+  const s = await getServerSessionWithBypass();
   if (!s?.user?.id || !s.user.isSuperAdmin) redirect("/");
   return s.user;
 }

@@ -2,14 +2,13 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { Alert, Anchor, Box, Button, Paper, Stack, Table, Text, Title } from "@mantine/core";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { attendanceRecords, institutions, sites, students } from "@/db/schema";
 import { ATTENDANCE_STATUSES } from "@/app/attendance/constants";
 import { saveAttendanceForDate } from "@/app/attendance/actions";
 import { AppPage } from "@/components/app-page";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getManageableInstitutionIds } from "@/lib/school-access";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +22,7 @@ export default async function AttendancePage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

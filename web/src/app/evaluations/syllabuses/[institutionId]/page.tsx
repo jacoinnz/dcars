@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { institutionSyllabuses, institutions, sites } from "@/db/schema";
 import { PrintPageButton } from "@/components/print-page-button";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getViewableInstitutionIds } from "@/lib/school-access";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +13,7 @@ type Props = { params: Promise<{ institutionId: string }> };
 
 export default async function InstitutionSyllabusesPage({ params }: Props) {
   const { institutionId } = await params;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const viewable = await getViewableInstitutionIds(session.user.id, Boolean(session.user.isSuperAdmin));

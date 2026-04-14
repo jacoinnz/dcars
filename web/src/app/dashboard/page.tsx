@@ -1,7 +1,6 @@
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { getServerSession } from "next-auth/next";
 import { getSiteSummaries, getProgramTotals } from "@/lib/aggregates";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getAudienceTabCounts } from "@/lib/audience-tab-counts";
 import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
@@ -19,7 +18,7 @@ export default async function DashboardPage({
   searchParams: Promise<{ from?: string; to?: string }>;
 }) {
   const sp = await searchParams;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
   const welcomeName = session?.user?.name?.trim() || session?.user?.email?.trim() || null;
   const todoStorageKey = session?.user?.id ?? "guest";

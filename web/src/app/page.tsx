@@ -1,8 +1,7 @@
 import { endOfMonth, startOfMonth } from "date-fns";
-import { getServerSession } from "next-auth/next";
 import { getProgramTotals } from "@/lib/aggregates";
 import { getDefaultMissingReportAlerts } from "@/lib/alerts";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getAudienceTabCounts } from "@/lib/audience-tab-counts";
 import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
@@ -11,7 +10,7 @@ import { HomePageContent } from "./home-page-content";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   const welcomeName = session?.user?.name?.trim() || session?.user?.email?.trim() || null;
   const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
   const todoStorageKey = session?.user?.id ?? "guest";

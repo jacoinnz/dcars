@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { desc, eq, and } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { institutions, students, teacherContentUploads } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +19,7 @@ function formatBytes(n: number): string {
 }
 
 export default async function StudentMaterialsPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const studentId = await getPortalStudentIdForUser(session.user.id);

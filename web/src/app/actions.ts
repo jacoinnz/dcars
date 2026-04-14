@@ -1,10 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { participantEntries } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canOnSite } from "@/lib/permissions";
 import { participantEntryFormSchema } from "@/lib/validation";
 
@@ -78,7 +77,7 @@ export async function submitParticipantEntry(
   }
 
   const data = parsed.data;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return { ok: false, message: "You must be signed in to save an entry." };
   }

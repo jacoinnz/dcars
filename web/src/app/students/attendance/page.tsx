@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { Anchor, Badge, Divider, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
 import { STUDENT_ATTENDANCE_PANEL_GROUPS } from "@/lib/student-attendance-panel";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +13,7 @@ export const metadata = {
 };
 
 export default async function StudentAttendanceHubPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   return (

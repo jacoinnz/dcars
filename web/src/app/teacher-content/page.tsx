@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { deleteTeacherContent, getTeacherUploadsForSession } from "@/app/teacher-actions";
 import { TeacherContentUploadForm } from "@/components/teacher-content-upload-form";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getInstitutionNamesBySiteIds } from "@/lib/institution-names";
 import { canOnSite } from "@/lib/permissions";
 import { getSitesForParticipantEntry } from "@/lib/sites-for-user";
@@ -21,7 +20,7 @@ function formatBytes(n: number): string {
 }
 
 export default async function TeacherContentPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

@@ -5,8 +5,7 @@ import { AppPage } from "@/components/app-page";
 import { getDb } from "@/db";
 import { appUsers } from "@/db/schema";
 import { adminDeleteUser } from "@/app/admin/actions";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +14,7 @@ export const metadata = {
 };
 
 export default async function AdminUsersPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   const db = getDb();
   const rows = await db.select().from(appUsers).orderBy(asc(appUsers.email));
 

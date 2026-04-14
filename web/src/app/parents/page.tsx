@@ -1,10 +1,9 @@
 import { Badge, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { HubLinkCard } from "@/components/hub-link-card";
 import { PARENT_PANEL_GROUPS } from "@/lib/parent-panel";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +12,7 @@ export const metadata = {
 };
 
 export default async function ParentsPanelPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   return (

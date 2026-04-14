@@ -1,4 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
+import type { Session } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
@@ -55,3 +57,21 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
 };
+
+/** When `SKIP_AUTH=true`, returns a synthetic session (dev/smoke tests only). Never enable in production. */
+export async function getServerSessionWithBypass(): Promise<Session | null> {
+  if (process.env.SKIP_AUTH === "true") {
+    const userId =
+      process.env.SKIP_AUTH_USER_ID?.trim() || "00000000-0000-4000-8000-000000000001";
+    return {
+      expires: new Date(Date.now() + 86400000 * 365).toISOString(),
+      user: {
+        id: userId,
+        email: process.env.SKIP_AUTH_EMAIL ?? "skip-auth@localhost",
+        name: "Skip auth (dev)",
+        isSuperAdmin: process.env.SKIP_AUTH_SUPER_ADMIN !== "false",
+      },
+    };
+  }
+  return getServerSession(authOptions);
+}

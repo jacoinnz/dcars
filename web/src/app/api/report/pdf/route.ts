@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { getServerSession } from "next-auth/next";
 import { getProgramTotals, getSiteSummaries } from "@/lib/aggregates";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { buildSummaryPdf } from "@/lib/pdf-report";
 import { getAccessibleSiteIds } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

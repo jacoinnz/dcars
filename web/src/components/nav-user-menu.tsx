@@ -26,9 +26,9 @@ export function NavUserMenu(props: {
           v === "sidebar"
             ? {
                 root: {
-                  borderColor: "var(--mantine-color-dark-4)",
-                  backgroundColor: "var(--mantine-color-dark-6)",
-                  color: "var(--mantine-color-dark-0)",
+                  borderColor: "var(--mantine-color-gray-4)",
+                  backgroundColor: "var(--mantine-color-gray-0)",
+                  color: "var(--mantine-color-gray-8)",
                 },
               }
             : undefined
@@ -53,35 +53,21 @@ export function NavUserMenu(props: {
         <Button
           component={Link}
           href="/settings/sidebar"
-          variant="outline"
+          variant="light"
           color="blue"
           fullWidth
           radius="md"
           size="sm"
-          styles={{
-            root: {
-              borderColor: "var(--mantine-color-blue-4)",
-              backgroundColor: "var(--mantine-color-dark-7)",
-              color: "var(--mantine-color-blue-1)",
-            },
-          }}
         >
           Sidebar manager
         </Button>
         <Button
           type="button"
-          variant="outline"
+          variant="default"
           color="gray"
           fullWidth
           radius="md"
           size="sm"
-          styles={{
-            root: {
-              borderColor: "var(--mantine-color-dark-4)",
-              backgroundColor: "var(--mantine-color-dark-6)",
-              color: "var(--mantine-color-dark-0)",
-            },
-          }}
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
           Sign out

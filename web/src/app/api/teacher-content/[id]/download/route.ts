@@ -1,9 +1,8 @@
 import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import { getDb } from "@/db";
 import { teacherContentUploads } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canOnSite } from "@/lib/permissions";
 import { canStudentPortalAccessTeacherUpload } from "@/lib/student-portal-access";
 import { readTeacherFileBody, teacherRowToStored } from "@/lib/teacher-upload-storage";
@@ -13,7 +12,7 @@ export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
 
 export async function GET(_request: Request, ctx: Props) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

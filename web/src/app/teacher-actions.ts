@@ -2,10 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { desc, eq, inArray } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { appUsers, sites, teacherContentUploads } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canOnSite, getAccessibleSiteIds } from "@/lib/permissions";
 import {
   deleteStoredTeacherFile,
@@ -30,7 +29,7 @@ export async function uploadTeacherContent(
   _prev: TeacherUploadActionState | undefined,
   formData: FormData,
 ): Promise<TeacherUploadActionState> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return { ok: false, message: "You must be signed in." };
   }
@@ -107,7 +106,7 @@ export async function uploadTeacherContent(
 }
 
 export async function deleteTeacherContent(uploadId: string): Promise<void> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     throw new Error("You must be signed in.");
   }
@@ -153,7 +152,7 @@ export type TeacherUploadListRow = {
 };
 
 export async function getTeacherUploadsForSession(): Promise<TeacherUploadListRow[]> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) return [];
 
   const userId = session.user.id;

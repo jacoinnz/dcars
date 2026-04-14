@@ -2,15 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { institutionNotices } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
 import { isNoticeType } from "@/app/communications/constants";
 
 async function sessionUser() {
-  const s = await getServerSession(authOptions);
+  const s = await getServerSessionWithBypass();
   if (!s?.user?.id) throw new Error("You must be signed in.");
   return { userId: s.user.id, isSuperAdmin: Boolean(s.user.isSuperAdmin) };
 }

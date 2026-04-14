@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { desc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import {
@@ -13,7 +12,7 @@ import {
   sites,
   students,
 } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +22,7 @@ export const metadata = {
 };
 
 export default async function StudentMarksPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const studentId = await getPortalStudentIdForUser(session.user.id);

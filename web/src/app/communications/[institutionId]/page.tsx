@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { getDb } from "@/db";
 import { institutionNotices, institutions, sites } from "@/db/schema";
 import {
@@ -11,7 +10,7 @@ import {
 } from "@/app/communications/actions";
 import { NOTICE_TYPES, noticeTypeLabel } from "@/app/communications/constants";
 import { PrintPageButton } from "@/components/print-page-button";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +31,7 @@ function formatDateRange(start: string | null, end: string | null): string {
 export default async function InstitutionNoticesPage({ params, searchParams }: Props) {
   const { institutionId } = await params;
   const sp = await searchParams;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

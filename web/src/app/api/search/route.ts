@@ -1,9 +1,8 @@
 import { and, eq, ilike, inArray, or } from "drizzle-orm";
-import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import { getDb } from "@/db";
 import { institutions, students } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getViewableInstitutionIds } from "@/lib/school-access";
 
 function likePattern(raw: string): string {
@@ -27,7 +26,7 @@ export type SearchSchoolHit = {
 };
 
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

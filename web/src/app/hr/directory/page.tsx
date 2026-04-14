@@ -2,11 +2,10 @@ import Link from "next/link";
 import { Anchor, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { AppPage } from "@/components/app-page";
-import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { appUsers, institutionStaff, institutions, sites } from "@/db/schema";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getViewableInstitutionIds } from "@/lib/school-access";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +21,7 @@ function roleLabel(role: string) {
 }
 
 export default async function StaffDirectoryPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;

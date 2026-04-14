@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
+import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { AdminLayoutClient } from "./admin-layout-client";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSessionWithBypass();
   if (!session?.user?.isSuperAdmin) {
     redirect("/");
   }
