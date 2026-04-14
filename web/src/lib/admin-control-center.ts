@@ -94,6 +94,12 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
         description: "Formal complaint intake, assignment, and resolution (planned).",
         status: "planned",
       },
+      {
+        key: "complaint-phone-call-log",
+        title: "Complaint phone call log",
+        description: "Log complaints received by phone with follow-up (planned).",
+        status: "planned",
+      },
     ],
   },
   {
@@ -160,6 +166,48 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
     title: "Academics & routine",
     items: [
       {
+        key: "optional-subjects",
+        title: "Optional subjects",
+        description: "Elective and optional subject catalogues per school (planned).",
+        status: "planned",
+      },
+      {
+        key: "academic-section",
+        title: "Section",
+        description: "School sections, streams, or phases (e.g. lower/upper) (planned).",
+        status: "planned",
+      },
+      {
+        key: "school-classes",
+        title: "Class",
+        description: "Class groups, codes, and rolls linked to sections (planned).",
+        status: "planned",
+      },
+      {
+        key: "subjects-catalog",
+        title: "Subjects",
+        description: "Master subject list and codes for timetabling and reporting (planned).",
+        status: "planned",
+      },
+      {
+        key: "assign-class-teacher",
+        title: "Assign class teacher",
+        description: "Homeroom and class teacher assignments (planned).",
+        status: "planned",
+      },
+      {
+        key: "assign-subject",
+        title: "Assign subject",
+        description: "Link subjects to classes and teachers (planned).",
+        status: "planned",
+      },
+      {
+        key: "classroom-allocation",
+        title: "Class room",
+        description: "Room codes, capacity, and allocation to classes (planned).",
+        status: "planned",
+      },
+      {
         key: "class-routine",
         title: "Class routine",
         description: "Timetable / period grid per class (planned).",
@@ -222,6 +270,18 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
         description: "Export printable ID sheets or cards (planned).",
         status: "planned",
       },
+      {
+        key: "general-id-card",
+        title: "General ID card",
+        description: "Non-student ID credentials and templates (planned).",
+        status: "planned",
+      },
+      {
+        key: "staff-id-card",
+        title: "Staff ID card",
+        description: "Staff identity cards and reprints (planned).",
+        status: "planned",
+      },
     ],
   },
   {
@@ -275,6 +335,102 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
         key: "transport",
         title: "Transport",
         description: "Routes, vehicles, and student assignments (planned).",
+        status: "planned",
+      },
+    ],
+  },
+  {
+    id: "download-center",
+    title: "Download center",
+    items: [
+      {
+        key: "content-type",
+        title: "Content type",
+        description: "Categories and rules for downloadable resources (planned).",
+        status: "planned",
+      },
+      {
+        key: "content-list",
+        title: "Content list",
+        description: "Files and documents available for download (planned).",
+        status: "planned",
+      },
+      {
+        key: "shared-content-list",
+        title: "Shared content list",
+        description: "Resources shared across sites or schools (planned).",
+        status: "planned",
+      },
+      {
+        key: "video-list",
+        title: "Video list",
+        description: "Video resources for streaming or download (planned).",
+        status: "planned",
+      },
+    ],
+  },
+  {
+    id: "study-material",
+    title: "Study material",
+    items: [
+      {
+        key: "study-upload-content",
+        title: "Upload content",
+        description: "Upload lesson files and resources for classes (planned).",
+        status: "planned",
+      },
+      {
+        key: "study-assignment",
+        title: "Assignment",
+        description: "Set and collect assignments with due dates (planned).",
+        status: "planned",
+      },
+      {
+        key: "study-syllabus",
+        title: "Syllabus",
+        description: "Per-class syllabus documents and versions (planned).",
+        status: "planned",
+      },
+      {
+        key: "study-other-downloads",
+        title: "Other downloads",
+        description: "Miscellaneous files for students and staff (planned).",
+        status: "planned",
+      },
+    ],
+  },
+  {
+    id: "lesson-plan",
+    title: "Lesson plan",
+    items: [
+      {
+        key: "lp-lesson",
+        title: "Lesson",
+        description: "Individual lesson records and sequencing (planned).",
+        status: "planned",
+      },
+      {
+        key: "lp-topic",
+        title: "Topic",
+        description: "Topics within a subject or unit (planned).",
+        status: "planned",
+      },
+      {
+        key: "lp-topic-overview",
+        title: "Topic overview",
+        description: "Summary view of topics and coverage (planned).",
+        status: "planned",
+      },
+      {
+        key: "lp-lesson-plan",
+        title: "Lesson plan",
+        description: "Structured lesson plans linked to classes (planned).",
+        status: "planned",
+      },
+      {
+        key: "lp-lesson-plan-overview",
+        title: "Lesson plan overview",
+        description: "Dashboard of plans by week, class, or teacher (planned).",
         status: "planned",
       },
     ],

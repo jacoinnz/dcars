@@ -37,6 +37,12 @@ export function NavUserMenu(props: {
             </span>
           ) : null}
         </p>
+        <Link
+          href="/settings/sidebar"
+          className="block w-full rounded-lg border border-stone-600 bg-stone-900 px-3 py-2 text-center text-sm font-medium text-teal-100 hover:border-teal-600 hover:bg-stone-800"
+        >
+          Sidebar manager
+        </Link>
         <button
           type="button"
           className="w-full rounded-lg border border-stone-600 bg-stone-800 px-3 py-2 text-sm text-stone-200 hover:bg-stone-700"

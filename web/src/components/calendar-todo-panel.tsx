@@ -46,7 +46,11 @@ function saveTodos(key: string, items: TodoItem[]) {
   }
 }
 
-export function CalendarTodoPanel(props: { storageKey: string }) {
+export function CalendarTodoPanel(props: {
+  storageKey: string;
+  calendarSectionId?: string;
+  todoSectionId?: string;
+}) {
   const todoKey = `dcaars-todos:${props.storageKey}`;
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(new Date()));
   const [todos, setTodos] = useState<TodoItem[]>([]);
@@ -86,10 +90,13 @@ export function CalendarTodoPanel(props: { storageKey: string }) {
     setTodos((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  const { calendarSectionId, todoSectionId } = props;
+
   return (
     <div className="mt-6 grid w-full grid-cols-1 gap-4 lg:grid-cols-[7fr_3fr] lg:items-stretch lg:gap-6">
       <section
-        className="flex min-h-[min(22rem,50vh)] min-w-0 flex-col rounded-xl border border-stone-200 bg-stone-50/80 p-4 shadow-sm"
+        id={calendarSectionId}
+        className="flex min-h-[min(22rem,50vh)] min-w-0 scroll-mt-24 flex-col rounded-xl border border-stone-200 bg-stone-50/80 p-4 shadow-sm"
         aria-labelledby="home-calendar-heading"
       >
         <div className="flex items-center justify-between gap-2 border-b border-stone-200 pb-3">
@@ -141,7 +148,8 @@ export function CalendarTodoPanel(props: { storageKey: string }) {
       </section>
 
       <section
-        className="flex min-h-[min(22rem,50vh)] min-w-0 flex-col rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
+        id={todoSectionId}
+        className="flex min-h-[min(22rem,50vh)] min-w-0 scroll-mt-24 flex-col rounded-xl border border-stone-200 bg-white p-4 shadow-sm"
         aria-labelledby="home-todo-heading"
       >
         <h2 id="home-todo-heading" className="text-base font-semibold text-stone-900">

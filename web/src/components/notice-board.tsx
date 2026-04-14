@@ -7,12 +7,15 @@ export function NoticeBoard(props: {
   showManageLink?: boolean;
   /** Inside welcome card, directly under the audience tabs */
   embedded?: boolean;
+  /** DOM id for in-page anchors (e.g. dashboard sidebar links) */
+  anchorId?: string;
 }) {
-  const { items, showManageLink, embedded } = props;
+  const { items, showManageLink, embedded, anchorId } = props;
 
   return (
     <section
-      className={`rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50/90 to-white p-6 shadow-sm ${
+      id={anchorId}
+      className={`rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50/90 to-white p-6 shadow-sm scroll-mt-24 ${
         embedded ? "mt-6 mb-0 rounded-xl" : "mb-10"
       }`}
       aria-labelledby="notice-board-heading"
@@ -31,7 +34,7 @@ export function NoticeBoard(props: {
             href="/admin/notices"
             className="shrink-0 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-950 shadow-sm transition hover:border-amber-400 hover:bg-amber-50"
           >
-            Manage notices
+            Add Notice
           </Link>
         ) : null}
       </div>

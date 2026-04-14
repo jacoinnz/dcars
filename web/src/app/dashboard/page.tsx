@@ -4,8 +4,10 @@ import { getServerSession } from "next-auth/next";
 import { getSiteSummaries, getProgramTotals } from "@/lib/aggregates";
 import { authOptions } from "@/lib/auth-options";
 import { CalendarTodoPanel } from "@/components/calendar-todo-panel";
+import { DashboardScrollToHash } from "@/components/dashboard-scroll-to-hash";
 import { NoticeBoard } from "@/components/notice-board";
 import { WelcomeAudienceTabs } from "@/components/welcome-audience-tabs";
+import { getAudienceTabCounts } from "@/lib/audience-tab-counts";
 import { getActiveNoticeBoardItems } from "@/lib/notice-board";
 import { getSessionSiteScope } from "@/lib/site-scope";
 
@@ -34,21 +36,39 @@ export default async function DashboardPage({
     : startOfMonth(now);
   const to = sp.to ? new Date(`${sp.to}T23:59:59.999Z`) : endOfMonth(now);
 
-  const [rows, totals, notices] = await Promise.all([
+  const [rows, totals, notices, tabCounts] = await Promise.all([
     getSiteSummaries({ from, to, siteScope }),
     getProgramTotals({ from, to, siteScope }),
     getActiveNoticeBoardItems(),
+    getAudienceTabCounts(siteScope),
   ]);
 
   const fromStr = format(from, "yyyy-MM-dd");
   const toStr = format(to, "yyyy-MM-dd");
+  const fromDisplay = format(from, "dd/MM/yyyy");
+  const toDisplay = format(to, "dd/MM/yyyy");
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <WelcomeAudienceTabs userName={welcomeName} isSuperAdmin={isSuperAdmin}>
+      <DashboardScrollToHash />
+      <WelcomeAudienceTabs
+        userName={welcomeName}
+        isSuperAdmin={isSuperAdmin}
+        tabCounts={tabCounts}
+        sectionId="dashboard-audience-tabs"
+      >
         <>
-          <NoticeBoard items={notices} showManageLink={isSuperAdmin} embedded />
-          <CalendarTodoPanel storageKey={todoStorageKey} />
+          <NoticeBoard
+            items={notices}
+            showManageLink={isSuperAdmin}
+            embedded
+            anchorId="notice-board"
+          />
+          <CalendarTodoPanel
+            storageKey={todoStorageKey}
+            calendarSectionId="dashboard-calendar"
+            todoSectionId="dashboard-todo"
+          />
         </>
       </WelcomeAudienceTabs>
 
@@ -57,8 +77,8 @@ export default async function DashboardPage({
           <h2 className="text-2xl font-semibold text-stone-900">Dashboard</h2>
           <p className="max-w-2xl text-sm text-stone-600">
             Programme overview: session metrics and participant registrations by site for{" "}
-            <span className="font-medium text-stone-800">
-              {fromStr} → {toStr}
+            <span className="font-medium text-stone-800 whitespace-nowrap">
+              {fromDisplay} to {toDisplay}
             </span>
             . Use quick access below for school operations (similar layout to common MIS home screens).
           </p>
