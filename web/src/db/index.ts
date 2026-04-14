@@ -1,17 +1,18 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import { getDatabaseUrl } from "@/lib/database-url";
 import * as schema from "./schema";
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function requireDatabaseUrl(): string {
-  const url = process.env.DATABASE_URL;
-  if (!url?.trim()) {
+  const url = getDatabaseUrl();
+  if (!url) {
     throw new Error(
-      "DATABASE_URL is not set. Add your Neon connection string to .env.local (see .env.example).",
+      "Database URL is not set. Add DATABASE_URL (Neon connection string) in Vercel → Project → Settings → Environment Variables for Production, then redeploy. Locally, use web/.env.local (see .env.example).",
     );
   }
-  return url.trim();
+  return url;
 }
 
 /** Server-side Postgres via Neon HTTP driver (works on Vercel serverless). */

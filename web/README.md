@@ -46,8 +46,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Deploying (e.g. Vercel)
 
 - Set **Root Directory** to `web` if the repo root is above this folder.
-- Add **`DATABASE_URL`** in the project **Environment Variables** (same value as Neon’s connection string).
-- Redeploy after the variable is set.
+- Add **`DATABASE_URL`** in **Settings → Environment Variables** for **Production** (and Preview if needed), using the same Neon connection string as local `.env.local`. The app also reads **`POSTGRES_URL`** / **`POSTGRES_PRISMA_URL`** if your integration sets those instead.
+- Redeploy after adding or changing variables. Without a database URL, pages that load data will error until env is set.
 
 ## Production notes
 
