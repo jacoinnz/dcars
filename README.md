@@ -1,16 +1,17 @@
 # dcars
 
-Youth programme reporting app: the Next.js app lives in **`web/`** (source, scripts, and full `node_modules` there).
+Youth programme reporting app: the Next.js app lives in **`web/`**.
 
-## Vercel
+## Vercel (required)
 
-**Preferred:** **Project → Settings → General → Root Directory** = **`web`**. Then you do **not** rely on the repo root `package.json` / [`vercel.json`](./vercel.json).
+**Project → Settings → General → Root Directory** must be **`web`** (not the repository root).
 
-**If Root Directory stays the repository root** (common default): the root [`package.json`](./package.json) lists **`next` / `react` / `react-dom`** only so Vercel’s framework detection succeeds, and [`vercel.json`](./vercel.json) runs **`npm install`** (root) plus **`npm install --prefix web`** (app deps), then **`npm run build --prefix web`**.
-
-Also:
-
-- Leave **Output Directory** empty.
+- Do **not** add a second `web` in Install/Build commands — if Root Directory is already `web`, paths like `web/web/package.json` will fail.
+- Leave **Output Directory** empty; use the default **Next.js** framework.
 - Set **`DATABASE_URL`** (Neon) under Environment Variables.
+
+There is **no** root [`vercel.json`](./vercel.json): install and build run inside **`web/`** automatically once Root Directory is set.
+
+The root [`package.json`](./package.json) is only for convenience (`npm run dev` from the repo root via `--prefix web`).
 
 See **`web/README.md`** for local development.

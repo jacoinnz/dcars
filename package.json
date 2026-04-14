@@ -1,12 +1,7 @@
 {
   "name": "dcars",
   "private": true,
-  "description": "Root package lists Next.js so Vercel can detect the framework when Root Directory is the repo root. App code and full deps remain under ./web.",
-  "dependencies": {
-    "next": "16.2.3",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
+  "description": "Helper scripts from repo root. The Next.js app is only under ./web — set Vercel Root Directory to web.",
   "scripts": {
     "build": "npm run build --prefix web",
     "dev": "npm run dev --prefix web",
