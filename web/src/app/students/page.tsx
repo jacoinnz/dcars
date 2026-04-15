@@ -91,9 +91,9 @@ export default async function StudentsHubPage() {
       <Stack gap="lg">
         <Stack gap="xs">
           <Title order={1}>Students Info</Title>
-          <Text c="dimmed" size="sm" maw={560}>
-            Registration, rosters, attendance, and academic reporting — use the tabs below for common tasks. Per-school
-            tools open from each school card where you have access.
+          <Text c="dimmed" size="sm" maw={720}>
+            Registration and rosters: on wide screens the new-student admission form stays on the left while you switch
+            hub tabs on the right. On small screens the form stacks above the tabs.
           </Text>
         </Stack>
 

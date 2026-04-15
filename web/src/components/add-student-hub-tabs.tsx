@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { List, Paper, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
+import { Divider, List, Paper, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
 import { HubLinkCard } from "@/components/hub-link-card";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
 
@@ -26,10 +26,12 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
 
   return (
     <Stack gap="lg">
-      <Text size="sm" c="dimmed" maw={640}>
-        Use the tabs to see what belongs in each part of a new admission. The full form (all sections) opens from each
-        school workspace below.
+      <Text size="sm" c="dimmed" maw={720} lh={1.65}>
+        The full admission form is fixed at the top of this page. Use the outline tabs here only as a{" "}
+        <strong>field guide</strong> for what each section contains.
       </Text>
+
+      <Divider label="Field guide" labelPosition="center" />
 
       <HubLinkCard href="/entry" variant="live">
         <Text fw={600} size="sm">
@@ -197,35 +199,22 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
         </Tabs.Panel>
       </Tabs>
 
-      {props.schoolRows.length === 0 ? (
+      {props.schoolRows.length > 0 ? (
+        <Text size="sm" c="dimmed">
+          After saving, open the{" "}
+          <NextMantineAnchor href="/evaluations" fw={600}>
+            school workspace
+          </NextMantineAnchor>{" "}
+          for class membership, roster, and the class dropdown when your data includes class names.
+        </Text>
+      ) : (
         <Text size="sm" c="dimmed">
           Add schools under{" "}
           <NextMantineAnchor href="/admin/institutions" fw={600}>
             Admin → Schools
           </NextMantineAnchor>{" "}
-          to open the tabbed admission form.
+          to use admission.
         </Text>
-      ) : (
-        <Stack gap="xs">
-          <Text size="sm" fw={600}>
-            Complete admission (all tabs) at a school
-          </Text>
-          <Stack gap="sm">
-            {props.schoolRows.map((s) => (
-              <Paper key={s.id} withBorder p="md" radius="md">
-                <Text size="sm" fw={600}>
-                  {s.name}
-                </Text>
-                <Text size="xs" c="dimmed" mb="sm">
-                  {s.siteName}
-                </Text>
-                <NextMantineAnchor href={`/evaluations/students/${s.id}`} size="sm" fw={600}>
-                  Open admission form →
-                </NextMantineAnchor>
-              </Paper>
-            ))}
-          </Stack>
-        </Stack>
       )}
     </Stack>
   );
