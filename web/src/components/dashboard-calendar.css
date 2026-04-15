@@ -1,0 +1,45 @@
+.fc {
+  --fc-border-color: var(--mantine-color-gray-3);
+  --fc-page-bg-color: white;
+  --fc-neutral-bg-color: var(--mantine-color-gray-0);
+  --fc-today-bg-color: rgba(59, 130, 246, 0.12);
+  --fc-event-border-color: transparent;
+  --fc-event-text-color: white;
+  --fc-event-bg-color: var(--mantine-color-teal-6);
+  --fc-button-text-color: var(--mantine-color-dark-7);
+  --fc-button-bg-color: var(--mantine-color-gray-0);
+  --fc-button-border-color: var(--mantine-color-gray-3);
+  --fc-button-hover-bg-color: var(--mantine-color-gray-1);
+  --fc-button-hover-border-color: var(--mantine-color-gray-3);
+  --fc-button-active-bg-color: var(--mantine-color-gray-2);
+  --fc-button-active-border-color: var(--mantine-color-gray-3);
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.fc .fc-button {
+  box-shadow: none;
+  border-radius: var(--mantine-radius-md);
+  padding: 0.25rem 0.5rem;
+}
+
+.fc .fc-scrollgrid {
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  color: var(--mantine-color-dark-7);
+  text-decoration: none;
+}
+
+.fc .fc-list-event:hover td {
+  background: var(--mantine-color-gray-0);
+}
+

@@ -1,33 +1,18 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import {
-  addMonths,
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  format,
-  isSameDay,
-  isSameMonth,
-  startOfMonth,
-  startOfWeek,
-  subMonths,
-} from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ActionIcon,
   Box,
   Button,
   Checkbox,
   Flex,
   Group,
   Paper,
-  SimpleGrid,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+import { DashboardCalendar } from "@/components/dashboard-calendar";
 
 type TodoItem = { id: string; text: string; done: boolean };
 
@@ -65,7 +50,6 @@ export function CalendarTodoPanel(props: {
   todoSectionId?: string;
 }) {
   const todoKey = `dcaars-todos:${props.storageKey}`;
-  const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(new Date()));
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [draft, setDraft] = useState("");
   const [hydrated, setHydrated] = useState(false);
@@ -82,14 +66,6 @@ export function CalendarTodoPanel(props: {
     if (!hydrated) return;
     saveTodos(todoKey, todos);
   }, [hydrated, todoKey, todos]);
-
-  const days = useMemo(() => {
-    const monthStart = startOfMonth(visibleMonth);
-    const monthEnd = endOfMonth(visibleMonth);
-    const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-    const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
-    return eachDayOfInterval({ start: gridStart, end: gridEnd });
-  }, [visibleMonth]);
 
   const addTodo = useCallback(() => {
     const text = draft.trim();
@@ -117,76 +93,9 @@ export function CalendarTodoPanel(props: {
       w="100%"
     >
       <Box style={{ flex: "7 1 0%", minWidth: 0 }}>
-        <Paper
-          component="section"
-          id={calendarSectionId}
-          withBorder
-          radius="md"
-          p="md"
-          shadow="sm"
-          style={{ minHeight: "min(22rem, 50vh)", scrollMarginTop: "6rem" }}
-          bg="gray.0"
-          aria-labelledby="home-calendar-heading"
-        >
-          <Group justify="space-between" pb="sm" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
-            <ActionIcon
-              variant="default"
-              size="lg"
-              radius="md"
-              aria-label="Previous month"
-              onClick={() => setVisibleMonth((m) => subMonths(m, 1))}
-            >
-              ←
-            </ActionIcon>
-            <Title order={2} id="home-calendar-heading" size="h4" ta="center" flex={1}>
-              {format(visibleMonth, "MMMM yyyy")}
-            </Title>
-            <ActionIcon
-              variant="default"
-              size="lg"
-              radius="md"
-              aria-label="Next month"
-              onClick={() => setVisibleMonth((m) => addMonths(m, 1))}
-            >
-              →
-            </ActionIcon>
-          </Group>
-
-          <SimpleGrid cols={7} spacing={4} mt="sm">
-            {WEEKDAYS.map((d) => (
-              <Text key={d} fz={11} fw={600} tt="uppercase" ta="center" c="dimmed" py={4}>
-                {d}
-              </Text>
-            ))}
-          </SimpleGrid>
-
-          <SimpleGrid cols={7} spacing={4} mt={4}>
-            {days.map((day) => {
-              const inMonth = isSameMonth(day, visibleMonth);
-              const isToday = isSameDay(day, new Date());
-              return (
-                <Box
-                  key={day.toISOString()}
-                  py={6}
-                  ta="center"
-                  style={{
-                    borderRadius: "var(--mantine-radius-md)",
-                    backgroundColor:
-                      isToday && inMonth ? "var(--mantine-color-blue-6)" : undefined,
-                    color: !inMonth
-                      ? "var(--mantine-color-gray-4)"
-                      : isToday && inMonth
-                        ? "white"
-                        : undefined,
-                    fontWeight: isToday && inMonth ? 600 : undefined,
-                  }}
-                >
-                  <time dateTime={format(day, "yyyy-MM-dd")}>{format(day, "d")}</time>
-                </Box>
-              );
-            })}
-          </SimpleGrid>
-        </Paper>
+        <section id={calendarSectionId} style={{ scrollMarginTop: "6rem" }}>
+          <DashboardCalendar />
+        </section>
       </Box>
 
       <Box style={{ flex: "3 1 0%", minWidth: 0 }}>
