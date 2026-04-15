@@ -41,6 +41,10 @@ export default async function StudentsHubPage({
   const session = await getServerSessionWithBypass();
   if (!session?.user?.id) redirect("/login");
 
+  if (tab === "student-attendance") {
+    redirect("/attendance");
+  }
+
   const userId = session.user.id;
   const isSuperAdmin = Boolean(session.user.isSuperAdmin);
 
@@ -143,12 +147,6 @@ export default async function StudentsHubPage({
             classNamesByStudentId={classNamesMerged}
             showSchoolColumn={allSchoolNames.size > 1}
           />
-
-          <Text size="sm" c="dimmed">
-            <NextMantineAnchor href="/students?tab=add-student" fw={600}>
-              New student registration
-            </NextMantineAnchor>
-          </Text>
         </Stack>
       </AppPage>
     );
