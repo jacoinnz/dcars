@@ -14,6 +14,14 @@ import { StudentListTable } from "@/components/student-list-table";
 
 export const dynamic = "force-dynamic";
 
+/** April–March style label, e.g. `2025–2026` for mid-April 2026. */
+function formatAcademicYearLabel(d = new Date()): string {
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const start = m >= 4 ? y : y - 1;
+  return `${start}–${start + 1}`;
+}
+
 type Props = { params: Promise<{ institutionId: string }> };
 
 export default async function EvaluationStudentsPage({ params }: Props) {
@@ -146,6 +154,8 @@ export default async function EvaluationStudentsPage({ params }: Props) {
             institutionId={institutionId}
             schoolName={school.name}
             defaultAdmissionDate={format(new Date(), "yyyy-MM-dd")}
+            defaultAcademicYear={formatAcademicYearLabel(new Date())}
+            classNames={classRows.map((c) => c.name)}
           />
         </Stack>
 

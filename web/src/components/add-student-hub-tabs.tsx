@@ -74,13 +74,13 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
                 <Text span fw={600} c="dark.5">
                   Academic information
                 </Text>{" "}
-                — admission date, roll number
+                — academic year, class, section, admission number and date, roll, group
               </List.Item>
               <List.Item>
                 <Text span fw={600} c="dark.5">
                   Personal information
                 </Text>{" "}
-                — legal name, date of birth, gender, blood group
+                — legal name, gender, date of birth, religion, caste, optional photo URL
               </List.Item>
               <List.Item>
                 <Text span fw={600} c="dark.5">
@@ -90,15 +90,15 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
               </List.Item>
               <List.Item>
                 <Text span fw={600} c="dark.5">
-                  Medical records
+                  Student address info
                 </Text>{" "}
-                — immunization and health notes for this learner
+                — current and permanent address
               </List.Item>
               <List.Item>
                 <Text span fw={600} c="dark.5">
-                  Student address
+                  Medical record
                 </Text>{" "}
-                — home postal address
+                — blood group, category, height and weight, plus immunization / health notes
               </List.Item>
             </List>
           </Paper>
@@ -112,16 +112,22 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
             <List size="sm" spacing="xs" c="dimmed">
               <List.Item>
                 <Text span fw={600} c="dark.5">
-                  Parents
+                  Fathers info
                 </Text>{" "}
-                — Parent 1 (always); optional Parent 2 when you tick “Include second parent” (then Parent 2 name and
-                contact are required)
+                — father name (required), occupation, phone, optional photo URL and email
               </List.Item>
               <List.Item>
                 <Text span fw={600} c="dark.5">
-                  Guardian
+                  Mother info
                 </Text>{" "}
-                — separate block for a non-parent primary contact when needed
+                — mother name, occupation, phone, optional photo URL and email
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Guardian info
+                </Text>{" "}
+                — relation (Father / Mother / Others), guardian name and contacts; when Others, specify the
+                relationship; optional photo URL, occupation, and address
               </List.Item>
             </List>
           </Paper>
@@ -133,14 +139,28 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
               Document Info
             </Text>
             <Text size="xs" c="dimmed" mb="sm">
-              References and checklist text only (numbers, authority, dates) — not uploads. Nothing from Personal,
-              Parents, or Previous School tabs belongs here.
+              Identity refs and notes, bank details for payouts, and four optional attachment slots (title + file URL).
+              Nothing from Personal or Previous School belongs here.
             </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Birth certificate — registration / authority / date issued</List.Item>
-              <List.Item>National ID or passport — number and type</List.Item>
-              <List.Item>Transfer or leaving certificate — certificate reference (paper proof of movement)</List.Item>
-              <List.Item>Other supporting papers — custody, sponsorship, court orders (reference lines only)</List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Document info
+                </Text>{" "}
+                — national ID, birth certificate number, additional notes, optional transfer certificate ref
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Bank information
+                </Text>{" "}
+                — bank name, account number, IFSC
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Document attachment
+                </Text>{" "}
+                — four titled slots with file URL + Browse (upload storage not wired yet)
+              </List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
@@ -151,22 +171,11 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
               Previous School Info
             </Text>
             <Text size="xs" c="dimmed" mb="sm">
-              Prior institution narrative only — where they studied last, class level, when they left, and why.
-              Certificate numbers and paper refs stay under Document Info.
+              Single bordered block: <strong>Previous school details</strong> — one large text area for the last
+              institution (name, address, class, dates, reason to move). Certificate refs stay under Document Info.
             </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>
-                <Text span fw={600} c="dark.5">
-                  Institution
-                </Text>{" "}
-                — school or college name; town / region / address of that school
-              </List.Item>
-              <List.Item>
-                <Text span fw={600} c="dark.5">
-                  Class &amp; exit
-                </Text>{" "}
-                — last class, grade, or year; date left; reason for leaving / transfer
-              </List.Item>
+              <List.Item>Matches common MIS “previous school” screens: one narrative field, not split columns.</List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
@@ -177,13 +186,12 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
               Other Info
             </Text>
             <Text size="xs" c="dimmed" mb="sm">
-              One catch-all notes box only — unstructured text that does not belong in the other tabs. Do not duplicate
-              identity, parents, documents, or previous-school fields here.
+              Two cards on wide screens: <strong>Transport</strong> (route list, vehicle number) and{" "}
+              <strong>Other info</strong> (dormitory, room number) as dropdowns; then <strong>Additional notes</strong> for
+              free text. Option lists are placeholders until school masters exist.
             </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Learning or behavioural context not captured elsewhere</List.Item>
-              <List.Item>Pastoral / safeguarding handover phrased as narrative (not duplicate medical or document refs)</List.Item>
-              <List.Item>Timing, special arrangements, or admissions team remarks</List.Item>
+              <List.Item>Learning or behavioural context, pastoral handover, timing, or team remarks in notes</List.Item>
             </List>
           </Paper>
         </Tabs.Panel>

@@ -105,61 +105,96 @@ export const studentAdmissionFormSchema = z
     middleName: z.preprocess(emptyToUndef, z.string().max(100).optional()),
     lastName: z.string().trim().min(1, "Last name is required").max(100),
     dateOfBirth: optionalDateYmd,
-    gender: z.preprocess(emptyToUndef, z.string().max(40).optional()),
+    gender: z.preprocess(emptyToUndef, z.string().min(1, "Gender is required").max(40)),
     email: optionalEmailLoose,
-    phone: optionalPhoneLoose,
-    address: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    phone: phoneLike,
+    academicYear: z.preprocess(emptyToUndef, z.string().min(1, "Academic year is required").max(40)),
+    admissionClassLabel: z.preprocess(emptyToUndef, z.string().min(1, "Class is required").max(120)),
+    admissionSectionLabel: z.preprocess(emptyToUndef, z.string().min(1, "Section is required").max(120)),
+    rollNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    studentGroup: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    religion: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    caste: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    currentAddress: z.preprocess(emptyToUndef, z.string().max(1000).optional()),
+    permanentAddress: z.preprocess(emptyToUndef, z.string().max(1000).optional()),
+    medicalCategory: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    heightIn: z.preprocess(emptyToUndef, z.string().max(20).optional()),
+    weightKg: z.preprocess(emptyToUndef, z.string().max(20).optional()),
+    photoUrl: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
     admissionNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
     admissionDate: optionalDateYmd,
     bloodGroup: z.preprocess(emptyToUndef, z.string().max(20).optional()),
-    /** Form-only: "1" when UI includes second parent (mother_* fields required). */
-    secondParentActive: z.preprocess(
-      (v) => (String(v ?? "").trim() === "1" ? "1" : "0"),
-      z.enum(["0", "1"]),
-    ),
     previousSchool: z.preprocess(emptyToUndef, z.string().max(300).optional()),
     previousSchoolAddress: z.preprocess(emptyToUndef, z.string().max(500).optional()),
     previousSchoolClassOrGrade: z.preprocess(emptyToUndef, z.string().max(120).optional()),
     previousSchoolDateLeft: optionalDateYmd,
     previousSchoolLeavingReason: z.preprocess(emptyToUndef, z.string().max(1000).optional()),
-    fatherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    previousSchoolDetails: z.preprocess(emptyToUndef, z.string().max(8000).optional()),
+    fatherName: z.string().trim().min(1, "Father name is required").max(120),
     fatherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
     fatherPhone: optionalPhoneLoose,
     fatherEmail: optionalEmailLoose,
+    fatherPhotoUrl: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
     motherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
     motherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
     motherPhone: optionalPhoneLoose,
     motherEmail: optionalEmailLoose,
+    motherPhotoUrl: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
     guardianName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
     guardianRelationship: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    guardianRelationKind: z.preprocess(
+      (v) => {
+        const s = String(v ?? "").trim().toLowerCase();
+        if (s === "father" || s === "mother" || s === "other") return s;
+        return "other";
+      },
+      z.enum(["father", "mother", "other"]),
+    ),
     guardianPhone: optionalPhoneLoose,
     guardianEmail: optionalEmailLoose,
+    guardianOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    guardianAddress: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    guardianPhotoUrl: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
     documentBirthCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
     documentNationalId: z.preprocess(emptyToUndef, z.string().max(500).optional()),
     documentTransferCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
     documentMedicalImmunization: z.preprocess(emptyToUndef, z.string().max(500).optional()),
     documentOtherNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
+    bankName: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    bankAccountNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    bankIfscCode: z.preprocess(emptyToUndef, z.string().max(22).optional()),
+    documentAttach1Title: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    documentAttach1Url: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
+    documentAttach2Title: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    documentAttach2Url: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
+    documentAttach3Title: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    documentAttach3Url: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
+    documentAttach4Title: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    documentAttach4Url: z.preprocess(emptyToUndef, z.string().url("Enter a valid URL").max(500).optional()),
+    transportRouteList: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    transportVehicleNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    dormitoryName: z.preprocess(emptyToUndef, z.string().max(200).optional()),
+    dormitoryRoomNumber: z.preprocess(emptyToUndef, z.string().max(40).optional()),
     admissionNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
   })
   .superRefine((data, ctx) => {
-    if (data.secondParentActive !== "1") return;
-    if (!data.motherName?.trim()) {
+    if (data.guardianRelationKind !== "other") return;
+    const g = data.guardianRelationship?.trim();
+    if (g && g.length > 0) return;
+    const hasGuardian =
+      (data.guardianName?.trim()?.length ?? 0) > 0 ||
+      (data.guardianOccupation?.trim()?.length ?? 0) > 0 ||
+      (data.guardianAddress?.trim()?.length ?? 0) > 0 ||
+      (data.guardianPhotoUrl != null && String(data.guardianPhotoUrl).trim().length > 0) ||
+      (data.guardianPhone != null &&
+        String(data.guardianPhone).trim().length > 0 &&
+        countPhoneDigits(String(data.guardianPhone)) >= 5) ||
+      (data.guardianEmail != null && String(data.guardianEmail).trim().length > 0);
+    if (hasGuardian) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Parent 2 full name is required when a second parent is included.",
-        path: ["motherName"],
-      });
-    }
-    const hasPhone =
-      data.motherPhone != null &&
-      String(data.motherPhone).trim().length > 0 &&
-      countPhoneDigits(String(data.motherPhone)) >= 5;
-    const hasEmail = data.motherEmail != null && String(data.motherEmail).trim().length > 0;
-    if (!hasPhone && !hasEmail) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Provide a valid phone or an email for parent 2.",
-        path: ["motherPhone"],
+        message: "Specify how the guardian is related when “Others” is selected.",
+        path: ["guardianRelationship"],
       });
     }
   });
