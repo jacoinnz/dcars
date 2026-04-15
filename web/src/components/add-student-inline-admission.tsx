@@ -15,7 +15,7 @@ function formatAcademicYearLabel(d = new Date()): string {
 export type AddStudentInlineSchoolRow = { id: string; name: string; siteName: string };
 
 /**
- * Full tabbed admission form on the Students hub. Class names are not loaded here (use free-text class field);
+ * Full tabbed admission form on the Students page. Class names are not loaded here (use free-text class field);
  * use the school workspace for a class dropdown when that data is wired.
  */
 export function AddStudentInlineAdmission(props: { schoolRows: AddStudentInlineSchoolRow[] }) {

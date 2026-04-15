@@ -1,5 +1,4 @@
-import { Suspense } from "react";
-import { Alert, Loader, Stack, Text, Title } from "@mantine/core";
+import { Alert, Stack, Text, Title } from "@mantine/core";
 import { asc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { AppPage } from "@/components/app-page";
@@ -15,17 +14,6 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Students Info — Youth programme",
 };
-
-function TabsFallback() {
-  return (
-    <Stack align="center" py="xl" gap="md">
-      <Loader size="sm" />
-      <Text size="sm" c="dimmed">
-        Loading…
-      </Text>
-    </Stack>
-  );
-}
 
 export default async function StudentsHubPage() {
   const session = await getServerSessionWithBypass();
@@ -92,14 +80,11 @@ export default async function StudentsHubPage() {
         <Stack gap="xs">
           <Title order={1}>Students Info</Title>
           <Text c="dimmed" size="sm" maw={900}>
-            Registration and rosters: the new-student admission form is full width at the top; scroll down for hub tabs
-            (lists, attendance, exports, field guide).
+            New-student registration: complete the admission form below.
           </Text>
         </Stack>
 
-        <Suspense fallback={<TabsFallback />}>
-          <StudentsInfoTabs schoolRows={schoolRows} />
-        </Suspense>
+        <StudentsInfoTabs schoolRows={schoolRows} />
 
         <Text size="sm" c="dimmed" mt="md">
           <NextMantineAnchor href="/admin/institutions" fw={600}>
