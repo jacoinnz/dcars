@@ -1,14 +1,14 @@
-import Link from "next/link";
 import { Anchor, Badge, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
 import { NzAcademicSectionView } from "@/components/academics/nz-academic-section-view";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 
 export function NzAcademicSectionPage() {
   return (
     <AppPage maxWidth="wide">
-      <Anchor component={Link} href="/dashboard" size="sm" c="blue.7" fw={500} underline="hover">
+      <NextMantineAnchor href="/dashboard" size="sm" c="blue.7" fw={500} underline="hover">
         ← Dashboard
-      </Anchor>
+      </NextMantineAnchor>
 
       <Stack gap="xs" mt="md">
         <Stack gap="xs" align="flex-start">
@@ -23,13 +23,13 @@ export function NzAcademicSectionPage() {
         <Text size="sm" c="dimmed" maw={900} lh={1.65}>
           In this app, a <strong>section</strong> is an organisational band: school phase, division, whānau community, or
           campus — not an individual subject class (see{" "}
-          <Anchor component={Link} href="/academics/module/school-classes" fw={600}>
+          <NextMantineAnchor href="/academics/module/school-classes" fw={600}>
             Class
-          </Anchor>
+          </NextMantineAnchor>
           ) or subject line (see{" "}
-          <Anchor component={Link} href="/academics/module/subjects-catalog" fw={600}>
+          <NextMantineAnchor href="/academics/module/subjects-catalog" fw={600}>
             Subjects
-          </Anchor>
+          </NextMantineAnchor>
           ). Labels below follow common practice in Aotearoa alongside{" "}
           <Anchor
             href="https://newzealandcurriculum.tahurangi.education.govt.nz/"
@@ -46,9 +46,9 @@ export function NzAcademicSectionPage() {
       <NzAcademicSectionView />
 
       <Text size="sm" c="dimmed" mt="xl">
-        <Anchor component={Link} href="/dashboard" fw={600} c="blue.7" underline="always">
+        <NextMantineAnchor href="/dashboard" fw={600} c="blue.7" underline="always">
           Back to dashboard
-        </Anchor>
+        </NextMantineAnchor>
       </Text>
     </AppPage>
   );

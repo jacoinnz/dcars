@@ -1,14 +1,14 @@
-import Link from "next/link";
 import { Anchor, Badge, Stack, Text, Title } from "@mantine/core";
 import { AppPage } from "@/components/app-page";
 import { NzSchoolClassesView } from "@/components/academics/nz-school-classes-view";
+import { NextMantineAnchor } from "@/components/next-mantine-links";
 
 export function NzSchoolClassesPage() {
   return (
     <AppPage maxWidth="wide">
-      <Anchor component={Link} href="/dashboard" size="sm" c="blue.7" fw={500} underline="hover">
+      <NextMantineAnchor href="/dashboard" size="sm" c="blue.7" fw={500} underline="hover">
         ← Dashboard
-      </Anchor>
+      </NextMantineAnchor>
 
       <Stack gap="xs" mt="md">
         <Stack gap="xs" align="flex-start">
@@ -30,9 +30,9 @@ export function NzSchoolClassesPage() {
       <NzSchoolClassesView />
 
       <Text size="sm" c="dimmed" mt="xl">
-        <Anchor component={Link} href="/dashboard" fw={600} c="blue.7" underline="always">
+        <NextMantineAnchor href="/dashboard" fw={600} c="blue.7" underline="always">
           Back to dashboard
-        </Anchor>
+        </NextMantineAnchor>
       </Text>
     </AppPage>
   );
