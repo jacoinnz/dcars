@@ -168,26 +168,34 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
       {
         key: "optional-subjects",
         title: "Optional subjects",
-        description: "Elective and optional subject catalogues per school (planned).",
-        status: "planned",
+        description:
+          "NZ electives and option lines — concepts, domains, naming patterns, and example codes (reference catalog).",
+        status: "live",
+        href: "/academics/module/optional-subjects",
       },
       {
         key: "academic-section",
         title: "Section",
-        description: "School sections, streams, or phases (e.g. lower/upper) (planned).",
-        status: "planned",
+        description:
+          "NZ school phases, divisions, and section naming — reference for organisational bands (not subject classes).",
+        status: "live",
+        href: "/academics/module/academic-section",
       },
       {
         key: "school-classes",
         title: "Class",
-        description: "Class groups, codes, and rolls linked to sections (planned).",
-        status: "planned",
+        description:
+          "NZ year levels, form vs subject classes, naming patterns, and example codes (reference for rolls and timetabling).",
+        status: "live",
+        href: "/academics/module/school-classes",
       },
       {
         key: "subjects-catalog",
         title: "Subjects",
-        description: "Master subject list and codes for timetabling and reporting (planned).",
-        status: "planned",
+        description:
+          "NZ Curriculum learning areas and suggested subject names and codes for timetabling and reporting (reference catalog).",
+        status: "live",
+        href: "/academics/module/subjects-catalog",
       },
       {
         key: "assign-class-teacher",
