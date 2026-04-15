@@ -4,6 +4,8 @@ const PAGE_MAX_WIDTH = {
   default: 1024,
   narrow: 672,
   medium: 768,
+  /** Wider main column for dense forms (e.g. Students admission). */
+  wide: 1400,
 } as const;
 
 export type AppPageMaxWidth = keyof typeof PAGE_MAX_WIDTH;

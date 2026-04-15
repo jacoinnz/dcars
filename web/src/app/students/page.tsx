@@ -87,13 +87,13 @@ export default async function StudentsHubPage() {
   }
 
   return (
-    <AppPage>
+    <AppPage maxWidth="wide">
       <Stack gap="lg">
         <Stack gap="xs">
           <Title order={1}>Students Info</Title>
-          <Text c="dimmed" size="sm" maw={720}>
-            Registration and rosters: on wide screens the new-student admission form stays on the left while you switch
-            hub tabs on the right. On small screens the form stacks above the tabs.
+          <Text c="dimmed" size="sm" maw={900}>
+            Registration and rosters: the new-student admission form is full width at the top; scroll down for hub tabs
+            (lists, attendance, exports, field guide).
           </Text>
         </Stack>
 

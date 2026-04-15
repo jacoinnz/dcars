@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Alert, Box, Grid, Paper, ScrollArea, SimpleGrid, Stack, Tabs, Text } from "@mantine/core";
+import { Alert, Divider, Paper, ScrollArea, SimpleGrid, Stack, Tabs, Text } from "@mantine/core";
 import { AddStudentHubTabs } from "@/components/add-student-hub-tabs";
 import { AddStudentInlineAdmission } from "@/components/add-student-inline-admission";
 import { HubLinkCard } from "@/components/hub-link-card";
@@ -87,36 +87,27 @@ export function StudentsInfoTabs(props: { schoolRows: StudentsInfoSchoolRow[] })
   );
 
   return (
-    <Grid gap={{ base: "lg", lg: "xl" }} align="flex-start">
-      <Grid.Col span={{ base: 12, lg: 5 }}>
-        <Box
-          style={{
-            position: "sticky",
-            top: 16,
-            maxHeight: "calc(100vh - 32px)",
-            overflowY: "auto",
-          }}
-        >
-          <Text size="sm" fw={600} mb="xs">
-            New student admission
-          </Text>
-          <Text size="xs" c="dimmed" mb="md" lh={1.55}>
-            Same submission form for every hub tab — switch tabs on the right for lists, attendance, exports, and the
-            field guide. Your draft stays here while you navigate.
-          </Text>
-          <AddStudentInlineAdmission schoolRows={props.schoolRows} />
-        </Box>
-      </Grid.Col>
+    <Stack gap="xl">
+      <Stack gap="sm" style={{ width: "100%" }}>
+        <Text size="sm" fw={600}>
+          New student admission
+        </Text>
+        <Text size="xs" c="dimmed" lh={1.55} maw={900}>
+          Full-width form below. Scroll down for the student hub (rosters, attendance, exports, field guide). The same
+          admission form stays above while you use hub tabs.
+        </Text>
+        <AddStudentInlineAdmission schoolRows={props.schoolRows} />
+      </Stack>
 
-      <Grid.Col span={{ base: 12, lg: 7 }}>
-        <Stack gap="md">
-          <Text size="sm" c="dimmed" lh={1.65}>
-            Student hub: pick a tab for roster links, class matrix, attendance, exports, and the admission section
-            checklist (Add Student).
-          </Text>
+      <Divider label="Student hub" labelPosition="center" />
 
-          <Tabs value={active} onChange={onTabChange} keepMounted={false}>
-      <ScrollArea type="scroll" scrollbars="x" offsetScrollbars>
+      <Stack gap="md">
+        <Text size="sm" c="dimmed" lh={1.65} maw={900}>
+          Roster links, class matrix, attendance, exports, and the admission section checklist (Add Student tab).
+        </Text>
+
+        <Tabs value={active} onChange={onTabChange} keepMounted={false}>
+          <ScrollArea type="scroll" scrollbars="x" offsetScrollbars>
         <Tabs.List
           style={{
             flexWrap: "nowrap",
@@ -306,9 +297,8 @@ export function StudentsInfoTabs(props: { schoolRows: StudentsInfoSchoolRow[] })
           </SimpleGrid>
         </Stack>
       </Tabs.Panel>
-          </Tabs>
-        </Stack>
-      </Grid.Col>
-    </Grid>
+        </Tabs>
+      </Stack>
+    </Stack>
   );
 }
