@@ -12,6 +12,7 @@ import {
 } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function StudentAttendancePage({
     .from(students)
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
     .innerJoin(sites, eq(institutions.siteId, sites.id))
-    .where(eq(students.id, studentId))
+    .where(and(eq(students.id, studentId), studentIsActive))
     .limit(1);
 
   const [settings] = await db

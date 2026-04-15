@@ -5,6 +5,7 @@ import { getDb } from "@/db";
 import { institutions, students, teacherContentUploads } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function StudentMaterialsPage() {
     })
     .from(students)
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
-    .where(eq(students.id, studentId))
+    .where(and(eq(students.id, studentId), studentIsActive))
     .limit(1);
 
   if (!ctx) redirect("/student");

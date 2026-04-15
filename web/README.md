@@ -57,6 +57,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Copy values from `.env.example`, add them in Vercel **Settings → Environment Variables** for each environment (Production, Preview) that runs the app, then **redeploy**.
 
+## Product status (features & roadmap)
+
+See **[docs/PRODUCT_STATUS.md](docs/PRODUCT_STATUS.md)** for what is implemented vs still planned, `/students` URL behaviour, and operational notes.
+
 ### After changing env
 
 - Redeploy after adding or changing variables. Without a database URL, data pages error until `DATABASE_URL` is set. Without `AUTH_SECRET`, auth routes error until it is set.

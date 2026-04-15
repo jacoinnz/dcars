@@ -1,6 +1,7 @@
 import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { getDb } from "@/db";
 import { classes, performanceRecords, students } from "@/db/schema";
+import { studentIsActive } from "@/lib/students-active";
 
 export type PerformanceRow = {
   id: string;
@@ -52,6 +53,7 @@ export async function fetchPerformanceForReport(params: {
       : inArray(performanceRecords.classId, params.classIds);
 
   const whereParts = [
+    studentIsActive,
     eq(students.institutionId, params.institutionId),
     gte(performanceRecords.recordedAt, from),
     lte(performanceRecords.recordedAt, to),

@@ -1,11 +1,12 @@
 import { format } from "date-fns";
 import { notFound, redirect } from "next/navigation";
-import { asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { Paper, Stack, Text, Title } from "@mantine/core";
 import { getDb } from "@/db";
 import { classes, institutions, studentClasses, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 import { AppPage } from "@/components/app-page";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { StudentAdmissionForm } from "@/components/student-admission-form";
@@ -65,7 +66,7 @@ export default async function EvaluationStudentsPage({ params }: Props) {
   const studRows = await db
     .select()
     .from(students)
-    .where(eq(students.institutionId, institutionId))
+    .where(and(eq(students.institutionId, institutionId), studentIsActive))
     .orderBy(asc(students.lastName), asc(students.firstName));
 
   const classRows = await db

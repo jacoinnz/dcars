@@ -1,6 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { institutions, students } from "@/db/schema";
+import { studentIsActive } from "@/lib/students-active";
 
 /** Student profile row linked to this login, if any. */
 export async function getPortalStudentIdForUser(userId: string): Promise<string | null> {
@@ -8,7 +9,7 @@ export async function getPortalStudentIdForUser(userId: string): Promise<string 
   const [r] = await db
     .select({ id: students.id })
     .from(students)
-    .where(eq(students.portalUserId, userId))
+    .where(and(eq(students.portalUserId, userId), studentIsActive))
     .limit(1);
   return r?.id ?? null;
 }
@@ -27,7 +28,7 @@ export async function canStudentPortalAccessTeacherUpload(
     })
     .from(students)
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
-    .where(eq(students.id, sid))
+    .where(and(eq(students.id, sid), studentIsActive))
     .limit(1);
   if (!row) return false;
   return row.siteId === upload.siteId && row.name === upload.institutionName;

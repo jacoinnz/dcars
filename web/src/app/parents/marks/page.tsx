@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getGuardianStudentIds } from "@/lib/guardian-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export default async function ParentMarksPage() {
     .from(students)
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
     .innerJoin(sites, eq(institutions.siteId, sites.id))
-    .where(inArray(students.id, guardianIds));
+    .where(and(inArray(students.id, guardianIds), studentIsActive));
 
   const studById = new Map(studRows.map((r) => [r.student.id, r]));
 
@@ -72,7 +73,7 @@ export default async function ParentMarksPage() {
           .from(performanceRecords)
           .innerJoin(students, eq(performanceRecords.studentId, students.id))
           .leftJoin(classes, eq(performanceRecords.classId, classes.id))
-          .where(inArray(performanceRecords.studentId, guardianIds))
+          .where(and(inArray(performanceRecords.studentId, guardianIds), studentIsActive))
           .orderBy(desc(performanceRecords.recordedAt));
 
   const examRows =
@@ -84,8 +85,9 @@ export default async function ParentMarksPage() {
             seriesTitle: institutionExamSeries.title,
           })
           .from(examMarks)
+          .innerJoin(students, eq(examMarks.studentId, students.id))
           .innerJoin(institutionExamSeries, eq(examMarks.examSeriesId, institutionExamSeries.id))
-          .where(inArray(examMarks.studentId, guardianIds))
+          .where(and(inArray(examMarks.studentId, guardianIds), studentIsActive))
           .orderBy(desc(examMarks.updatedAt));
 
   return (

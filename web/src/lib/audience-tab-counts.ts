@@ -7,6 +7,7 @@ import {
   students,
 } from "@/db/schema";
 import type { SiteScope } from "@/lib/site-scope";
+import { studentIsActive } from "@/lib/students-active";
 
 export type AudienceTabCounts = {
   students: number;
@@ -35,7 +36,7 @@ export async function getAudienceTabCounts(siteScope: SiteScope = "all"): Promis
       .select({ c: count(students.id) })
       .from(students)
       .innerJoin(institutions, eq(students.institutionId, institutions.id))
-      .where(scope),
+      .where(and(scope, studentIsActive)),
     db
       .select({ c: countDistinct(institutionStaff.userId) })
       .from(institutionStaff)
@@ -46,7 +47,7 @@ export async function getAudienceTabCounts(siteScope: SiteScope = "all"): Promis
       .from(studentGuardians)
       .innerJoin(students, eq(studentGuardians.studentId, students.id))
       .innerJoin(institutions, eq(students.institutionId, institutions.id))
-      .where(scope),
+      .where(and(scope, studentIsActive)),
     db
       .select({ c: countDistinct(institutionStaff.userId) })
       .from(institutionStaff)

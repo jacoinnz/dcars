@@ -236,17 +236,6 @@ export function StudentAdmissionForm(props: {
       <input type="hidden" name="institutionId" value={props.institutionId} />
 
       <Stack gap="xl">
-        <Stack gap={6}>
-          <Title order={2} size="h4" fw={600}>
-            New student admission
-          </Title>
-          <Text size="sm" c="dimmed" maw={640} lh={1.6}>
-            Complete the learner profile for <Text span fw={600} c="dark.7">{props.schoolName}</Text>.
-            Use each tab for the right category; only the selected tab is highlighted. All fields are saved when you
-            submit (switch tabs to review before sending).
-          </Text>
-        </Stack>
-
         {state?.ok ? (
           <Alert color="green" title="Saved" variant="light">
             <Text size="sm">{state.message}</Text>

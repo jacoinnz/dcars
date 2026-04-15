@@ -6,6 +6,7 @@ import { getDb } from "@/db";
 import { examMarks, examScheduleSlots, institutionExamSeries, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 
 async function sessionUser() {
   const s = await getServerSessionWithBypass();
@@ -173,7 +174,10 @@ export async function saveExamMarksGrid(institutionId: string, seriesId: string,
   if (papers.length === 0) throw new Error("Define at least one paper (from schedule or add columns).");
 
   const db = getDb();
-  const studRows = await db.select({ id: students.id }).from(students).where(eq(students.institutionId, institutionId));
+  const studRows = await db
+    .select({ id: students.id })
+    .from(students)
+    .where(and(eq(students.institutionId, institutionId), studentIsActive));
   const now = new Date();
 
   for (const st of studRows) {

@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { institutions, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getViewableInstitutionIds } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 
 function likePattern(raw: string): string {
   const t = raw.trim().slice(0, 80).replace(/[%_\\]/g, "");
@@ -61,6 +62,7 @@ export async function GET(req: Request) {
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
     .where(
       and(
+        studentIsActive,
         inArray(students.institutionId, viewableIds),
         or(
           ilike(students.firstName, pattern),

@@ -119,7 +119,7 @@ export const ADMIN_MODULE_GROUPS: AdminModuleGroup[] = [
         title: "Student admission",
         description: "Participant registration and linking students to a school record.",
         status: "live",
-        href: "/students",
+        href: "/students?tab=add-student",
       },
       {
         key: "student-details",

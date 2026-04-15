@@ -250,6 +250,9 @@ export const students = pgTable(
     }),
     /** Optional login (`app_users`) for the student portal (`/student`). */
     portalUserId: text("portal_user_id").references(() => appUsers.id, { onDelete: "set null" }),
+    /** Soft-delete: hidden from rolls; may be restored within the retention window. */
+    deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "date" }),
+    deletedByUserId: text("deleted_by_user_id").references(() => appUsers.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull(),
   },
   (t) => [uniqueIndex("students_portal_user_uq").on(t.portalUserId)],

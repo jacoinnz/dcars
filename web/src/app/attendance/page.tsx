@@ -24,6 +24,7 @@ import { AppPage } from "@/components/app-page";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getManageableInstitutionIds } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -81,7 +82,7 @@ export default async function AttendancePage({
     studRows = await db
       .select()
       .from(students)
-      .where(eq(students.institutionId, activeInstitutionId))
+      .where(and(eq(students.institutionId, activeInstitutionId), studentIsActive))
       .orderBy(asc(students.lastName), asc(students.firstName));
 
     if (studRows.length) {

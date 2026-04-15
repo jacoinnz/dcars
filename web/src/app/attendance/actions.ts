@@ -6,6 +6,7 @@ import { getDb } from "@/db";
 import { attendanceRecords, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 import { ATTENDANCE_STATUSES } from "@/app/attendance/constants";
 
 function isValidStatus(s: string): s is (typeof ATTENDANCE_STATUSES)[number] {
@@ -30,7 +31,7 @@ export async function saveAttendanceForDate(
   const studs = await db
     .select({ id: students.id })
     .from(students)
-    .where(eq(students.institutionId, institutionId));
+    .where(and(eq(students.institutionId, institutionId), studentIsActive));
   const now = new Date();
 
   for (const s of studs) {

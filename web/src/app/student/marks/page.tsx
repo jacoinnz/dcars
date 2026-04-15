@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { getPortalStudentIdForUser } from "@/lib/student-portal-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export default async function StudentMarksPage() {
     .from(students)
     .innerJoin(institutions, eq(students.institutionId, institutions.id))
     .innerJoin(sites, eq(institutions.siteId, sites.id))
-    .where(eq(students.id, studentId))
+    .where(and(eq(students.id, studentId), studentIsActive))
     .limit(1);
 
   const perfRows = await db

@@ -14,6 +14,7 @@ import {
   students,
 } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
+import { studentIsActive } from "@/lib/students-active";
 
 async function requireSuperAdmin() {
   const s = await getServerSessionWithBypass();
@@ -282,7 +283,7 @@ export async function adminLinkStudentPortal(formData: FormData): Promise<void> 
   const [st] = await db
     .select({ institutionId: students.institutionId })
     .from(students)
-    .where(eq(students.id, studentId))
+    .where(and(eq(students.id, studentId), studentIsActive))
     .limit(1);
   if (!st || st.institutionId !== institutionId) {
     throw new Error("Student does not belong to this school.");

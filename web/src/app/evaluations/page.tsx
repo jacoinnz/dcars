@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { endOfDay, format, startOfDay, subMonths } from "date-fns";
-import { asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import {
   Alert,
   Box,
@@ -28,6 +28,7 @@ import { NextMantineAnchor } from "@/components/next-mantine-links";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { fetchPerformanceForReport } from "@/lib/evaluation-report";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -111,7 +112,7 @@ export default async function EvaluationsPage({
     const studs = await db
       .select()
       .from(students)
-      .where(eq(students.institutionId, institutionId))
+      .where(and(eq(students.institutionId, institutionId), studentIsActive))
       .orderBy(asc(students.lastName), asc(students.firstName));
     studentOptions = studs.map((s) => ({
       id: s.id,

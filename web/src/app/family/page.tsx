@@ -12,6 +12,7 @@ import {
   students,
 } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,7 @@ export default async function FamilyAttendancePage({
           .from(students)
           .innerJoin(institutions, eq(students.institutionId, institutions.id))
           .innerJoin(sites, eq(institutions.siteId, sites.id))
-          .where(inArray(students.id, guardianIds))
+          .where(and(inArray(students.id, guardianIds), studentIsActive))
           .orderBy(asc(students.lastName), asc(students.firstName));
 
   const instIds = [...new Set(studRows.map((r) => r.student.institutionId))];

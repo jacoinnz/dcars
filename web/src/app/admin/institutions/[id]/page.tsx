@@ -3,7 +3,7 @@ import { Badge, Box, Button, Divider, Group, Paper, Stack, Text, Title } from "@
 import { notFound } from "next/navigation";
 import { AppPage } from "@/components/app-page";
 import { NextMantineAnchor } from "@/components/next-mantine-links";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
   appUsers,
@@ -30,6 +30,7 @@ import {
   adminUnlinkStudentPortal,
   adminUpdateSyllabus,
 } from "@/app/admin/school-actions";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -109,7 +110,7 @@ export default async function AdminInstitutionDetailPage({ params }: Props) {
   const studentRows = await db
     .select()
     .from(students)
-    .where(eq(students.institutionId, id))
+    .where(and(eq(students.institutionId, id), studentIsActive))
     .orderBy(asc(students.lastName), asc(students.firstName));
 
   const [attendanceSettings] = await db

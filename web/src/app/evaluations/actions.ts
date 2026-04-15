@@ -6,6 +6,7 @@ import { getDb } from "@/db";
 import { classes, performanceRecords, studentClasses, students } from "@/db/schema";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 import { studentAdmissionFormSchema } from "@/lib/validation";
 
 export type StudentAdmissionState =
@@ -235,7 +236,11 @@ export async function setStudentEnrollment(
 ): Promise<void> {
   const { userId, isSuperAdmin } = await sessionUser();
   const db = getDb();
-  const [st] = await db.select().from(students).where(eq(students.id, studentId)).limit(1);
+  const [st] = await db
+    .select()
+    .from(students)
+    .where(and(eq(students.id, studentId), studentIsActive))
+    .limit(1);
   if (!st) throw new Error("Student not found.");
   if (!(await canManageInstitution(userId, isSuperAdmin, st.institutionId))) {
     throw new Error("Not allowed.");
@@ -283,7 +288,11 @@ export async function addPerformanceRecord(formData: FormData): Promise<void> {
   }
 
   const db = getDb();
-  const [st] = await db.select().from(students).where(eq(students.id, studentId)).limit(1);
+  const [st] = await db
+    .select()
+    .from(students)
+    .where(and(eq(students.id, studentId), studentIsActive))
+    .limit(1);
   if (!st || st.institutionId !== institutionId) throw new Error("Invalid student.");
 
   const classId: string | null = classIdRaw || null;

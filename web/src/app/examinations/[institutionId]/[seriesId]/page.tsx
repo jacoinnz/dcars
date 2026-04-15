@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
   examMarks,
@@ -23,6 +23,7 @@ import {
 import { PrintPageButton } from "@/components/print-page-button";
 import { getServerSessionWithBypass } from "@/lib/auth-options";
 import { canManageInstitution, getViewableInstitutionIds } from "@/lib/school-access";
+import { studentIsActive } from "@/lib/students-active";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +86,7 @@ export default async function ExaminationSeriesPage({ params }: Props) {
   const studRows = await db
     .select()
     .from(students)
-    .where(eq(students.institutionId, institutionId))
+    .where(and(eq(students.institutionId, institutionId), studentIsActive))
     .orderBy(asc(students.lastName), asc(students.firstName));
 
   const markRows = await db.select().from(examMarks).where(eq(examMarks.examSeriesId, seriesId));
