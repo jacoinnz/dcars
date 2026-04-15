@@ -98,42 +98,70 @@ export const participantEntryFormSchema = z.object({
 export type ParticipantEntryFormInput = z.infer<typeof participantEntryFormSchema>;
 
 /** School student admission — extended profile (optional fields typical of MIS admission screens). */
-export const studentAdmissionFormSchema = z.object({
-  institutionId: z.string().min(1, "School is required"),
-  firstName: z.string().trim().min(1, "First name is required").max(100),
-  middleName: z.preprocess(emptyToUndef, z.string().max(100).optional()),
-  lastName: z.string().trim().min(1, "Last name is required").max(100),
-  dateOfBirth: optionalDateYmd,
-  gender: z.preprocess(emptyToUndef, z.string().max(40).optional()),
-  email: optionalEmailLoose,
-  phone: optionalPhoneLoose,
-  address: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  admissionNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
-  admissionDate: optionalDateYmd,
-  bloodGroup: z.preprocess(emptyToUndef, z.string().max(20).optional()),
-  previousSchool: z.preprocess(emptyToUndef, z.string().max(300).optional()),
-  previousSchoolAddress: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  previousSchoolClassOrGrade: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  previousSchoolDateLeft: optionalDateYmd,
-  previousSchoolLeavingReason: z.preprocess(emptyToUndef, z.string().max(1000).optional()),
-  fatherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  fatherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  fatherPhone: optionalPhoneLoose,
-  fatherEmail: optionalEmailLoose,
-  motherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  motherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  motherPhone: optionalPhoneLoose,
-  motherEmail: optionalEmailLoose,
-  guardianName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
-  guardianRelationship: z.preprocess(emptyToUndef, z.string().max(80).optional()),
-  guardianPhone: optionalPhoneLoose,
-  guardianEmail: optionalEmailLoose,
-  documentBirthCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  documentNationalId: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  documentTransferCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  documentMedicalImmunization: z.preprocess(emptyToUndef, z.string().max(500).optional()),
-  documentOtherNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
-  admissionNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
-});
+export const studentAdmissionFormSchema = z
+  .object({
+    institutionId: z.string().min(1, "School is required"),
+    firstName: z.string().trim().min(1, "First name is required").max(100),
+    middleName: z.preprocess(emptyToUndef, z.string().max(100).optional()),
+    lastName: z.string().trim().min(1, "Last name is required").max(100),
+    dateOfBirth: optionalDateYmd,
+    gender: z.preprocess(emptyToUndef, z.string().max(40).optional()),
+    email: optionalEmailLoose,
+    phone: optionalPhoneLoose,
+    address: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    admissionNumber: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    admissionDate: optionalDateYmd,
+    bloodGroup: z.preprocess(emptyToUndef, z.string().max(20).optional()),
+    /** Form-only: "1" when UI includes second parent (mother_* fields required). */
+    secondParentActive: z.preprocess(
+      (v) => (String(v ?? "").trim() === "1" ? "1" : "0"),
+      z.enum(["0", "1"]),
+    ),
+    previousSchool: z.preprocess(emptyToUndef, z.string().max(300).optional()),
+    previousSchoolAddress: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    previousSchoolClassOrGrade: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    previousSchoolDateLeft: optionalDateYmd,
+    previousSchoolLeavingReason: z.preprocess(emptyToUndef, z.string().max(1000).optional()),
+    fatherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    fatherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    fatherPhone: optionalPhoneLoose,
+    fatherEmail: optionalEmailLoose,
+    motherName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    motherOccupation: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    motherPhone: optionalPhoneLoose,
+    motherEmail: optionalEmailLoose,
+    guardianName: z.preprocess(emptyToUndef, z.string().max(120).optional()),
+    guardianRelationship: z.preprocess(emptyToUndef, z.string().max(80).optional()),
+    guardianPhone: optionalPhoneLoose,
+    guardianEmail: optionalEmailLoose,
+    documentBirthCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    documentNationalId: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    documentTransferCert: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    documentMedicalImmunization: z.preprocess(emptyToUndef, z.string().max(500).optional()),
+    documentOtherNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
+    admissionNotes: z.preprocess(emptyToUndef, z.string().max(2000).optional()),
+  })
+  .superRefine((data, ctx) => {
+    if (data.secondParentActive !== "1") return;
+    if (!data.motherName?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Parent 2 full name is required when a second parent is included.",
+        path: ["motherName"],
+      });
+    }
+    const hasPhone =
+      data.motherPhone != null &&
+      String(data.motherPhone).trim().length > 0 &&
+      countPhoneDigits(String(data.motherPhone)) >= 5;
+    const hasEmail = data.motherEmail != null && String(data.motherEmail).trim().length > 0;
+    if (!hasPhone && !hasEmail) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide a valid phone or an email for parent 2.",
+        path: ["motherPhone"],
+      });
+    }
+  });
 
 export type StudentAdmissionFormInput = z.infer<typeof studentAdmissionFormSchema>;

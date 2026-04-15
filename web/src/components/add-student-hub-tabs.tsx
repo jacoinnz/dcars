@@ -67,13 +67,39 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
         <Tabs.Panel value="personal" pt="md">
           <Paper withBorder p="md" radius="md" bg="gray.0">
             <Text size="sm" fw={600} mb="sm">
-              Personal Info
+              Personal Info (learner only)
             </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Admission date and roll number</List.Item>
-              <List.Item>Legal name (first, middle, last)</List.Item>
-              <List.Item>Date of birth, gender, blood group</List.Item>
-              <List.Item>Student email, phone, and postal address</List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Academic information
+                </Text>{" "}
+                — admission date, roll number
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Personal information
+                </Text>{" "}
+                — legal name, date of birth, gender, blood group
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Contact information
+                </Text>{" "}
+                — student email and phone
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Medical records
+                </Text>{" "}
+                — immunization and health notes for this learner
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Student address
+                </Text>{" "}
+                — home postal address
+              </List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
@@ -84,50 +110,81 @@ export function AddStudentHubTabs(props: { schoolRows: AddStudentHubSchoolRow[] 
               Parents &amp; Guardian Info
             </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Father — name, occupation, phone, email</List.Item>
-              <List.Item>Mother — name, occupation, phone, email</List.Item>
-              <List.Item>Guardian / local contact when not the parents</List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Parents
+                </Text>{" "}
+                — Parent 1 (always); optional Parent 2 when you tick “Include second parent” (then Parent 2 name and
+                contact are required)
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Guardian
+                </Text>{" "}
+                — separate block for a non-parent primary contact when needed
+              </List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
 
         <Tabs.Panel value="documents" pt="md">
           <Paper withBorder p="md" radius="md" bg="gray.0">
-            <Text size="sm" fw={600} mb="sm">
+            <Text size="sm" fw={600} mb="xs">
               Document Info
             </Text>
+            <Text size="xs" c="dimmed" mb="sm">
+              References and checklist text only (numbers, authority, dates) — not uploads. Nothing from Personal,
+              Parents, or Previous School tabs belongs here.
+            </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Birth certificate reference</List.Item>
-              <List.Item>National ID or passport details</List.Item>
-              <List.Item>Transfer / leaving certificate references</List.Item>
-              <List.Item>Medical / immunization notes</List.Item>
-              <List.Item>Other documents (custody, sponsorship, etc.)</List.Item>
+              <List.Item>Birth certificate — registration / authority / date issued</List.Item>
+              <List.Item>National ID or passport — number and type</List.Item>
+              <List.Item>Transfer or leaving certificate — certificate reference (paper proof of movement)</List.Item>
+              <List.Item>Other supporting papers — custody, sponsorship, court orders (reference lines only)</List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
 
         <Tabs.Panel value="previous-school" pt="md">
           <Paper withBorder p="md" radius="md" bg="gray.0">
-            <Text size="sm" fw={600} mb="sm">
+            <Text size="sm" fw={600} mb="xs">
               Previous School Info
             </Text>
+            <Text size="xs" c="dimmed" mb="sm">
+              Prior institution narrative only — where they studied last, class level, when they left, and why.
+              Certificate numbers and paper refs stay under Document Info.
+            </Text>
             <List size="sm" spacing="xs" c="dimmed">
-              <List.Item>Last school name and address</List.Item>
-              <List.Item>Class / grade / year completed</List.Item>
-              <List.Item>Date left and reason for transfer</List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Institution
+                </Text>{" "}
+                — school or college name; town / region / address of that school
+              </List.Item>
+              <List.Item>
+                <Text span fw={600} c="dark.5">
+                  Class &amp; exit
+                </Text>{" "}
+                — last class, grade, or year; date left; reason for leaving / transfer
+              </List.Item>
             </List>
           </Paper>
         </Tabs.Panel>
 
         <Tabs.Panel value="other" pt="md">
           <Paper withBorder p="md" radius="md" bg="gray.0">
-            <Text size="sm" fw={600} mb="sm">
+            <Text size="sm" fw={600} mb="xs">
               Other Info
             </Text>
-            <Text size="sm" c="dimmed">
-              General admission notes — medical alerts, learning needs, safeguarding context, or anything that does
-              not fit the categories above.
+            <Text size="xs" c="dimmed" mb="sm">
+              One catch-all notes box only — unstructured text that does not belong in the other tabs. Do not duplicate
+              identity, parents, documents, or previous-school fields here.
             </Text>
+            <List size="sm" spacing="xs" c="dimmed">
+              <List.Item>Learning or behavioural context not captured elsewhere</List.Item>
+              <List.Item>Pastoral / safeguarding handover phrased as narrative (not duplicate medical or document refs)</List.Item>
+              <List.Item>Timing, special arrangements, or admissions team remarks</List.Item>
+            </List>
           </Paper>
         </Tabs.Panel>
       </Tabs>

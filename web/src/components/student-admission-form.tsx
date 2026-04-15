@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import {
   Alert,
   Button,
+  Checkbox,
   Code,
   NativeSelect,
   Paper,
@@ -57,8 +58,16 @@ export function StudentAdmissionForm(props: {
   );
 
   const [addSection, setAddSection] = useState<AddSection>("personal");
+  const [secondParent, setSecondParent] = useState(false);
 
   const fieldErrors = state?.ok === false ? state.fieldErrors : undefined;
+
+  useEffect(() => {
+    if (!fieldErrors) return;
+    if (fieldErrors.motherName || fieldErrors.motherPhone || fieldErrors.motherEmail) {
+      setSecondParent(true);
+    }
+  }, [fieldErrors]);
 
   return (
     <Paper
@@ -125,10 +134,15 @@ export function StudentAdmissionForm(props: {
           </ScrollArea>
 
           <Tabs.Panel value="personal" pt="md">
-            <Stack gap="lg">
+            <Stack gap="xl">
+              <Text size="sm" c="dimmed" maw={640}>
+                This tab is only for the learner: academic details, identity, contact, medical notes, and address.
+                Parents and guardians are on the next tab.
+              </Text>
+
               <Stack gap="md">
-                <Title order={3} size="sm" fw={600} c="dark.7">
-                  Admission & identity
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Academic information
                 </Title>
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                   <TextInput
@@ -149,8 +163,8 @@ export function StudentAdmissionForm(props: {
               </Stack>
 
               <Stack gap="md">
-                <Title order={3} size="sm" fw={600} c="dark.7">
-                  Student name
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Personal information
                 </Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
                   <TextInput
@@ -199,8 +213,8 @@ export function StudentAdmissionForm(props: {
               </Stack>
 
               <Stack gap="md">
-                <Title order={3} size="sm" fw={600} c="dark.7">
-                  Contact & address
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Contact information
                 </Title>
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                   <TextInput
@@ -219,11 +233,33 @@ export function StudentAdmissionForm(props: {
                     error={fe(fieldErrors, "phone")}
                   />
                 </SimpleGrid>
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Medical records
+                </Title>
+                <Text size="xs" c="dimmed">
+                  Immunization, conditions, or clinic references for this learner (not file uploads).
+                </Text>
+                <Textarea
+                  name="documentMedicalImmunization"
+                  label="Medical / immunization"
+                  placeholder="Health card ref, immunization summary, allergies, or clinic note"
+                  rows={4}
+                  error={fe(fieldErrors, "documentMedicalImmunization")}
+                />
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Student address
+                </Title>
                 <Textarea
                   name="address"
-                  label="Address"
+                  label="Home address"
                   placeholder="Street, town, postcode"
-                  rows={3}
+                  rows={4}
                   autoComplete="street-address"
                   error={fe(fieldErrors, "address")}
                 />
@@ -232,164 +268,187 @@ export function StudentAdmissionForm(props: {
           </Tabs.Panel>
 
           <Tabs.Panel value="parents" pt="md">
-            <Stack gap="md">
-              <Title order={3} size="sm" fw={600} c="dark.7">
-                Parent & guardian
-              </Title>
+            <input type="hidden" name="secondParentActive" value={secondParent ? "1" : "0"} />
+
+            <Stack gap="lg">
               <Text size="sm" c="dimmed" maw={640}>
-                Contact details for parents and, if applicable, a local guardian (same structure as typical school
-                admission forms).
+                Only parent and guardian contacts belong here. Use <strong>Parent 1</strong> for the first parent; add a
+                second parent if needed — name and at least one contact method are then required for parent 2.
               </Text>
 
-              <Paper withBorder p="md" radius="md" bg="gray.0">
-                <Stack gap="md">
-                  <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
-                    Father
-                  </Text>
-                  <TextInput
-                    name="fatherName"
-                    label="Full name"
-                    autoComplete="section-father name"
-                    error={fe(fieldErrors, "fatherName")}
-                  />
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <TextInput
-                      name="fatherOccupation"
-                      label="Occupation"
-                      error={fe(fieldErrors, "fatherOccupation")}
-                    />
-                    <TextInput
-                      name="fatherPhone"
-                      type="tel"
-                      inputMode="tel"
-                      label="Phone"
-                      autoComplete="section-father tel"
-                      error={fe(fieldErrors, "fatherPhone")}
-                    />
-                  </SimpleGrid>
-                  <TextInput
-                    name="fatherEmail"
-                    type="email"
-                    label="Email"
-                    autoComplete="section-father email"
-                    error={fe(fieldErrors, "fatherEmail")}
-                  />
-                </Stack>
-              </Paper>
+              <Stack gap="xs">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Parents
+                </Title>
 
-              <Paper withBorder p="md" radius="md" bg="gray.0">
-                <Stack gap="md">
-                  <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
-                    Mother
-                  </Text>
-                  <TextInput
-                    name="motherName"
-                    label="Full name"
-                    autoComplete="section-mother name"
-                    error={fe(fieldErrors, "motherName")}
-                  />
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <TextInput
-                      name="motherOccupation"
-                      label="Occupation"
-                      error={fe(fieldErrors, "motherOccupation")}
-                    />
-                    <TextInput
-                      name="motherPhone"
-                      type="tel"
-                      inputMode="tel"
-                      label="Phone"
-                      autoComplete="section-mother tel"
-                      error={fe(fieldErrors, "motherPhone")}
-                    />
-                  </SimpleGrid>
-                  <TextInput
-                    name="motherEmail"
-                    type="email"
-                    label="Email"
-                    autoComplete="section-mother email"
-                    error={fe(fieldErrors, "motherEmail")}
-                  />
-                </Stack>
-              </Paper>
-
-              <Paper withBorder p="md" radius="md" bg="gray.0">
-                <Stack gap="sm">
-                  <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
-                    Guardian / local contact
-                  </Text>
-                  <Text size="xs" c="dimmed">
-                    When someone other than the parents is the primary contact (e.g. grandparent, foster carer).
-                  </Text>
+                <Paper withBorder p="md" radius="md" bg="gray.0">
                   <Stack gap="md">
-                    <TextInput name="guardianName" label="Guardian name" error={fe(fieldErrors, "guardianName")} />
+                    <Text size="sm" fw={600}>
+                      Parent 1
+                    </Text>
                     <TextInput
-                      name="guardianRelationship"
-                      label="Relationship to student"
-                      placeholder="e.g. Grandmother, uncle"
-                      error={fe(fieldErrors, "guardianRelationship")}
+                      name="fatherName"
+                      label="Full name"
+                      autoComplete="section-parent1 name"
+                      error={fe(fieldErrors, "fatherName")}
                     />
                     <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                       <TextInput
-                        name="guardianPhone"
+                        name="fatherOccupation"
+                        label="Occupation"
+                        error={fe(fieldErrors, "fatherOccupation")}
+                      />
+                      <TextInput
+                        name="fatherPhone"
                         type="tel"
                         inputMode="tel"
                         label="Phone"
-                        error={fe(fieldErrors, "guardianPhone")}
-                      />
-                      <TextInput
-                        name="guardianEmail"
-                        type="email"
-                        label="Email"
-                        error={fe(fieldErrors, "guardianEmail")}
+                        autoComplete="tel"
+                        error={fe(fieldErrors, "fatherPhone")}
                       />
                     </SimpleGrid>
+                    <TextInput
+                      name="fatherEmail"
+                      type="email"
+                      label="Email"
+                      autoComplete="email"
+                      error={fe(fieldErrors, "fatherEmail")}
+                    />
                   </Stack>
-                </Stack>
-              </Paper>
+                </Paper>
+
+                <Checkbox
+                  label="Include second parent"
+                  description="Turn on to enter Parent 2. Those fields become required."
+                  checked={secondParent}
+                  onChange={(e) => setSecondParent(e.currentTarget.checked)}
+                />
+
+                {secondParent ? (
+                  <Paper withBorder p="md" radius="md" bg="gray.0">
+                    <Stack gap="md">
+                      <Text size="sm" fw={600}>
+                        Parent 2
+                      </Text>
+                      <TextInput
+                        name="motherName"
+                        label="Full name"
+                        required={secondParent}
+                        autoComplete="section-parent2 name"
+                        error={fe(fieldErrors, "motherName")}
+                      />
+                      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                        <TextInput
+                          name="motherOccupation"
+                          label="Occupation"
+                          error={fe(fieldErrors, "motherOccupation")}
+                        />
+                        <TextInput
+                          name="motherPhone"
+                          type="tel"
+                          inputMode="tel"
+                          label="Phone"
+                          autoComplete="tel"
+                          error={fe(fieldErrors, "motherPhone")}
+                        />
+                      </SimpleGrid>
+                      <TextInput
+                        name="motherEmail"
+                        type="email"
+                        label="Email"
+                        autoComplete="email"
+                        error={fe(fieldErrors, "motherEmail")}
+                      />
+                    </Stack>
+                  </Paper>
+                ) : null}
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Guardian
+                </Title>
+                <Paper withBorder p="md" radius="md" bg="gray.0">
+                  <Stack gap="sm">
+                    <Text size="xs" c="dimmed">
+                      When someone other than the parents is the primary contact (e.g. grandparent, foster carer).
+                    </Text>
+                    <Stack gap="md">
+                      <TextInput name="guardianName" label="Guardian name" error={fe(fieldErrors, "guardianName")} />
+                      <TextInput
+                        name="guardianRelationship"
+                        label="Relationship to student"
+                        placeholder="e.g. Grandmother, uncle"
+                        error={fe(fieldErrors, "guardianRelationship")}
+                      />
+                      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+                        <TextInput
+                          name="guardianPhone"
+                          type="tel"
+                          inputMode="tel"
+                          label="Phone"
+                          error={fe(fieldErrors, "guardianPhone")}
+                        />
+                        <TextInput
+                          name="guardianEmail"
+                          type="email"
+                          label="Email"
+                          error={fe(fieldErrors, "guardianEmail")}
+                        />
+                      </SimpleGrid>
+                    </Stack>
+                  </Stack>
+                </Paper>
+              </Stack>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Panel value="documents" pt="md">
-            <Stack gap="md">
-              <Title order={3} size="sm" fw={600} c="dark.7">
-                Documents & references
-              </Title>
-              <Text size="sm" c="dimmed">
-                Record document details supplied at admission. File uploads are not stored here yet — use this as a
-                checklist and reference log.
+            <Stack gap="xl">
+              <Text size="sm" c="dimmed" maw={640}>
+                This tab is only for <strong>document references</strong> (numbers, issuing authority, dates). It does
+                not include medical notes, address, or previous-school narrative — those belong in their own tabs.
               </Text>
+
               <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Birth &amp; identity papers
+                </Title>
                 <TextInput
                   name="documentBirthCert"
                   label="Birth certificate"
-                  placeholder="Registration number, authority, or date issued"
+                  placeholder="Registration number, issuing authority, date issued"
                   error={fe(fieldErrors, "documentBirthCert")}
                 />
                 <TextInput
                   name="documentNationalId"
                   label="National ID / passport"
-                  placeholder="Document number and type"
+                  placeholder="Document number and document type"
                   error={fe(fieldErrors, "documentNationalId")}
                 />
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Transfer / leaving certificate
+                </Title>
                 <TextInput
                   name="documentTransferCert"
-                  label="Transfer / leaving certificate"
-                  placeholder="Reference from previous school (if applicable)"
+                  label="Certificate reference"
+                  placeholder="Certificate no., authority, or date (proof of transfer)"
                   error={fe(fieldErrors, "documentTransferCert")}
                 />
-                <Textarea
-                  name="documentMedicalImmunization"
-                  label="Medical / immunization"
-                  placeholder="Health card ref, immunization summary, or clinic note"
-                  rows={2}
-                  error={fe(fieldErrors, "documentMedicalImmunization")}
-                />
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Other supporting documents
+                </Title>
                 <Textarea
                   name="documentOtherNotes"
-                  label="Other documents"
-                  placeholder="Custody order, sponsorship letter, etc."
-                  rows={2}
+                  label="Other documents (references only)"
+                  placeholder="e.g. custody order ref., sponsorship letter ref., court order number"
+                  rows={3}
                   error={fe(fieldErrors, "documentOtherNotes")}
                 />
               </Stack>
@@ -397,70 +456,75 @@ export function StudentAdmissionForm(props: {
           </Tabs.Panel>
 
           <Tabs.Panel value="previous-school" pt="md">
-            <Stack gap="md">
-              <Title order={3} size="sm" fw={600} c="dark.7">
-                Previous school
-              </Title>
-              <Text size="sm" c="dimmed">
-                If the learner is transferring from another institution, capture the last school&apos;s details.
+            <Stack gap="xl">
+              <Text size="sm" c="dimmed" maw={640}>
+                This tab is only about the <strong>last institution</strong> the learner attended: identity of that
+                school, where it was, what class they were in, when they left, and why. It does{" "}
+                <strong>not</strong> include document certificate numbers (those belong under Document Info), learner
+                personal details, or parent contacts.
               </Text>
-              <Paper withBorder p="md" radius="md" bg="gray.0">
-                <Stack gap="md">
-                  <Text size="xs" fw={700} tt="uppercase" c="dimmed" lts={0.5}>
-                    Previous school
-                  </Text>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Institution
+                </Title>
+                <TextInput
+                  name="previousSchool"
+                  label="School name"
+                  placeholder="Full name of the last school or college"
+                  error={fe(fieldErrors, "previousSchool")}
+                />
+                <Textarea
+                  name="previousSchoolAddress"
+                  label="School location / address"
+                  placeholder="Town, region, postcode / country"
+                  rows={3}
+                  error={fe(fieldErrors, "previousSchoolAddress")}
+                />
+              </Stack>
+
+              <Stack gap="md">
+                <Title order={4} size="sm" fw={700} tt="uppercase" c="dimmed" lts={0.6}>
+                  Class &amp; exit
+                </Title>
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                   <TextInput
-                    name="previousSchool"
-                    label="School name"
-                    placeholder="Full name of the last school or college"
-                    error={fe(fieldErrors, "previousSchool")}
+                    name="previousSchoolClassOrGrade"
+                    label="Last class / grade / year"
+                    placeholder="e.g. Year 9, Grade 7"
+                    error={fe(fieldErrors, "previousSchoolClassOrGrade")}
                   />
-                  <Textarea
-                    name="previousSchoolAddress"
-                    label="School address"
-                    placeholder="Town, region, postcode / country"
-                    rows={2}
-                    error={fe(fieldErrors, "previousSchoolAddress")}
+                  <TextInput
+                    name="previousSchoolDateLeft"
+                    type="date"
+                    label="Date left that school"
+                    error={fe(fieldErrors, "previousSchoolDateLeft")}
                   />
-                  <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-                    <TextInput
-                      name="previousSchoolClassOrGrade"
-                      label="Last class / grade / year"
-                      placeholder="e.g. Year 9, Grade 7"
-                      error={fe(fieldErrors, "previousSchoolClassOrGrade")}
-                    />
-                    <TextInput
-                      name="previousSchoolDateLeft"
-                      type="date"
-                      label="Date left school"
-                      error={fe(fieldErrors, "previousSchoolDateLeft")}
-                    />
-                  </SimpleGrid>
-                  <Textarea
-                    name="previousSchoolLeavingReason"
-                    label="Reason for leaving / transfer"
-                    rows={2}
-                    error={fe(fieldErrors, "previousSchoolLeavingReason")}
-                  />
-                </Stack>
-              </Paper>
+                </SimpleGrid>
+                <Textarea
+                  name="previousSchoolLeavingReason"
+                  label="Reason for leaving / transfer"
+                  placeholder="Why the learner left or moved (narrative for this school only)"
+                  rows={3}
+                  error={fe(fieldErrors, "previousSchoolLeavingReason")}
+                />
+              </Stack>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Panel value="other" pt="md">
-            <Stack gap="md">
-              <Title order={3} size="sm" fw={600} c="dark.7">
-                Other Info
-              </Title>
-              <Text size="sm" c="dimmed">
-                Anything that does not fit the other tabs — medical alerts, learning needs, or general notes for the
-                admission file.
+            <Stack gap="lg">
+              <Text size="sm" c="dimmed" maw={640}>
+                This tab is only for <strong>free-text notes</strong> that genuinely do not fit Personal, Parents,
+                Document, or Previous School. Do not repeat structured fields from those tabs. Do not use this for
+                certificate numbers, ID refs, or the learner&apos;s medical record — those belong in Document Info and
+                Personal → Medical records respectively.
               </Text>
               <Textarea
                 name="admissionNotes"
-                label="General admission notes"
-                placeholder="Medical alerts, learning needs, or other notes."
-                rows={5}
+                label="Other admission notes (catch-all)"
+                placeholder="e.g. learning support summary, pastoral handover, timing of move, anything unstructured not captured above"
+                rows={6}
                 error={fe(fieldErrors, "admissionNotes")}
               />
             </Stack>

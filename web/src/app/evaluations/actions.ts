@@ -53,6 +53,7 @@ export async function submitStudentAdmission(
     admissionNumber: String(formData.get("admissionNumber") ?? ""),
     admissionDate: String(formData.get("admissionDate") ?? ""),
     bloodGroup: String(formData.get("bloodGroup") ?? ""),
+    secondParentActive: String(formData.get("secondParentActive") ?? ""),
     previousSchool: String(formData.get("previousSchool") ?? ""),
     previousSchoolAddress: String(formData.get("previousSchoolAddress") ?? ""),
     previousSchoolClassOrGrade: String(formData.get("previousSchoolClassOrGrade") ?? ""),
